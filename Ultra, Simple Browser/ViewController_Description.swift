@@ -1441,3 +1441,110 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
 }
+
+
+//the controller for user to add a new favorite bookmark
+class NewFavoriteItemTableViewController: UITableViewController, UITableViewDataSource, UITableViewDelegate {
+    
+    var thepassingvalue: Int = 0
+    var viewshowed: Bool = false
+    var clickedDone: Bool = false
+    var defaultTitle: String = ""
+    var defaultURL: String = ""
+    var usrTitle: String = ""
+    var usrURL: String = ""
+    var usrTitleTextField: UITextField!
+    var usrURLTextField: UITextField!
+    var doneButton: UIButton!
+    var cancelButton: UIBarButtonItem!
+    
+    //config UI
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.viewshowed = true
+        
+        usrTitleTextField = UITextField(frame: CGRectMake(0, 0, view.frame.width, 44))
+        usrTitleTextField.placeholder = "Title"
+        usrTitleTextField.text = defaultTitle
+        usrTitleTextField.tintColor = UIColor.grayColor()
+        usrTitleTextField.textAlignment = .Left
+        usrTitleTextField.clearButtonMode = .WhileEditing
+        usrTitleTextField.keyboardType = .Default
+        usrTitleTextField.spellCheckingType = .No
+        usrTitleTextField.autocapitalizationType = .None
+        usrTitleTextField.autocorrectionType = .No
+        usrTitleTextField.enablesReturnKeyAutomatically = true
+        
+        usrURLTextField = UITextField(frame: CGRectMake(0, 0, view.frame.width, 44))
+        usrURLTextField.placeholder = "URL"
+        usrURLTextField.text = defaultURL
+        usrURLTextField.tintColor = UIColor.grayColor()
+        usrURLTextField.textAlignment = .Left
+        usrURLTextField.clearButtonMode = .WhileEditing
+        usrURLTextField.keyboardType = .URL
+        usrURLTextField.spellCheckingType = .No
+        usrURLTextField.autocapitalizationType = .None
+        usrURLTextField.autocorrectionType = .No
+        usrURLTextField.enablesReturnKeyAutomatically = true
+        
+        doneButton = UIButton(frame: CGRectMake(0, 0, view.frame.width, 44))
+        doneButton.setTitle("Done", forState: .Normal)
+        doneButton.setTitleColor(UIColor.blackColor(), forState: .Normal)
+        doneButton.addTarget(self, action: "pressDone", forControlEvents: .TouchUpInside)
+        
+        cancelButton = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "cancelAddFavorite")
+        self.navigationController?.navigationBar.backItem?.backBarButtonItem = cancelButton
+        
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+    
+    //two sections, one for title and URL, another for the done button
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    //the first section is for title and url, so it will be two rows; second is for done button, which is one row.
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0 {
+            return 2
+        } else {
+            return 1
+        }
+    }
+    
+    //first section first row is title, second row is url. second section is done button only
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        let cell = UITableViewCell()
+        
+        if indexPath.section == 0 {
+            if indexPath.row == 0 {
+                cell.addSubview(usrTitleTextField)
+            } else {
+                cell.addSubview(usrURLTextField)
+            }
+        } else if indexPath.section == 1 {
+            cell.addSubview(doneButton)
+        }
+        
+        return cell
+    }
+    
+    //press done button to pass data
+    func pressDone() {
+        usrTitle = usrTitleTextField.text
+        usrURL = usrURLTextField.text
+        clickedDone = true
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    //if user canceled adding new favorite bookmark
+    func cancelAddFavorite(){
+        clickedDone = false
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+}
