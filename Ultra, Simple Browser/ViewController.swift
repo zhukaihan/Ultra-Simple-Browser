@@ -17,7 +17,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     
 //////////Variables
     var homewebpage : String!
-    var statusbarpref = NSUserDefaults.standardUserDefaults().boolForKey("preferstatusbarhidden")
     var defaultSearchEngine = NSUserDefaults.standardUserDefaults().stringForKey("searchtype")
     var unclosedwebviews = [NSManagedObject]()
     var Favoriteitems = [NSManagedObject]()
@@ -66,29 +65,27 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     var toolBar: UIToolbar! = UIToolbar()
     var edgeSwipe: UIPanGestureRecognizer! = UIPanGestureRecognizer()
     var showButton: UIButton! = UIButton()
-    var textField: UITextField! = UITextField()
+    var textField: URLTextField!
     
     var progressBar: UIProgressView! = UIProgressView(progressViewStyle: .Bar)
     
     var adbanner: ADBannerView! = ADBannerView()
     
+    let backgroundimage = UIImageView(image: UIImage(named: "icon.png")!)
     
     
 //////////Override funcs
     override func loadView() {
         super.loadView()
         
-        if  NSUserDefaults.standardUserDefaults().stringForKey("homeurl") != nil {
-            homewebpage = NSUserDefaults.standardUserDefaults().stringForKey("homeurl")!
-        } else {
-            homewebpage = "google.com"
-        }
-        
         self.view.backgroundColor = UIColor.darkGrayColor()
         
-        let backgroundimage = UIImageView(image: UIImage(named: "icon.png")!)
         backgroundimage.frame = CGRectMake(0, 0, view.frame.width, view.frame.width)
         self.view.addSubview(backgroundimage)
+        
+        configtextField()
+        textField.configrefreshImage()
+        textField.delegate = self
         
         let backimg = UIImage(named: "backbutton.png")
         let backbutton = UIButton()
@@ -121,10 +118,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         undoWebViewButton = UIBarButtonItem(barButtonSystemItem: .Undo, target: self, action: "undoPreviousWebView")
         undoWebViewButton.enabled = false
         flexibleSpaceBarButtonItem = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: nil, action: nil)
-        
-        configtextField()
-        configrefreshImage()
-        textField.delegate = self
         
         toolBar.frame = CGRectMake(0, view.frame.height - 44, view.frame.width, 44)
         configtoolbaritems()
@@ -160,7 +153,9 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         
         let showfavoritebuttonimg = UIImage(named: "favorites.png")
         showfavoritebutton = UIButton()
-        let framewidthone = view.frame.width / 4 * 1 - (view.frame.width / 4 - 59) / 2 - 59
+        let framewidthmid = view.frame.width / 4 * 1
+        let framewidthonemid = (view.frame.width / 4 - 59) / 2
+        let framewidthone = framewidthmid - framewidthonemid - 59
         let framewidth = framewidthone + view.frame.width
         showfavoritebutton.frame = CGRectMake(framewidth, 55, 59, 59)
         showfavoritebutton.setImage(showfavoritebuttonimg, forState: .Normal)
@@ -179,7 +174,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         dashboard.addSubview(openinsafaributton)
         dashboard.addSubview(showfavoritebutton)
         dashboardTitle.frame = CGRectMake(0, 0, view.frame.width, 30)
-        dashboardTitle.text = " Dashboard"
+        dashboardTitle.text = "  Dashboard"
         dashboardTitle.textColor = UIColor(white: 0.5, alpha: 1)
         dashboardTitle.font = UIFont(name: "Arial", size: 15)
         dashboardTitle.backgroundColor = UIColor(white: 0.825, alpha: 1)
@@ -279,7 +274,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             NSUserDefaults.standardUserDefaults().setValue(homewebpage, forKey: "homeurl")
             NSUserDefaults.standardUserDefaults().synchronize()
         }
-        statusbarpref = NSUserDefaults.standardUserDefaults().boolForKey("preferstatusbarhidden")
         if !homewebpage.hasPrefix("http://") {
             homewebpage = "http://" + homewebpage
             NSUserDefaults.standardUserDefaults().setValue(homewebpage, forKey: "homeurl")
@@ -299,7 +293,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     override func prefersStatusBarHidden() -> Bool {
-        return statusbarpref
+        return true
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -337,40 +331,10 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     
 //////////Regular funcs
     func configtextField() {
-        textField.leftViewMode = .UnlessEditing
+        textField = URLTextField()
+        textField.parentViewController = self
         textField.frame = CGRectMake(0, 0, view.frame.width - 150, 30)
-        textField.tintColor = UIColor.grayColor()
-        textField.textAlignment = .Center
-        textField.returnKeyType = .Go
-        textField.placeholder = "Enter URL or Search"
-        textField.adjustsFontSizeToFitWidth = true
-        textField.clearButtonMode = .WhileEditing
-        textField.keyboardType = .WebSearch
-        textField.spellCheckingType = .No
-        textField.autocapitalizationType = .None
-        textField.autocorrectionType = .No
-        textField.enablesReturnKeyAutomatically = true
         textField.addTarget(self, action: "didClickGo", forControlEvents: .EditingDidEndOnExit)
-    }
-    
-    func configrefreshImage() {
-        let refreshImage = UIImage(named: "refreshimage.png")!
-        let refreshImageButton = UIButton.buttonWithType(.Custom) as UIButton
-        refreshImageButton.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
-        refreshImageButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 3)
-        refreshImageButton.setImage(refreshImage, forState: .Normal)
-        refreshImageButton.addTarget(self, action: "doRefresh", forControlEvents: .TouchUpInside)
-        textField.leftView = refreshImageButton
-    }
-    
-    func configstopImage() {
-        let stopImage = UIImage(named: "stopimage.png")!
-        let stopImageButton = UIButton.buttonWithType(.Custom) as UIButton
-        stopImageButton.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
-        stopImageButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 3)
-        stopImageButton.setImage(stopImage, forState: .Normal)
-        stopImageButton.addTarget(self, action: "doStop", forControlEvents: .TouchUpInside)
-        textField.leftView = stopImageButton
     }
     
     func configtoolbaritems() {
@@ -410,36 +374,40 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func lettextfieldtohost() {
-        let theurl: String! = webViews[currentWebView]?.URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
-        let urlhost: String! = webViews[currentWebView]?.URL?.host
-        println("Finished navigating to url \(urlhost)")
-        if webViews[currentWebView]?.URL?.host != nil{
-            if ((((theurl.hasPrefix("http://www.google.com/search?q=")) || (theurl.hasPrefix("https://www.google.com/search?q=")))) && (theurl.hasSuffix("gws_rd=ssl"))) {
-                var str: String! = webViews[currentWebView]?.URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-                let strstartindex = str.startIndex
-                str = str?.substringFromIndex(advance(strstartindex, 32))
-                let strendindex = str.endIndex
-                str = str?.substringToIndex(advance(strendindex, -11))
-                str = "🔍" + str
-                textField.text = str
-            } else if (((theurl.hasPrefix("http://www.baidu.com/s?wd=")) || (theurl.hasPrefix("https://www.baidu.com/s?wd="))) && (!(theurl.hasSuffix("&cl=3")) && !(theurl.hasSuffix("&cl=2")))) {
-                var str: String! = webViews[currentWebView]?.URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-                let strstartindex = str.startIndex
-                str = str?.substringFromIndex(advance(strstartindex, 26))
-                str = "🔍" + str
-                textField.text = str
-            } else if (urlhost?.hasPrefix("www.") == true) {
-                let strr = NSString(string: urlhost!)
-                let sttr = strr.substringFromIndex(4)
-                textField.text = sttr
-            } else  {
-                textField.text = urlhost
+        if (!textField.isFirstResponder()  && ((webViews[currentWebView]?.URL?.absoluteString != nil) && (webViews[currentWebView]?.URL?.absoluteString != ""))){
+            let theurl: String! = webViews[currentWebView]?.URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+            let urlhost: String! = webViews[currentWebView]?.URL?.host
+            println("Finished navigating to url \(urlhost)")
+            if webViews[currentWebView]?.URL?.host != nil{
+                if ((((theurl.hasPrefix("http://www.google.com/search?q=")) || (theurl.hasPrefix("https://www.google.com/search?q=")))) && (theurl.hasSuffix("gws_rd=ssl"))) {
+                    var str: String! = webViews[currentWebView]?.URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+                    let strstartindex = str.startIndex
+                    str = str?.substringFromIndex(advance(strstartindex, 32))
+                    let strendindex = str.endIndex
+                    str = str?.substringToIndex(advance(strendindex, -11))
+                    str = "🔍" + str
+                    textField.text = str
+                } else if (((theurl.hasPrefix("http://www.baidu.com/s?wd=")) || (theurl.hasPrefix("https://www.baidu.com/s?wd="))) && (!(theurl.hasSuffix("&cl=3")) && !(theurl.hasSuffix("&cl=2")))) {
+                    var str: String! = webViews[currentWebView]?.URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+                    let strstartindex = str.startIndex
+                    str = str?.substringFromIndex(advance(strstartindex, 26))
+                    str = "🔍" + str
+                    textField.text = str
+                } else if (urlhost?.hasPrefix("www.") == true) {
+                    let strr = NSString(string: urlhost!)
+                    let sttr = strr.substringFromIndex(4)
+                    textField.text = sttr
+                } else  {
+                    textField.text = urlhost
+                }
+            } else {
+                textField.text = ""
+            }
+            if (webViews[currentWebView]?.hasOnlySecureContent == true) {
+                textField.text = "🔒" + textField.text
             }
         } else {
-            textField.text = ""
-        }
-        if (webViews[currentWebView]?.hasOnlySecureContent == true) {
-            textField.text = "🔒" + textField.text
+            textField.text = "An Error has occurred."
         }
     }
     
@@ -479,6 +447,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                 }
                 for tryShowingWebView in 0...webViews.count - 1 {
                     webViews[tryShowingWebView]?.frame = CGRectMake(20, CGFloat(200 * tryShowingWebView) + weby, view.frame.width - 40, view.frame.height - 10)
+                    webViewButtons[tryShowingWebView]?.frame = CGRectMake(0, 0, view.frame.width - 40, view.frame.height)
                     webViewLabels[tryShowingWebView]?.frame = CGRectMake(0, 0, view.frame.width - 40, 20)
                 }
                 adbanner.frame = CGRectMake(5, 0, self.view.frame.width - 10, 50)
@@ -488,6 +457,8 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             if (backForwardFavoriteTableView.window != nil) {
                 backForwardFavoriteTableView.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
             }
+            
+            //backgroundimage.frame = CGRectMake(abs(view.frame.width - view.frame.height) / 2, 0, sort(&[view.frame.width,view.frame.height]), view.frame.width)
             
             toolBar.frame = CGRectMake(0, view.frame.height - 44, view.frame.width, 44)
             textField.frame = CGRectMake(0, 0, view.frame.width - 150, 30)
@@ -501,7 +472,9 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             homebutton.frame = CGRectMake(view.frame.width / 4 * 2 - (view.frame.width / 4 - 59) / 2 - 59, 55, 59, 59)
             sharebutton.frame = CGRectMake(view.frame.width / 4 * 3 - (view.frame.width / 4 - 59) / 2 - 59, 55, 59, 59)
             openinsafaributton.frame = CGRectMake(view.frame.width / 4 * 4 - (view.frame.width / 4 - 59) / 2 - 59, 55, 59, 59)
-            let framewidthone = view.frame.width / 4 * 1 - (view.frame.width / 4 - 59) / 2 - 59
+            let framewidthmid = view.frame.width / 4 * 1
+            let framewidthonemid = (view.frame.width / 4 - 59) / 2
+            let framewidthone = framewidthmid - framewidthonemid - 59
             let framewidth = framewidthone + view.frame.width
             showfavoritebutton.frame = CGRectMake(framewidth, 55, 59, 59)
             
@@ -514,11 +487,9 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func webView(webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation) {
-        configstopImage()
+        textField.configstopImage()
         checkifdnsrsearch()
-        if !textField.isFirstResponder(){
-            lettextfieldtohost()
-        }
+        lettextfieldtohost()
         progressBar.setProgress(0.1, animated: false)
         refreshControl.attributedTitle = NSAttributedString(string: "Refreshing")
         UIView.animateWithDuration(0.3, delay: 0, options: .CurveEaseInOut, animations: { self.progressBar.alpha = 1 }, nil)
@@ -526,48 +497,48 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     
     func webView(webView: WKWebView, didCommitNavigation navigation: WKNavigation){
         progressBar.setProgress(Float(webViews[currentWebView]!.estimatedProgress) + 0.01, animated: true)
-        configstopImage()
+        textField.configstopImage()
         checkifdnsrsearch()
-        if !textField.isFirstResponder(){
-            lettextfieldtohost()
-        }
+        lettextfieldtohost()
     }
     
     func webView(webView: WKWebView!, didFinishNavigation navigation: WKNavigation!) {
         checkGos()
-        if !textField.isFirstResponder(){
-            lettextfieldtohost()
-        }
+        lettextfieldtohost()
         progressBar.setProgress(1.0, animated: true)
         UIView.animateWithDuration(0.3, delay: 0.5, options: .CurveEaseInOut, animations: { self.progressBar.alpha = 0 }, completion: nil)
-        configrefreshImage()
+        textField.configrefreshImage()
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         refreshControl.endRefreshing()
     }
     
     func webView(webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: NSError) {
-        //let path = NSBundle.mainBundle().pathForResource("Error", ofType: "html", inDirectory: "SimpleBrowser")
-        //var requesturl = NSURL(string: path!);
-        //var request = NSURLRequest(URL: requesturl!);
-        //webViews[currentWebView]!.loadRequest(request)
-        //textField.text = "Error"
+        /*if textField.text != nil {
+            var requesturl = NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("Ultra_Simple_Browser_Internet_Error", ofType: "html")!)
+            var request = NSURLRequest(URL: requesturl!)
+            webView.loadRequest(request)
+            textField.text = error.localizedDescription
+        }*/
+        lettextfieldtohost()
         checkGos()
         progressBar.setProgress(1.0, animated: true)
         UIView.animateWithDuration(0.3, delay: 0.5, options: .CurveEaseInOut, animations: { self.progressBar.alpha = 0 }, completion: nil)
-        configrefreshImage()
+        textField.configrefreshImage()
         refreshControl.endRefreshing()
     }
     
     func webView(webView: WKWebView, didFailNavigation navigation: WKNavigation!, withError error: NSError) {
-        //let path = NSBundle.mainBundle().pathForResource("Error", ofType: "html")
-        //var requestURL = NSURL(string: path!);
-        //var request = NSURLRequest(URL: requestURL!);
-        //webViews[currentWebView]!.loadRequest(request)
-        //textField.text = "Error"
+        /*if textField.text != nil {
+            var requesturl = NSURL(fileURLWithPath: NSBundle.mainBundle().pathForResource("Ultra_Simple_Browser_Internet_Error", ofType: "html")!)
+            var request = NSURLRequest(URL: requesturl!)
+            webView.loadRequest(request)
+            textField.text = error.localizedDescription
+        }*/
+        lettextfieldtohost()
         checkGos()
         progressBar.setProgress(1.0, animated: true)
         UIView.animateWithDuration(0.3, delay: 0.5, options: .CurveEaseInOut, animations: { self.progressBar.alpha = 0 }, completion: nil)
-        configrefreshImage()
+        textField.configrefreshImage()
         refreshControl.endRefreshing()
     }
     
@@ -599,6 +570,8 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
+        //dismissDashboard()
+        
         var cancelBarItem: UIBarButtonItem!
         
         cancelBarItem = UIBarButtonItem(title: "Cancel", style: .Plain, target: self, action: "cancelInput")
@@ -680,7 +653,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             let managedContext = appDelegate.managedObjectContext!
             let fetchRequest = NSFetchRequest(entityName:"Favorites")
             Favoriteitems = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
-            let number = Favoriteitems.count - 1
+            let number = Favoriteitems.count
             return number
         } else {
             return 0
@@ -779,10 +752,10 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             let isValidURL: Bool = predicate.evaluateWithObject(urlString)
             
             if !isValidURL {
-                if (defaultSearchEngine == "0") {
-                    text = "http://www.google.com/search?q=" + oritext
-                } else if (defaultSearchEngine == "1") {
+                if (defaultSearchEngine == "1") {
                     text = "http://www.baidu.com/s?wd=" + oritext
+                } else {
+                    text = "http://www.google.com/search?q=" + oritext
                 }
                 url = NSURL(string: text.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!)
             }
@@ -907,7 +880,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         UIView.animateWithDuration(0.3, delay: 0.5, options: .CurveEaseInOut, animations: {
             self.progressBar.alpha = 0
         }, completion: nil)
-        configrefreshImage()
+        textField.configrefreshImage()
     }
     
     func displayDashboard() {
@@ -992,10 +965,10 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func showFavorites() {
-        backForwardFavoriteTableView = UITableView()
+        dismissDashboard()
+        backForwardFavoriteTableView = UITableView(frame: CGRectMake(0, view.frame.height, view.frame.width, view.frame.height - 44), style: .Grouped)
         backForwardFavoriteTableView.dataSource = self
         backForwardFavoriteTableView.delegate = self
-        backForwardFavoriteTableView.frame = CGRectMake(0, view.frame.height, view.frame.width, view.frame.height - 44)
         backForwardFavoriteTableView.tag = 2
         
         UIView.beginAnimations("animateWebView", context: nil)
@@ -1009,7 +982,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         listLabel.text = "Favorites"
         listLabel.frame = CGRectMake(0, 0, view.frame.width - 150, 30)
         let listLabelItem: UIBarButtonItem = UIBarButtonItem(customView: listLabel)
-        let cancelButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "hideGoBackForwardFavoritesList")
+        let cancelButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: "hideGoBackForwardFavoritesList")
         let addButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "startAddingFavorites")
         var toolBarItems = [
             addButton,
@@ -1161,7 +1134,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         lettextfieldtohost()
         progressBar.setProgress(1.0, animated: true)
         UIView.animateWithDuration(0.3, delay: 0.5, options: .CurveEaseInOut, animations: { self.progressBar.alpha = 0 }, completion: nil)
-        configrefreshImage()
+        textField.configrefreshImage()
         refreshControl.endRefreshing()
         
         UIView.commitAnimations()

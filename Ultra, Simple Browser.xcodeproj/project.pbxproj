@@ -13,8 +13,9 @@
 		8301108A1A6DA3F70026C4DD /* share.png in Resources */ = {isa = PBXBuildFile; fileRef = 830110881A6DA3F70026C4DD /* share.png */; };
 		8301108C1A6DA4800026C4DD /* openinsafari.png in Resources */ = {isa = PBXBuildFile; fileRef = 8301108B1A6DA4800026C4DD /* openinsafari.png */; };
 		8304135F1A37BF93000E8C92 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8304135E1A37BF93000E8C92 /* QuartzCore.framework */; };
+		833A74EB1A71E4DC00656ECB /* URLTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833A74EA1A71E4DC00656ECB /* URLTextField.swift */; };
+		833A74ED1A71E79D00656ECB /* toolBarItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833A74EC1A71E79D00656ECB /* toolBarItems.swift */; };
 		833C45B61A5110C2007833FE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 833C45B51A5110C2007833FE /* Settings.bundle */; };
-		833C45BC1A578A7D007833FE /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 833C45BB1A578A7D007833FE /* background.jpg */; };
 		837CE4B21A6ACEE800B79EDD /* backbutton.png in Resources */ = {isa = PBXBuildFile; fileRef = 837CE4B11A6ACEE800B79EDD /* backbutton.png */; };
 		837CE4B41A6ACF7100B79EDD /* forwardbutton.png in Resources */ = {isa = PBXBuildFile; fileRef = 837CE4B31A6ACF7100B79EDD /* forwardbutton.png */; };
 		837CE4B81A6AD04600B79EDD /* stopimage.png in Resources */ = {isa = PBXBuildFile; fileRef = 837CE4B71A6AD04600B79EDD /* stopimage.png */; };
@@ -38,7 +39,7 @@
 		83A045641A33F705007E3FCC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83A045631A33F705007E3FCC /* Images.xcassets */; };
 		83A045671A33F705007E3FCC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83A045651A33F705007E3FCC /* LaunchScreen.xib */; };
 		83A045731A33F705007E3FCC /* Ultra__Simple_BrowserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83A045721A33F705007E3FCC /* Ultra__Simple_BrowserTests.swift */; };
-		83A045811A33F760007E3FCC /* Error.html in Resources */ = {isa = PBXBuildFile; fileRef = 83A0457E1A33F760007E3FCC /* Error.html */; };
+		83A045811A33F760007E3FCC /* Ultra_Simple_Browser_Internet_Error.html in Resources */ = {isa = PBXBuildFile; fileRef = 83A0457E1A33F760007E3FCC /* Ultra_Simple_Browser_Internet_Error.html */; };
 		83A0458E1A33F798007E3FCC /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 83A045831A33F798007E3FCC /* icon.png */; };
 		83A045A01A352158007E3FCC /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83A0459F1A352158007E3FCC /* WebKit.framework */; };
 		83A045A21A35215C007E3FCC /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83A045A11A35215C007E3FCC /* iAd.framework */; };
@@ -76,8 +77,9 @@
 		830110881A6DA3F70026C4DD /* share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = share.png; sourceTree = "<group>"; };
 		8301108B1A6DA4800026C4DD /* openinsafari.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = openinsafari.png; sourceTree = "<group>"; };
 		8304135E1A37BF93000E8C92 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		833A74EA1A71E4DC00656ECB /* URLTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLTextField.swift; sourceTree = "<group>"; };
+		833A74EC1A71E79D00656ECB /* toolBarItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = toolBarItems.swift; sourceTree = "<group>"; };
 		833C45B51A5110C2007833FE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
-		833C45BB1A578A7D007833FE /* background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background.jpg; sourceTree = "<group>"; };
 		837CE4B11A6ACEE800B79EDD /* backbutton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backbutton.png; sourceTree = "<group>"; };
 		837CE4B31A6ACF7100B79EDD /* forwardbutton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = forwardbutton.png; sourceTree = "<group>"; };
 		837CE4B71A6AD04600B79EDD /* stopimage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stopimage.png; sourceTree = "<group>"; };
@@ -105,11 +107,10 @@
 		83A0456C1A33F705007E3FCC /* Ultra, Simple BrowserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Ultra, Simple BrowserTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		83A045711A33F705007E3FCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83A045721A33F705007E3FCC /* Ultra__Simple_BrowserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ultra__Simple_BrowserTests.swift; sourceTree = "<group>"; };
-		83A0457E1A33F760007E3FCC /* Error.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Error.html; sourceTree = "<group>"; };
+		83A0457E1A33F760007E3FCC /* Ultra_Simple_Browser_Internet_Error.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Ultra_Simple_Browser_Internet_Error.html; sourceTree = "<group>"; };
 		83A045831A33F798007E3FCC /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		83A0459F1A352158007E3FCC /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		83A045A11A35215C007E3FCC /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
-		83E9B6F01A661BAA003866BD /* ViewController_Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController_Description.swift; sourceTree = "<group>"; };
 		83E9B7261A674637003866BD /* NewFavoriteItemTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewFavoriteItemTableViewController.swift; sourceTree = "<group>"; };
 		83FE59381A6DCA7E0047C36E /* fullscreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fullscreen.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -165,6 +166,8 @@
 				83A045821A33F770007E3FCC /* icon */,
 				83A045591A33F705007E3FCC /* AppDelegate.swift */,
 				83A0455E1A33F705007E3FCC /* ViewController.swift */,
+				833A74EC1A71E79D00656ECB /* toolBarItems.swift */,
+				833A74EA1A71E4DC00656ECB /* URLTextField.swift */,
 				83E9B7261A674637003866BD /* NewFavoriteItemTableViewController.swift */,
 				83A045601A33F705007E3FCC /* Main.storyboard */,
 				83A045631A33F705007E3FCC /* Images.xcassets */,
@@ -181,9 +184,7 @@
 				83FE59381A6DCA7E0047C36E /* fullscreen.png */,
 				83879C9A1A6EED4200FE72E6 /* favorites.png */,
 				837CE4BB1A6AD24100B79EDD /* showtoolbar.png */,
-				833C45BB1A578A7D007833FE /* background.jpg */,
-				83A0457E1A33F760007E3FCC /* Error.html */,
-				83E9B6F01A661BAA003866BD /* ViewController_Description.swift */,
+				83A0457E1A33F760007E3FCC /* Ultra_Simple_Browser_Internet_Error.html */,
 				83A045571A33F705007E3FCC /* Supporting Files */,
 			);
 			path = "Ultra, Simple Browser";
@@ -335,11 +336,10 @@
 				839D08F51A411DD4008F138A /* icon58.png in Resources */,
 				8301107A1A6C0C680026C4DD /* pages.png in Resources */,
 				83A045671A33F705007E3FCC /* LaunchScreen.xib in Resources */,
-				83A045811A33F760007E3FCC /* Error.html in Resources */,
+				83A045811A33F760007E3FCC /* Ultra_Simple_Browser_Internet_Error.html in Resources */,
 				830110891A6DA3F70026C4DD /* home.png in Resources */,
 				839D08F61A411DD4008F138A /* icon60.png in Resources */,
 				837CE4B21A6ACEE800B79EDD /* backbutton.png in Resources */,
-				833C45BC1A578A7D007833FE /* background.jpg in Resources */,
 				83A045641A33F705007E3FCC /* Images.xcassets in Resources */,
 				839D08F91A411DD4008F138A /* icon87.png in Resources */,
 				837CE4B81A6AD04600B79EDD /* stopimage.png in Resources */,
@@ -365,6 +365,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				83A0455F1A33F705007E3FCC /* ViewController.swift in Sources */,
+				833A74EB1A71E4DC00656ECB /* URLTextField.swift in Sources */,
+				833A74ED1A71E79D00656ECB /* toolBarItems.swift in Sources */,
 				83A0455A1A33F705007E3FCC /* AppDelegate.swift in Sources */,
 				83A0455D1A33F705007E3FCC /* Ultra__Simple_Browser.xcdatamodeld in Sources */,
 				83E9B7271A674637003866BD /* NewFavoriteItemTableViewController.swift in Sources */,

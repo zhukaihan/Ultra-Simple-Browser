@@ -57,7 +57,7 @@ class NewFavoriteItemTableViewController: UITableViewController, UITableViewData
         doneButton.addTarget(self, action: "pressDone", forControlEvents: .TouchUpInside)
         
         cancelButton = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "cancelAddFavorite")
-        self.navigationController?.navigationBar.backItem?.backBarButtonItem = cancelButton
+        self.navigationItem.leftBarButtonItem = cancelButton
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
