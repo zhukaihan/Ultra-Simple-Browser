@@ -17,16 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        if (NSUserDefaults.standardUserDefaults().boolForKey("HasLaunchedOnce")) {
-            println("app already launched")
-        }
-        else
-        {
-            NSUserDefaults.standardUserDefaults().setBool(true, forKey: "HasLaunchedOnce")
-            NSUserDefaults.standardUserDefaults().synchronize()
-            println("This is the first launch ever")
-            //ViewController.performSegueWithIdentifier(ViewController)
-        }
+        
         return true
     }
 

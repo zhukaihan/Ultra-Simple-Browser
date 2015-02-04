@@ -255,6 +255,17 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         self.view.bringSubviewToFront(showButton)
         self.view.bringSubviewToFront(toolBar)
         self.view.bringSubviewToFront(progressBar)
+        
+        if (NSUserDefaults.standardUserDefaults().boolForKey("HasLaunchedOnce")) {
+            println("app already launched")
+        } else {
+            NSUserDefaults.standardUserDefaults().setBool(true, forKey: "HasLaunchedOnce")
+            NSUserDefaults.standardUserDefaults().synchronize()
+            println("This is the first launch ever")
+            var demoViewController: DemoViewController = DemoViewController()
+            var DemoNavigationController = UINavigationController(rootViewController: demoViewController)
+            self.navigationController?.presentViewController(DemoNavigationController, animated: false, completion: nil)
+        }
     }
     
     /*override func viewDidLoad() {
@@ -406,7 +417,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             if (webViews[currentWebView]?.hasOnlySecureContent == true) {
                 textField.text = "🔒" + textField.text
             }
-        } else {
+        } else if (!textField.isFirstResponder()) {
             textField.text = "An Error has occurred."
         }
     }
@@ -719,7 +730,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        var pageWidth: CGFloat = scrollView.frame.size.width // you need to have a **iVar** with getter for scrollView
+        var pageWidth: CGFloat = scrollView.frame.size.width
         var contentoffsetx: CGFloat = scrollView.contentOffset.x
         var fractionalPage = contentoffsetx / pageWidth
         var page: NSInteger = lroundf(Float(fractionalPage))
