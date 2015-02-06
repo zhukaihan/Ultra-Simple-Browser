@@ -12,15 +12,13 @@ import iAd
 import QuartzCore
 import CoreData
 
-class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate,  UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
+class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate {
     
     
 //////////Variables
     var homewebpage : String!
     var defaultSearchEngine = NSUserDefaults.standardUserDefaults().stringForKey("searchtype")
     var unclosedwebviews = [NSManagedObject]()
-    var Favoriteitems = [NSManagedObject]()
-    
     var orientationchanged: Bool = false //true for landscape, false for portrait
     
     var currentWebView: Int = 0
@@ -37,10 +35,8 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     var webViews: [WKWebView?]! = []  //first WKWebView starts at webViews[0]
     var undoWebView: WKWebView? = WKWebView()
     var isLongPressed: Bool = false
-    var backForwardFavoriteTableView: UITableView! = UITableView()
+    var backForwardFavoriteTableView: BackForwardTableViewController! = BackForwardTableViewController()
     //var autocompleteTableView: UITableView!
-    
-    var addNewFavoriteTableViewController: NewFavoriteItemTableViewController! = NewFavoriteItemTableViewController()
     
     var refreshControl: UIRefreshControl!
     
@@ -291,10 +287,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             NSUserDefaults.standardUserDefaults().synchronize()
         }
         
-        if ((addNewFavoriteTableViewController.viewshowed) && (addNewFavoriteTableViewController.clickedDone)) {
-            addFavorites()
-        }
-        
         registerForNotifications()
     }
     
@@ -385,7 +377,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func lettextfieldtohost() {
-        if (!textField.isFirstResponder()  && ((webViews[currentWebView]?.URL?.absoluteString != nil) && (webViews[currentWebView]?.URL?.absoluteString != ""))){
+        if (!textField.isFirstResponder() && ((webViews[currentWebView]?.URL?.absoluteString != nil)/* && ((webViews[currentWebView]?.URL?.absoluteString != "") && (webViews[currentWebView]?.canGoBack == false) && (webViews[currentWebView]?.canGoForward == false))*/)){
             let theurl: String! = webViews[currentWebView]?.URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
             let urlhost: String! = webViews[currentWebView]?.URL?.host
             println("Finished navigating to url \(urlhost)")
@@ -463,10 +455,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                 }
                 adbanner.frame = CGRectMake(5, 0, self.view.frame.width - 10, 50)
                 self.view.bringSubviewToFront(toolBar)
-            }
-            
-            if (backForwardFavoriteTableView.window != nil) {
-                backForwardFavoriteTableView.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
             }
             
             //backgroundimage.frame = CGRectMake(abs(view.frame.width - view.frame.height) / 2, 0, sort(&[view.frame.width,view.frame.height]), view.frame.width)
@@ -652,82 +640,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     autocompleteTableView.reloadData()
     }
     */
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if backForwardFavoriteTableView.tag == 0 {
-            let number = webViews[currentWebView]?.backForwardList.backList.count
-            return number!
-        } else if backForwardFavoriteTableView.tag == 1 {
-            let number = webViews[currentWebView]?.backForwardList.forwardList.count
-            return number!
-        } else if backForwardFavoriteTableView.tag == 2 {
-            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-            let managedContext = appDelegate.managedObjectContext!
-            let fetchRequest = NSFetchRequest(entityName:"Favorites")
-            Favoriteitems = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
-            let number = Favoriteitems.count
-            return number
-        } else {
-            return 0
-        }
-    }
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        println("cellforrowatindexpath")
-        let tableviewcell = UITableViewCell()
-        //tableviewcell.textLabel?.text = webViews[currentWebView]?.backForwardList.backItem?.title
-        if backForwardFavoriteTableView.tag == 0 {
-            tableviewcell.textLabel?.text = webViews[currentWebView]?.backForwardList.itemAtIndex(0 - indexPath.row - 1)?.title
-        } else if backForwardFavoriteTableView.tag == 1 {
-            tableviewcell.textLabel?.text = webViews[currentWebView]?.backForwardList.itemAtIndex(indexPath.row + 1)?.title
-        } else if backForwardFavoriteTableView.tag == 2 {
-            if Favoriteitems.count != 0 {
-                let theFavoriteitem = Favoriteitems[indexPath.row]
-                let urlstring = theFavoriteitem.valueForKey("title") as String?
-                tableviewcell.textLabel?.text = urlstring
-            }
-        }
-        //return webViews[currentWebView]?.backForwardList.backList.first as UITableViewCell
-        return tableviewcell
-    }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        hideGoBackForwardFavoritesList()
-        var thewknavitem = webViews[currentWebView]?.backForwardList.itemAtIndex(0)
-        if backForwardFavoriteTableView.tag == 0 {
-            thewknavitem = webViews[currentWebView]?.backForwardList.itemAtIndex(0 - indexPath.row - 1)
-            webViews[currentWebView]?.goToBackForwardListItem(thewknavitem!)
-        } else if backForwardFavoriteTableView.tag == 1 {
-            thewknavitem = webViews[currentWebView]?.backForwardList.itemAtIndex(indexPath.row + 1)
-            webViews[currentWebView]?.goToBackForwardListItem(thewknavitem!)
-        } else if backForwardFavoriteTableView.tag == 2 {
-            let theFavoriteitem = Favoriteitems[indexPath.row]
-            let urlstring = theFavoriteitem.valueForKey("url") as String?
-            textField.text = urlstring
-            didClickGo()
-        }
-    }
-    
-    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        if backForwardFavoriteTableView.tag == 2 {
-            return true
-        } else {
-            return false
-        }
-    }
-    
-    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-            let managedContext = appDelegate.managedObjectContext!
-            managedContext.deleteObject(Favoriteitems[indexPath.row])
-            //tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Left)
-            NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "tableReload", userInfo: nil, repeats: false)
-        }
-    }
-    
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
-    }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         var pageWidth: CGFloat = scrollView.frame.size.width
@@ -755,7 +667,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             var url:NSURL? = NSURL(string:text)
             
             let urlString: NSString = NSString(string: text)
-            let urlRegEx = "^((http|https|ftps)://)*(w{0,3}\\.)*([0-9a-zA-Z-_]*)\\.([0-9a-zA-Z]*)(/{0,1})([0-9a-zA-Z-./?%&=]*)$"
+            let urlRegEx = "^((http|https|ftps)://)*(w{0,3}\\.)*([0-9a-zA-Z-_]*)\\.([0-9a-zA-Z]*)(/{0,1})([0-9a-zA-Z-_./?%&=]*)$"
             //"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+"
             //"^(http|https|ftps)://([\\\\w-]+\\.)+[\\\\w-]+(/[\\\\w-./?%&=]*)?$"
             let predicate = NSPredicate(format:"SELF MATCHES %@", argumentArray:[urlRegEx])
@@ -796,32 +708,12 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         dismissDashboard()
         
         if rec.state == .Began {
-            backForwardFavoriteTableView = UITableView()
-            backForwardFavoriteTableView.dataSource = self
-            backForwardFavoriteTableView.delegate = self
-            backForwardFavoriteTableView.frame = CGRectMake(0, view.frame.height, view.frame.width, view.frame.height - 44)
+            backForwardFavoriteTableView = BackForwardTableViewController()
+            backForwardFavoriteTableView.backForwardParentViewController = self
             backForwardFavoriteTableView.tag = 0
             
-            UIView.beginAnimations("animateWebView", context: nil)
-            UIView.setAnimationDuration(0.1)
-            
-            backForwardFavoriteTableView.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
-            //backForwardFavoriteTableView.style = .Plain
-            self.view.addSubview(backForwardFavoriteTableView)
-            
-            let listLabel: UILabel = UILabel()
-            listLabel.text = "History of this Tab"
-            listLabel.frame = CGRectMake(0, 0, view.frame.width - 150, 30)
-            let listLabelItem: UIBarButtonItem = UIBarButtonItem(customView: listLabel)
-            let cancelButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "hideGoBackForwardFavoritesList")
-            var toolBarItems = [
-                listLabelItem,
-                flexibleSpaceBarButtonItem,
-                cancelButton
-            ]
-            toolBar.setItems(toolBarItems, animated: true)
-            self.view.bringSubviewToFront(toolBar)
-            UIView.commitAnimations()
+            var backForwardNavigationController = UINavigationController(rootViewController: backForwardFavoriteTableView)
+            self.navigationController?.presentViewController(backForwardNavigationController, animated: true, completion: nil)
         }
     }
     
@@ -829,32 +721,12 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         dismissDashboard()
         
         if rec.state == .Began {
-            backForwardFavoriteTableView = UITableView()
-            backForwardFavoriteTableView.dataSource = self
-            backForwardFavoriteTableView.delegate = self
-            backForwardFavoriteTableView.frame = CGRectMake(0, view.frame.height, view.frame.width, view.frame.height - 44)
+            backForwardFavoriteTableView = BackForwardTableViewController()
+            backForwardFavoriteTableView.backForwardParentViewController = self
             backForwardFavoriteTableView.tag = 1
             
-            UIView.beginAnimations("animateWebView", context: nil)
-            UIView.setAnimationDuration(0.1)
-            
-            backForwardFavoriteTableView.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
-            //backForwardFavoriteTableView.style = .Plain
-            self.view.addSubview(backForwardFavoriteTableView)
-            
-            let listLabel: UILabel = UILabel()
-            listLabel.text = "History of this Tab"
-            listLabel.frame = CGRectMake(0, 0, view.frame.width - 150, 30)
-            let listLabelItem: UIBarButtonItem = UIBarButtonItem(customView: listLabel)
-            let cancelButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "hideGoBackForwardFavoritesList")
-            var toolBarItems = [
-                listLabelItem,
-                flexibleSpaceBarButtonItem,
-                cancelButton
-            ]
-            toolBar.setItems(toolBarItems, animated: true)
-            self.view.bringSubviewToFront(toolBar)
-            UIView.commitAnimations()
+            var backForwardNavigationController = UINavigationController(rootViewController: backForwardFavoriteTableView)
+            self.navigationController?.presentViewController(backForwardNavigationController, animated: true, completion: nil)
         }
     }
     
@@ -862,14 +734,10 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         UIView.beginAnimations("animateWebView", context: nil)
         UIView.setAnimationDuration(0.1)
         
-        backForwardFavoriteTableView.removeFromSuperview()
+        backForwardFavoriteTableView.dismissSelf()
         configtoolbaritems()
         
         UIView.commitAnimations()
-    }
-    
-    func tableReload() {
-        backForwardFavoriteTableView.reloadData()
     }
     
     func doRefresh() {
@@ -977,71 +845,12 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     
     func showFavorites() {
         dismissDashboard()
-        backForwardFavoriteTableView = UITableView(frame: CGRectMake(0, view.frame.height, view.frame.width, view.frame.height - 44), style: .Grouped)
-        backForwardFavoriteTableView.dataSource = self
-        backForwardFavoriteTableView.delegate = self
+        backForwardFavoriteTableView = BackForwardTableViewController(style: .Grouped)
+        backForwardFavoriteTableView.backForwardParentViewController = self
         backForwardFavoriteTableView.tag = 2
         
-        UIView.beginAnimations("animateWebView", context: nil)
-        UIView.setAnimationDuration(0.1)
-        
-        backForwardFavoriteTableView.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
-        //backForwardFavoriteTableView.style = .Plain
-        self.view.addSubview(backForwardFavoriteTableView)
-        
-        let listLabel: UILabel = UILabel()
-        listLabel.text = "Favorites"
-        listLabel.frame = CGRectMake(0, 0, view.frame.width - 150, 30)
-        let listLabelItem: UIBarButtonItem = UIBarButtonItem(customView: listLabel)
-        let cancelButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: "hideGoBackForwardFavoritesList")
-        let addButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "startAddingFavorites")
-        var toolBarItems = [
-            addButton,
-            flexibleSpaceBarButtonItem,
-            listLabelItem,
-            flexibleSpaceBarButtonItem,
-            cancelButton
-        ]
-        toolBar.setItems(toolBarItems, animated: true)
-        self.view.bringSubviewToFront(toolBar)
-        UIView.commitAnimations()
-    }
-    
-    func startAddingFavorites() {
-        println("startaddingfavorites")
-        addNewFavoriteTableViewController = NewFavoriteItemTableViewController(style: .Grouped)
-        let title: String! = webViews[currentWebView]?.title
-        let url: String! = webViews[currentWebView]?.URL?.absoluteString
-        addNewFavoriteTableViewController.defaultTitle = title
-        if url != nil {
-            addNewFavoriteTableViewController.defaultURL = url
-        }
-        var addNewFavoriteNavigationController = UINavigationController(rootViewController: addNewFavoriteTableViewController)
-        self.navigationController?.presentViewController(addNewFavoriteNavigationController, animated: true, completion: nil)
-    }
-    
-    func addFavorites() {
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        let managedContext = appDelegate.managedObjectContext!
-        let fetchRequest = NSFetchRequest(entityName:"Favorites")
-        var Favoriteitems = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
-        let entity =  NSEntityDescription.entityForName("Favorites", inManagedObjectContext: managedContext)
-        
-        let favoriteItem = NSEntityDescription.insertNewObjectForEntityForName("Favorites", inManagedObjectContext: managedContext) as NSManagedObject
-        
-        favoriteItem.setValue(addNewFavoriteTableViewController.usrTitle, forKey: "title")
-        favoriteItem.setValue(addNewFavoriteTableViewController.usrURL, forKey: "url")
-        
-        var error: NSError?
-        if !managedContext.save(&error) {
-            println("Could not save \\(error), \(error?.userInfo)")
-        }
-        
-        //Favoriteitems.append(favoriteItem)
-        
-        addNewFavoriteTableViewController = NewFavoriteItemTableViewController()
-        
-        backForwardFavoriteTableView.reloadData()
+        var backForwardNavigationController = UINavigationController(rootViewController: backForwardFavoriteTableView)
+        self.navigationController?.presentViewController(backForwardNavigationController, animated: true, completion: nil)
     }
     
     func showAllWebViews() {

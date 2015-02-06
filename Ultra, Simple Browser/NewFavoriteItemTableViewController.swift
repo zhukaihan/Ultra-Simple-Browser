@@ -27,7 +27,7 @@ class NewFavoriteItemTableViewController: UITableViewController, UITableViewData
         
         self.viewshowed = true
         
-        usrTitleTextField = UITextField(frame: CGRectMake(0, 0, view.frame.width, 44))
+        usrTitleTextField = UITextField(frame: CGRectMake(10, 0, view.frame.width - 10, 44))
         usrTitleTextField.placeholder = "Title"
         usrTitleTextField.text = defaultTitle
         usrTitleTextField.tintColor = UIColor.grayColor()
@@ -39,7 +39,7 @@ class NewFavoriteItemTableViewController: UITableViewController, UITableViewData
         usrTitleTextField.autocorrectionType = .No
         usrTitleTextField.enablesReturnKeyAutomatically = true
         
-        usrURLTextField = UITextField(frame: CGRectMake(0, 0, view.frame.width, 44))
+        usrURLTextField = UITextField(frame: CGRectMake(10, 0, view.frame.width - 10, 44))
         usrURLTextField.placeholder = "URL"
         usrURLTextField.text = defaultURL
         usrURLTextField.tintColor = UIColor.grayColor()
@@ -102,6 +102,26 @@ class NewFavoriteItemTableViewController: UITableViewController, UITableViewData
         }
         
         return cell
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
+        
+        let notificationCenter = NSNotificationCenter.defaultCenter()
+        notificationCenter.addObserver(self, selector: "orientationDidChange:", name: UIDeviceOrientationDidChangeNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(true)
+        
+        let notificationCenter = NSNotificationCenter.defaultCenter()
+        notificationCenter.removeObserver(self)
+    }
+    
+    func orientationDidChange() {
+        usrTitleTextField.frame = CGRectMake(10, 0, view.frame.width - 10, 44)
+        usrURLTextField.frame = CGRectMake(10, 0, view.frame.width - 10, 44)
+        doneButton.frame = CGRectMake(0, 0, view.frame.width, 44)
     }
     
     func pressDone() {

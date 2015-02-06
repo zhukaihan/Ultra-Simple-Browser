@@ -8,7 +8,6 @@
 
 import UIKit
 
-
 class URLTextField: UITextField {
     
     var parentViewController: ViewController!
