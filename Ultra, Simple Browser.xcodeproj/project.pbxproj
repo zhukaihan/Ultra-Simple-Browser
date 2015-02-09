@@ -13,6 +13,10 @@
 		8301108A1A6DA3F70026C4DD /* share.png in Resources */ = {isa = PBXBuildFile; fileRef = 830110881A6DA3F70026C4DD /* share.png */; };
 		8301108C1A6DA4800026C4DD /* openinsafari.png in Resources */ = {isa = PBXBuildFile; fileRef = 8301108B1A6DA4800026C4DD /* openinsafari.png */; };
 		8304135F1A37BF93000E8C92 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8304135E1A37BF93000E8C92 /* QuartzCore.framework */; };
+		831554A81A89261100697E2D /* SuggestionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831554A71A89261100697E2D /* SuggestionsViewController.swift */; };
+		8327E25B1A887F0500FF5ED6 /* img2.png in Resources */ = {isa = PBXBuildFile; fileRef = 8327E2591A887F0500FF5ED6 /* img2.png */; };
+		8327E25C1A887F0500FF5ED6 /* img3.png in Resources */ = {isa = PBXBuildFile; fileRef = 8327E25A1A887F0500FF5ED6 /* img3.png */; };
+		8338BFA31A85B95300391E90 /* img1.png in Resources */ = {isa = PBXBuildFile; fileRef = 8338BFA21A85B95300391E90 /* img1.png */; };
 		833A74EB1A71E4DC00656ECB /* URLTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833A74EA1A71E4DC00656ECB /* URLTextField.swift */; };
 		833A74ED1A71E79D00656ECB /* toolBarItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833A74EC1A71E79D00656ECB /* toolBarItems.swift */; };
 		833C45B61A5110C2007833FE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 833C45B51A5110C2007833FE /* Settings.bundle */; };
@@ -46,9 +50,6 @@
 		83A045A21A35215C007E3FCC /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83A045A11A35215C007E3FCC /* iAd.framework */; };
 		83E9B7271A674637003866BD /* NewFavoriteItemTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E9B7261A674637003866BD /* NewFavoriteItemTableViewController.swift */; };
 		83F693EF1A8184B0001CD18F /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83F693EE1A8184B0001CD18F /* DemoViewController.swift */; };
-		83F693F31A81AB66001CD18F /* img3.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F693F01A81AB66001CD18F /* img3.png */; };
-		83F693F41A81AB66001CD18F /* img1.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F693F11A81AB66001CD18F /* img1.png */; };
-		83F693F51A81AB66001CD18F /* img2.png in Resources */ = {isa = PBXBuildFile; fileRef = 83F693F21A81AB66001CD18F /* img2.png */; };
 		83FE59391A6DCA7E0047C36E /* fullscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 83FE59381A6DCA7E0047C36E /* fullscreen.png */; };
 /* End PBXBuildFile section */
 
@@ -82,6 +83,10 @@
 		830110881A6DA3F70026C4DD /* share.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = share.png; sourceTree = "<group>"; };
 		8301108B1A6DA4800026C4DD /* openinsafari.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = openinsafari.png; sourceTree = "<group>"; };
 		8304135E1A37BF93000E8C92 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		831554A71A89261100697E2D /* SuggestionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionsViewController.swift; sourceTree = "<group>"; };
+		8327E2591A887F0500FF5ED6 /* img2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img2.png; sourceTree = "<group>"; };
+		8327E25A1A887F0500FF5ED6 /* img3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img3.png; sourceTree = "<group>"; };
+		8338BFA21A85B95300391E90 /* img1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img1.png; sourceTree = "<group>"; };
 		833A74EA1A71E4DC00656ECB /* URLTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLTextField.swift; sourceTree = "<group>"; };
 		833A74EC1A71E79D00656ECB /* toolBarItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = toolBarItems.swift; sourceTree = "<group>"; };
 		833C45B51A5110C2007833FE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -119,9 +124,6 @@
 		83A045A11A35215C007E3FCC /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		83E9B7261A674637003866BD /* NewFavoriteItemTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewFavoriteItemTableViewController.swift; sourceTree = "<group>"; };
 		83F693EE1A8184B0001CD18F /* DemoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DemoViewController.swift; sourceTree = "<group>"; };
-		83F693F01A81AB66001CD18F /* img3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img3.png; sourceTree = "<group>"; };
-		83F693F11A81AB66001CD18F /* img1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img1.png; sourceTree = "<group>"; };
-		83F693F21A81AB66001CD18F /* img2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img2.png; sourceTree = "<group>"; };
 		83FE59381A6DCA7E0047C36E /* fullscreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fullscreen.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -176,6 +178,7 @@
 				83A045821A33F770007E3FCC /* icon */,
 				83A045591A33F705007E3FCC /* AppDelegate.swift */,
 				83A0455E1A33F705007E3FCC /* ViewController.swift */,
+				831554A71A89261100697E2D /* SuggestionsViewController.swift */,
 				838DDB231A83F794008007E0 /* BackForwardTableViewController.swift */,
 				83F693EE1A8184B0001CD18F /* DemoViewController.swift */,
 				833A74EC1A71E79D00656ECB /* toolBarItems.swift */,
@@ -197,9 +200,9 @@
 				83879C9A1A6EED4200FE72E6 /* favorites.png */,
 				837CE4BB1A6AD24100B79EDD /* showtoolbar.png */,
 				83A0457E1A33F760007E3FCC /* Ultra_Simple_Browser_Internet_Error.html */,
-				83F693F01A81AB66001CD18F /* img3.png */,
-				83F693F11A81AB66001CD18F /* img1.png */,
-				83F693F21A81AB66001CD18F /* img2.png */,
+				8338BFA21A85B95300391E90 /* img1.png */,
+				8327E2591A887F0500FF5ED6 /* img2.png */,
+				8327E25A1A887F0500FF5ED6 /* img3.png */,
 				83A045571A33F705007E3FCC /* Supporting Files */,
 			);
 			path = "Ultra, Simple Browser";
@@ -338,16 +341,17 @@
 				837CE4B41A6ACF7100B79EDD /* forwardbutton.png in Resources */,
 				839D08FC1A411DD4008F138A /* icon152.png in Resources */,
 				833C45B61A5110C2007833FE /* Settings.bundle in Resources */,
-				83F693F31A81AB66001CD18F /* img3.png in Resources */,
 				839D08FB1A411DD4008F138A /* icon180.png in Resources */,
 				83A045621A33F705007E3FCC /* Main.storyboard in Resources */,
 				839D08FA1A411DD4008F138A /* icon120.png in Resources */,
 				839D08F41A411DD4008F138A /* icon40.png in Resources */,
 				837CE4BC1A6AD24100B79EDD /* showtoolbar.png in Resources */,
 				83FE59391A6DCA7E0047C36E /* fullscreen.png in Resources */,
+				8327E25B1A887F0500FF5ED6 /* img2.png in Resources */,
 				83A0458E1A33F798007E3FCC /* icon.png in Resources */,
+				8327E25C1A887F0500FF5ED6 /* img3.png in Resources */,
+				8338BFA31A85B95300391E90 /* img1.png in Resources */,
 				830110781A6C0B280026C4DD /* refreshimage.png in Resources */,
-				83F693F41A81AB66001CD18F /* img1.png in Resources */,
 				8301108C1A6DA4800026C4DD /* openinsafari.png in Resources */,
 				839D08F31A411DD4008F138A /* icon29.png in Resources */,
 				839D08F51A411DD4008F138A /* icon58.png in Resources */,
@@ -361,7 +365,6 @@
 				839D08F91A411DD4008F138A /* icon87.png in Resources */,
 				837CE4B81A6AD04600B79EDD /* stopimage.png in Resources */,
 				839D08F81A411DD4008F138A /* icon80.png in Resources */,
-				83F693F51A81AB66001CD18F /* img2.png in Resources */,
 				839D08F71A411DD4008F138A /* icon76.png in Resources */,
 				8301108A1A6DA3F70026C4DD /* share.png in Resources */,
 				83879C9B1A6EED4200FE72E6 /* favorites.png in Resources */,
@@ -387,6 +390,7 @@
 				833A74ED1A71E79D00656ECB /* toolBarItems.swift in Sources */,
 				83A0455A1A33F705007E3FCC /* AppDelegate.swift in Sources */,
 				838DDB241A83F794008007E0 /* BackForwardTableViewController.swift in Sources */,
+				831554A81A89261100697E2D /* SuggestionsViewController.swift in Sources */,
 				83F693EF1A8184B0001CD18F /* DemoViewController.swift in Sources */,
 				83A0455D1A33F705007E3FCC /* Ultra__Simple_Browser.xcdatamodeld in Sources */,
 				83E9B7271A674637003866BD /* NewFavoriteItemTableViewController.swift in Sources */,

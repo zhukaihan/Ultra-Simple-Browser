@@ -5,6 +5,7 @@
 //  Created by Peter Zhu on 14/12/6.
 //  Copyright (c) 2014年 Peter Zhu. All rights reserved.
 //
+//  This is an "Emily Dickinson" style poetry.
 
 import UIKit  //Foundation included in
 import WebKit
@@ -62,6 +63,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     var edgeSwipe: UIPanGestureRecognizer! = UIPanGestureRecognizer()
     var showButton: UIButton! = UIButton()
     var textField: URLTextField!
+    var childSuggestionsViewController: SuggestionsViewController = SuggestionsViewController()
     
     var progressBar: UIProgressView! = UIProgressView(progressViewStyle: .Bar)
     
@@ -554,7 +556,10 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         } else {
             toolBar.frame = CGRectMake(0, view.frame.height - keyboardSize.height - 44, view.frame.width, 44)
         }
-        println("\(keyboardSize.height)")
+        if childSuggestionsViewController.view.window != nil {
+            childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - keyboardSize.height - 44)
+            childSuggestionsViewController.suggestionsTableView.frame = childSuggestionsViewController.view.frame
+        }
     }
     
     func keyboardWillBeHidden(sender: NSNotification) {
@@ -593,6 +598,13 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         textField.text = webViews[currentWebView]?.URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
         textField.textAlignment = .Left
         textField.selectedTextRange = textField.textRangeFromPosition(textField.beginningOfDocument, toPosition: textField.endOfDocument)
+        
+        childSuggestionsViewController = SuggestionsViewController()
+        self.addChildViewController(childSuggestionsViewController)
+        childSuggestionsViewController.suggestionsParentViewController = self
+        childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height)
+        self.view.addSubview(childSuggestionsViewController.view)
+        childSuggestionsViewController.didMoveToParentViewController(self)
     }
     
     func textFieldShouldEndEditing(textField: UITextField) -> Bool {
@@ -606,6 +618,10 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     func textFieldDidEndEditing(textField: UITextField) {
         textField.adjustsFontSizeToFitWidth = true
         textField.textAlignment = .Center
+        
+        childSuggestionsViewController.willMoveToParentViewController(nil)
+        childSuggestionsViewController.view.removeFromSuperview()
+        childSuggestionsViewController.removeFromParentViewController()
     }
     
     func textFieldShouldReturn(textField: UITextField) -> Bool {
@@ -614,32 +630,12 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         lettextfieldtohost()
         return false
     }
-    /*
-    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
-    self.view.bringSubviewToFront(autocompleteTableView)
-    self.view.bringSubviewToFront(toolBar)
-    autocompleteTableView.hidden = false
     
-    var substring: NSString = NSString(string: textField.text)
-    substring = substring.stringByReplacingCharactersInRange(range, withString: string)
-    self.searchAutocompleteEntriesWithSubstring(substring)
-    return true
+    func textFieldDidChanged() {
+        var substring: String = textField.text
+        //substring = substring.stringByReplacingCharactersInRange(range, withString: string)
+        childSuggestionsViewController.searchAutocompleteEntriesWithSubstring(substring)
     }
-    
-    func searchAutocompleteEntriesWithSubstring(substring: NSString) {
-    let pastUrls: [NSString] = ["google.com"]
-    var autocompleteUrls: [NSString] = ["google.com"]
-    autocompleteUrls.removeAll(keepCapacity: false)
-    for curString: NSString in pastUrls {
-    var substringRange: NSRange = curString.rangeOfString(substring)
-    if (substringRange.location == 0) {
-    autocompleteUrls.append(curString)
-    }
-    }
-    
-    autocompleteTableView.reloadData()
-    }
-    */
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         var pageWidth: CGFloat = scrollView.frame.size.width
@@ -660,14 +656,14 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             let textmid: NSString = NSString(string: text)
             text = String(textmid.substringFromIndex(2))
         }
-        if !(text.hasPrefix("http://")) && !(text.hasPrefix("https://")) {
+        if !(text.hasPrefix("http://") || text.hasPrefix("https://") || text.hasPrefix("ftp://") || text.hasPrefix("ftps://")) {
             text = "http://" + text
         }
         if (text != webViews[currentWebView]?.URL?.absoluteString) {
             var url:NSURL? = NSURL(string:text)
             
             let urlString: NSString = NSString(string: text)
-            let urlRegEx = "^((http|https|ftps)://)*(w{0,3}\\.)*([0-9a-zA-Z-_]*)\\.([0-9a-zA-Z]*)(/{0,1})([0-9a-zA-Z-_./?%&=]*)$"
+            let urlRegEx = "^((http|https|ftp|ftps)://)*(w{0,3}\\.)*([0-9a-zA-Z-_]*)\\.([0-9a-zA-Z]*)(/{0,1})([0-9a-zA-Z-_./?%&=:]*)$"
             //"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+"
             //"^(http|https|ftps)://([\\\\w-]+\\.)+[\\\\w-]+(/[\\\\w-./?%&=]*)?$"
             let predicate = NSPredicate(format:"SELF MATCHES %@", argumentArray:[urlRegEx])
@@ -866,7 +862,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         }
         
         UIView.beginAnimations("animateWebView", context: nil)
-        UIView.setAnimationDuration(0.5)
+        UIView.setAnimationDuration(0.2)
         
         var addNewWebViewButton: UIBarButtonItem! = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addNewWebView")
         var doneShowingAllWebViewsButton: UIBarButtonItem! = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: "doneShowingAllWebViews")
@@ -936,7 +932,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         adbanner.removeFromSuperview()
         
         UIView.beginAnimations("animateWebView", context: nil)
-        UIView.setAnimationDuration(0.5)
+        UIView.setAnimationDuration(0.2)
         
         for i in 0...webViews.count - 1 {
             webViews[i]?.removeFromSuperview()
@@ -1024,8 +1020,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         
         switch rec.state {
         case .Began:
-            UIView.beginAnimations("animateWebView", context: nil)
-            UIView.setAnimationDuration(0.1)
             if !isLongPressed {
                 if rec.view != nil {
                 }
@@ -1153,7 +1147,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                 //change order of web views
                 println("end of changing the order of the webViews with long press")
             }
-            UIView.commitAnimations()
         default: true
         }
     }

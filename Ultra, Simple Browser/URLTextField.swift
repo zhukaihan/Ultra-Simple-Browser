@@ -12,8 +12,7 @@ class URLTextField: UITextField {
     
     var parentViewController: ViewController!
     
-    // Only override drawRect: if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
+    // override drawRect to perform custom drawing.
     override func drawRect(rect: CGRect) {
         self.leftViewMode = .UnlessEditing
         self.tintColor = UIColor.grayColor()
@@ -28,7 +27,7 @@ class URLTextField: UITextField {
         self.autocorrectionType = .No
         self.enablesReturnKeyAutomatically = true
         self.font = UIFont(name: "Arial", size: 17)
-        // Drawing code
+        self.addTarget(self, action: "textFieldDidChanged", forControlEvents: .EditingChanged)
     }
     
     func configrefreshImage() {
@@ -59,5 +58,8 @@ class URLTextField: UITextField {
         parentViewController.doStop()
     }
     
-
+    func textFieldDidChanged() {
+        parentViewController.textFieldDidChanged()
+    }
+    
 }

@@ -36,6 +36,7 @@ class DemoViewController: UIViewController, UIScrollViewDelegate {
         var firstImageView = UIImageView(image: UIImage(named: "img1.png"))
         firstImageView.frame = CGRectMake(0, 0, view.frame.width, view.frame.height)
         firstImageView.contentMode = .ScaleAspectFit
+        firstImageView.backgroundColor = UIColor(red: 0.3254, green: 0.7960, blue: 0.9921, alpha: 0.5)
         
         var secondImageView = UIImageView(image: UIImage(named: "img2.png"))
         secondImageView.frame = CGRectMake(view.frame.width, 0, view.frame.width, view.frame.height)
