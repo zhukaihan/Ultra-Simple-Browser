@@ -635,6 +635,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         var substring: String = textField.text
         //substring = substring.stringByReplacingCharactersInRange(range, withString: string)
         childSuggestionsViewController.searchAutocompleteEntriesWithSubstring(substring)
+        childSuggestionsViewController.suggestionsTableView.reloadData()
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -656,30 +657,49 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             let textmid: NSString = NSString(string: text)
             text = String(textmid.substringFromIndex(2))
         }
-        if !(text.hasPrefix("http://") || text.hasPrefix("https://") || text.hasPrefix("ftp://") || text.hasPrefix("ftps://")) {
+        if !URLHasInternetProtocalPrefix(text) {
             text = "http://" + text
         }
         if (text != webViews[currentWebView]?.URL?.absoluteString) {
-            var url:NSURL? = NSURL(string:text)
-            
-            let urlString: NSString = NSString(string: text)
-            let urlRegEx = "^((http|https|ftp|ftps)://)*(w{0,3}\\.)*([0-9a-zA-Z-_]*)\\.([0-9a-zA-Z]*)(/{0,1})([0-9a-zA-Z-_./?%&=:]*)$"
-            //"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+"
-            //"^(http|https|ftps)://([\\\\w-]+\\.)+[\\\\w-]+(/[\\\\w-./?%&=]*)?$"
-            let predicate = NSPredicate(format:"SELF MATCHES %@", argumentArray:[urlRegEx])
-            let urlTest = NSPredicate.predicateWithSubstitutionVariables(predicate)
-            let isValidURL: Bool = predicate.evaluateWithObject(urlString)
-            
-            if !isValidURL {
-                if (defaultSearchEngine == "1") {
-                    text = "http://www.baidu.com/s?wd=" + oritext
-                } else {
-                    text = "http://www.google.com/search?q=" + oritext
-                }
-                url = NSURL(string: text.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!)
+            if !URLIsValid(text) {
+                searchURL(oritext)
+            } else {
+                loadURLRegularly(text)
             }
-            var request = NSURLRequest(URL: url!)
-            webViews[currentWebView]?.loadRequest(request)
+        }
+    }
+    
+    func URLHasInternetProtocalPrefix(urlstring: String) -> Bool {
+        return (urlstring.hasPrefix("http://") || urlstring.hasPrefix("https://") || urlstring.hasPrefix("ftp://") || urlstring.hasPrefix("ftps://"))
+    }
+    
+    func URLIsValid(urlstring: String) -> Bool {
+        let urlString: NSString = NSString(string: urlstring)
+        let urlRegEx = "^((http|https|ftp|ftps)://)*(w{0,3}\\.)*([0-9a-zA-Z-_]*)\\.([0-9a-zA-Z]*)(/{0,1})([0-9a-zA-Z-_./?%&=:\\s]*)$"
+        //"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+"
+        //"^(http|https|ftps)://([\\\\w-]+\\.)+[\\\\w-]+(/[\\\\w-./?%&=]*)?$"
+        let predicate = NSPredicate(format:"SELF MATCHES %@", argumentArray:[urlRegEx])
+        let urlTest = NSPredicate.predicateWithSubstitutionVariables(predicate)
+        let isValidURL: Bool = predicate.evaluateWithObject(urlString)
+        
+        return isValidURL
+    }
+    
+    func loadURLRegularly(urlstring: String) {
+        println("\(urlstring)")
+        let url = NSURL(string: urlstring)
+        println("\(url)")
+        let request = NSURLRequest(URL: url!)
+        webViews[currentWebView]?.loadRequest(request)
+    }
+    
+    func searchURL(urlstring: String) {
+        if (defaultSearchEngine == "1") {
+            let text = "http://www.baidu.com/s?wd=" + urlstring
+            loadURLRegularly(text.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!)
+        } else {
+            let text = "http://www.google.com/search?q=" + urlstring
+            loadURLRegularly(text.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!)
         }
     }
     

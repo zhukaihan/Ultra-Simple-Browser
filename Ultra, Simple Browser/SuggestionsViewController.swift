@@ -8,8 +8,9 @@
 
 import UIKit
 import CoreData
+import Dispatch
 
-class SuggestionsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class SuggestionsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, NSXMLParserDelegate {
     
     var suggestionsTableView: UITableView = UITableView()
     var suggestionsParentViewController: ViewController!
@@ -18,6 +19,7 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
     var listOfSuggestionsURL: [String!] = ["google.com", "facebook.com", "youtube.com", "yahoo.com", "baidu.com", "amazon.com", "wikipedia.org", "taobao.com", "twitter.com", "qq.com", "live.com", "linkedln.com", "sina.com.cn", "tmall.com", "weibo.com", "blogspot.com", "ebay.com", "yandex.ru"]
     var initListOfSuggestionsTitle: [String!] = []
     var initListOfSuggestionsURL: [String!] = []
+    var parser: NSXMLParser! = NSXMLParser()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,6 +44,8 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
             listOfSuggestionsURL = initListOfSuggestionsURL
         }
         
+        parser.delegate = self
+        
         suggestionsTableView.frame = CGRectMake(0, 0, view.frame.width, view.frame.height)
         suggestionsTableView.alpha = 1
         suggestionsTableView.delegate = self
@@ -64,13 +68,29 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell: UITableViewCell = UITableViewCell()
         cell.textLabel?.text = listOfSuggestionsTitle[indexPath.row]
+        cell.detailTextLabel?.text = listOfSuggestionsURL[indexPath.row]
         
         return cell
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        suggestionsParentViewController.textField.text = listOfSuggestionsURL[indexPath.row]
-        suggestionsParentViewController.textFieldShouldReturn(suggestionsParentViewController.textField)
+        var text = listOfSuggestionsURL[indexPath.row]
+        if text.hasPrefix("🔒") {
+            let textmid: NSString = NSString(string: text)
+            text = String(textmid.substringFromIndex(2))
+        }
+        if !suggestionsParentViewController.URLHasInternetProtocalPrefix(text) {
+            text = "http://" + text
+        }
+        suggestionsParentViewController.loadURLRegularly(text.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!)
+        suggestionsParentViewController.textField.resignFirstResponder()
+    }
+    
+    func parser(parser: NSXMLParser!, didStartElement elementName: String!, namespaceURI: String!, qualifiedName qName: String!, attributes attributeDict: [NSObject : AnyObject]!) {
+        if elementName == "suggestion" {
+            listOfSuggestionsTitle.append(attributeDict.values.first as String)
+            listOfSuggestionsURL.append("http://google.com/search?q=\(attributeDict.values.first as String)")
+        }
     }
     
     func searchAutocompleteEntriesWithSubstring(substring: String) {
@@ -85,10 +105,24 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
                     }
                 }
             }
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {
+                let url: String = "http://google.com/complete/search?output=toolbar&q=" + substring
+                let parserurl = NSURL(string: url.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!)
+                self.parser = NSXMLParser(contentsOfURL: parserurl)
+                self.parser.delegate = self
+                self.parser.parse()
+                dispatch_async(dispatch_get_main_queue(), {
+                    UIView.beginAnimations("animateWebView", context: nil)
+                    UIView.setAnimationDuration(0.2)
+                    self.suggestionsTableView.reloadData()
+                    UIView.commitAnimations()
+                })
+            })
         } else {
             listOfSuggestionsTitle = initListOfSuggestionsTitle
             listOfSuggestionsURL = initListOfSuggestionsURL
         }
+        
         suggestionsTableView.reloadData()
     }
     
