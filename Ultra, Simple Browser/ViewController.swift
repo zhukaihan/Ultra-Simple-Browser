@@ -435,7 +435,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func orientationDidChange(sender: NSNotification) {
-        if ((UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) && !orientationchanged) || (UIDeviceOrientationIsPortrait(UIDevice.currentDevice().orientation) && orientationchanged)) {
+        if ((UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) && !orientationchanged) || (((UIDevice.currentDevice().orientation == .Portrait) || UIDevice.currentDevice().userInterfaceIdiom == .Pad) && orientationchanged)) {
             if !showingAllWebViews{
                 if (toolBar.hidden == false) {
                     webViews[currentWebView]?.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
