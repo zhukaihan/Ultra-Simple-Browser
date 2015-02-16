@@ -53,6 +53,8 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     var sharebutton: UIButton!
     var openinsafaributton: UIButton!
     var showfavoritebutton: UIButton!
+    var orientationlockbutton: UIButton!
+    var browsingHistoryButton: UIButton!
     
     var dashboard: UIScrollView! = UIScrollView()
     var dashboardTitle: UILabel! = UILabel()
@@ -151,13 +153,27 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         
         let showfavoritebuttonimg = UIImage(named: "favorites.png")
         showfavoritebutton = UIButton()
-        let framewidthmid = view.frame.width / 4 * 1
-        let framewidthonemid = (view.frame.width / 4 - 59) / 2
-        let framewidthone = framewidthmid - framewidthonemid - 59
-        let framewidth = framewidthone + view.frame.width
-        showfavoritebutton.frame = CGRectMake(framewidth, 55, 59, 59)
+        let showfavoritebuttonframewidthmid = view.frame.width / 4 * 1
+        let showfavoritebuttonframewidthonemid = (view.frame.width / 4 - 59) / 2
+        let showfavoritebuttonframewidthone = showfavoritebuttonframewidthmid - showfavoritebuttonframewidthonemid - 59
+        let showfavoritebuttonframewidth = showfavoritebuttonframewidthone + view.frame.width
+        showfavoritebutton.frame = CGRectMake(showfavoritebuttonframewidth, 55, 59, 59)
         showfavoritebutton.setImage(showfavoritebuttonimg, forState: .Normal)
         showfavoritebutton.addTarget(self, action: "showFavorites", forControlEvents: .TouchUpInside)
+        
+        let orientationlockbuttonimg = UIImage(named: "orientationlock_unlocked.png")
+        orientationlockbutton = UIButton()
+        let orientationlockbuttonframewidthmid = view.frame.width / 4 * 2
+        let orientationlockbuttonframewidthonemid = (view.frame.width / 4 - 59) / 2
+        let orientationlockbuttonframewidthone = orientationlockbuttonframewidthmid - orientationlockbuttonframewidthonemid - 59
+        let orientationlockbuttonframewidth = orientationlockbuttonframewidthone + view.frame.width
+        orientationlockbutton.frame = CGRectMake(orientationlockbuttonframewidth, 55, 59, 59)
+        orientationlockbutton.setImage(orientationlockbuttonimg, forState: .Normal)
+        orientationlockbutton.addTarget(self, action: "changeOrientationLock", forControlEvents: .TouchUpInside)
+        orientationlockbutton.addTarget(self, action: "buttonTint", forControlEvents: .TouchDown)
+        orientationlockbutton.tintColor = UIColor.grayColor()
+        
+        //////////browsing history button
         
         dashboard.delegate = self
         dashboard.frame = CGRectMake(0, view.frame.height - 44 - 120, view.frame.width, 120)
@@ -171,6 +187,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         dashboard.addSubview(sharebutton)
         dashboard.addSubview(openinsafaributton)
         dashboard.addSubview(showfavoritebutton)
+        dashboard.addSubview(orientationlockbutton)
         dashboardTitle.frame = CGRectMake(0, 0, view.frame.width, 30)
         dashboardTitle.text = "  Dashboard"
         dashboardTitle.textColor = UIColor(white: 0.5, alpha: 1)
@@ -261,7 +278,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             NSUserDefaults.standardUserDefaults().synchronize()
             println("This is the first launch ever")
             var demoViewController: DemoViewController = DemoViewController()
-            var DemoNavigationController = UINavigationController(rootViewController: demoViewController)
+            var DemoNavigationController = NavigationController(rootViewController: demoViewController)
             self.navigationController?.presentViewController(DemoNavigationController, animated: false, completion: nil)
         }
     }
@@ -311,8 +328,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         let entity =  NSEntityDescription.entityForName("UnclosedWebViews", inManagedObjectContext: managedContext)
         
         var bas: NSManagedObject!
-        for bas in unclosedwebviews
-        {
+        for bas in unclosedwebviews {
             managedContext.deleteObject(bas as NSManagedObject)
         }
         unclosedwebviews.removeAll(keepCapacity: false)
@@ -333,12 +349,29 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         }
     }
     
+    override func shouldAutorotate() -> Bool {
+        if self.view.window != nil {
+            if orientationlockbutton != nil {
+                if orientationlockbutton.tag == 1 {
+                    return false
+                } else {
+                    return true
+                }
+            } else {
+                return true
+            }
+        } else {
+            return false
+        }
+    }
+    
     
 //////////Regular funcs
     func configtextField() {
         textField = URLTextField()
         textField.parentViewController = self
         textField.frame = CGRectMake(0, 0, view.frame.width - 150, 30)
+        textField.borderStyle = .RoundedRect
         textField.addTarget(self, action: "didClickGo", forControlEvents: .EditingDidEndOnExit)
     }
     
@@ -362,7 +395,12 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         notificationCenter.addObserver(self, selector: "keyboardWillBeShown:", name: UIKeyboardWillShowNotification, object: nil)
         notificationCenter.addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
         notificationCenter.addObserver(self, selector: "keyboardDidHidden:", name: UIKeyboardDidHideNotification, object: nil)
-        notificationCenter.addObserver(self, selector: "orientationDidChange:", name: UIDeviceOrientationDidChangeNotification, object: nil)
+        if orientationlockbutton.tag == 1 {
+            lockOrientation()
+        } else {
+            unlockOrientation()
+        }
+        notificationCenter.addObserver(self, selector: "downloadVideo", name: MPMoviePlayerDidEnterFullscreenNotification, object: nil)
     }
     
     func checkGos() {
@@ -382,7 +420,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         if (!textField.isFirstResponder() && ((webViews[currentWebView]?.URL?.absoluteString != nil)/* && ((webViews[currentWebView]?.URL?.absoluteString != "") && (webViews[currentWebView]?.canGoBack == false) && (webViews[currentWebView]?.canGoForward == false))*/)){
             let theurl: String! = webViews[currentWebView]?.URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
             let urlhost: String! = webViews[currentWebView]?.URL?.host
-            println("Finished navigating to url \(urlhost)")
+            println("Finished navigating to url \(theurl)")
             if webViews[currentWebView]?.URL?.host != nil{
                 if ((((theurl.hasPrefix("http://www.google.com/search?q=")) || (theurl.hasPrefix("https://www.google.com/search?q=")))) && (theurl.hasSuffix("gws_rd=ssl"))) {
                     var str: String! = webViews[currentWebView]?.URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
@@ -423,14 +461,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             var text = NSString(string: textfieldtext!)
             text = text.substringFromIndex(53)
             text = text.substringToIndex(text.length - 4)
-            if (defaultSearchEngine == "0") {
-                text = "http://www.google.com/search?q=" + text
-            } else if (defaultSearchEngine == "1") {
-                text = "http://www.baidu.com/s?wd=" + text
-            }
-            let url = NSURL(string: text.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!)
-            var request = NSURLRequest(URL: url!)
-            webViews[currentWebView]?.loadRequest(request)
+            searchURL(String(text))
         }
     }
     
@@ -462,7 +493,11 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             //backgroundimage.frame = CGRectMake(abs(view.frame.width - view.frame.height) / 2, 0, sort(&[view.frame.width,view.frame.height]), view.frame.width)
             
             toolBar.frame = CGRectMake(0, view.frame.height - 44, view.frame.width, 44)
-            textField.frame = CGRectMake(0, 0, view.frame.width - 150, 30)
+            if textField.isFirstResponder() {
+                textField.frame = CGRectMake(0, 0, view.frame.width - 100, 30)
+            } else {
+                textField.frame = CGRectMake(0, 0, view.frame.width - 150, 30)
+            }
             showButton.frame = CGRectMake(view.frame.width - 30, view.frame.height - 30, 29, 29)
             superHugeRegretButton.frame = CGRectMake(0, 0, view.frame.width, view.frame.height)
             dashboard.frame = CGRectMake(0, view.frame.height - 44 - 120, view.frame.width, 120)
@@ -473,11 +508,16 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             homebutton.frame = CGRectMake(view.frame.width / 4 * 2 - (view.frame.width / 4 - 59) / 2 - 59, 55, 59, 59)
             sharebutton.frame = CGRectMake(view.frame.width / 4 * 3 - (view.frame.width / 4 - 59) / 2 - 59, 55, 59, 59)
             openinsafaributton.frame = CGRectMake(view.frame.width / 4 * 4 - (view.frame.width / 4 - 59) / 2 - 59, 55, 59, 59)
-            let framewidthmid = view.frame.width / 4 * 1
-            let framewidthonemid = (view.frame.width / 4 - 59) / 2
-            let framewidthone = framewidthmid - framewidthonemid - 59
-            let framewidth = framewidthone + view.frame.width
-            showfavoritebutton.frame = CGRectMake(framewidth, 55, 59, 59)
+            let showfavoritebuttonframewidthmid = view.frame.width / 4 * 1
+            let showfavoritebuttonframewidthonemid = (view.frame.width / 4 - 59) / 2
+            let showfavoritebuttonframewidthone = showfavoritebuttonframewidthmid - showfavoritebuttonframewidthonemid - 59
+            let showfavoritebuttonframewidth = showfavoritebuttonframewidthone + view.frame.width
+            showfavoritebutton.frame = CGRectMake(showfavoritebuttonframewidth, 55, 59, 59)
+            let orientationlockbuttonframewidthmid = view.frame.width / 4 * 2
+            let orientationlockbuttonframewidthonemid = (view.frame.width / 4 - 59) / 2
+            let orientationlockbuttonframewidthone = orientationlockbuttonframewidthmid - orientationlockbuttonframewidthonemid - 59
+            let orientationlockbuttonframewidth = orientationlockbuttonframewidthone + view.frame.width
+            orientationlockbutton.frame = CGRectMake(orientationlockbuttonframewidth, 55, 59, 59)
             
             if (UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation)) {
                 orientationchanged = true
@@ -493,7 +533,28 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         lettextfieldtohost()
         progressBar.setProgress(0.1, animated: false)
         refreshControl.attributedTitle = NSAttributedString(string: "Refreshing")
-        UIView.animateWithDuration(0.3, delay: 0, options: .CurveEaseInOut, animations: { self.progressBar.alpha = 1 }, nil)
+        UIView.animateWithDuration(0.3, delay: 0, options: .CurveEaseInOut, animations: { self.progressBar.alpha = 1 }, completion: nil)
+        
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let managedContext = appDelegate.managedObjectContext!
+        let entity =  NSEntityDescription.entityForName("Historys", inManagedObjectContext: managedContext)
+        let fetchRequest = NSFetchRequest(entityName:"Historys")
+        var historys = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
+        
+        if (webViews[currentWebView]?.URL?.absoluteString != nil) {
+            
+            let websitevisit = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+            websitevisit.setValue(webViews[currentWebView]?.title, forKey: "title")
+            websitevisit.setValue(webViews[currentWebView]?.URL?.absoluteString, forKey: "url")
+            let timeNow = NSDate()
+            
+            websitevisit.setValue(timeNow, forKey: "time")
+            var error: NSError?
+            if !managedContext.save(&error) {
+                println("Could not save \\(error), \(error?.userInfo)")
+            }
+            historys.append(websitevisit)
+        }
     }
     
     func webView(webView: WKWebView, didCommitNavigation navigation: WKNavigation){
@@ -503,7 +564,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         lettextfieldtohost()
     }
     
-    func webView(webView: WKWebView!, didFinishNavigation navigation: WKNavigation!) {
+    func webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!) {
         checkGos()
         lettextfieldtohost()
         progressBar.setProgress(1.0, animated: true)
@@ -543,6 +604,10 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         refreshControl.endRefreshing()
     }
     
+    func downloadVideo() {
+        println("downloadvideo")
+    }
+    
     func keyboardWillBeShown(sender: NSNotification) {
         println("keyboardWillBeShown")
         let info: NSDictionary = sender.userInfo!
@@ -552,13 +617,19 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         if adbanner.bannerLoaded {
             toolBar.frame = CGRectMake(0, view.frame.height - keyboardSize.height - 94, view.frame.width, 44)
             adbanner.frame = CGRectMake(0, view.frame.height - keyboardSize.height - 50, view.frame.width, 50)
-            self.view.addSubview(adbanner)
+            if adbanner.window == nil {
+                self.view.addSubview(adbanner)
+            }
         } else {
             toolBar.frame = CGRectMake(0, view.frame.height - keyboardSize.height - 44, view.frame.width, 44)
         }
         if childSuggestionsViewController.view.window != nil {
-            childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - keyboardSize.height - 44)
-            childSuggestionsViewController.suggestionsTableView.frame = childSuggestionsViewController.view.frame
+            if adbanner.window != nil {
+                childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - keyboardSize.height - 44 - 50) //44: toolBar height; 50: adbanner height
+            } else {
+                childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - keyboardSize.height - 44) //44:toolBar height
+            }
+            childSuggestionsViewController.viewFrameDidChange()
         }
     }
     
@@ -602,7 +673,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         childSuggestionsViewController = SuggestionsViewController()
         self.addChildViewController(childSuggestionsViewController)
         childSuggestionsViewController.suggestionsParentViewController = self
-        childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height)
+        childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
         self.view.addSubview(childSuggestionsViewController.view)
         childSuggestionsViewController.didMoveToParentViewController(self)
     }
@@ -633,7 +704,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     
     func textFieldDidChanged() {
         var substring: String = textField.text
-        //substring = substring.stringByReplacingCharactersInRange(range, withString: string)
         childSuggestionsViewController.searchAutocompleteEntriesWithSubstring(substring)
         childSuggestionsViewController.suggestionsTableView.reloadData()
     }
@@ -728,7 +798,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             backForwardFavoriteTableView.backForwardParentViewController = self
             backForwardFavoriteTableView.tag = 0
             
-            var backForwardNavigationController = UINavigationController(rootViewController: backForwardFavoriteTableView)
+            var backForwardNavigationController = NavigationController(rootViewController: backForwardFavoriteTableView)
             self.navigationController?.presentViewController(backForwardNavigationController, animated: true, completion: nil)
         }
     }
@@ -741,7 +811,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             backForwardFavoriteTableView.backForwardParentViewController = self
             backForwardFavoriteTableView.tag = 1
             
-            var backForwardNavigationController = UINavigationController(rootViewController: backForwardFavoriteTableView)
+            var backForwardNavigationController = NavigationController(rootViewController: backForwardFavoriteTableView)
             self.navigationController?.presentViewController(backForwardNavigationController, animated: true, completion: nil)
         }
     }
@@ -766,9 +836,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         dismissDashboard()
         
         webViews[currentWebView]?.stopLoading()
-        if (webViews[currentWebView]!.URL != nil) {
-            textField.text = String(contentsOfURL: webViews[currentWebView]!.URL!)
-        }
         checkGos()
         lettextfieldtohost()
         progressBar.setProgress(1.0, animated: true)
@@ -836,7 +903,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         if myWebsiteurl != nil {
             objectsToShare = [myWebsiteurl!, myWebsite!]
         }
-        let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+        let activityVC = UIActivityViewController(activityItems: objectsToShare as [AnyObject], applicationActivities: nil)
         
         self.presentViewController(activityVC, animated: true, completion: nil)
     }
@@ -865,7 +932,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         backForwardFavoriteTableView.backForwardParentViewController = self
         backForwardFavoriteTableView.tag = 2
         
-        var backForwardNavigationController = UINavigationController(rootViewController: backForwardFavoriteTableView)
+        var backForwardNavigationController = NavigationController(rootViewController: backForwardFavoriteTableView)
         self.navigationController?.presentViewController(backForwardNavigationController, animated: true, completion: nil)
     }
     
@@ -987,6 +1054,32 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         showingAllWebViews = false
     }
     
+    func buttonTint() {
+        
+    }
+    
+    func changeOrientationLock() {
+        if orientationlockbutton.tag == 0 {
+            lockOrientation()
+            let img = UIImage(named: "orientationlock_locked.png")
+            orientationlockbutton.setImage(img, forState: .Normal)
+        } else {
+            unlockOrientation()
+            let img = UIImage(named: "orientationlock_unlocked.png")
+            orientationlockbutton.setImage(img, forState: .Normal)
+        }
+    }
+    
+    func lockOrientation() {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIDeviceOrientationDidChangeNotification, object: nil)
+        orientationlockbutton.tag = 1
+    }
+    
+    func unlockOrientation() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "orientationDidChange:", name: UIDeviceOrientationDidChangeNotification, object: nil)
+        orientationlockbutton.tag = 0
+    }
+    
     func addNewWebView() {
         webViews.insert(WKWebView(), atIndex: webViews.endIndex)
         currentWebView = webViews.endIndex - 1
@@ -1064,12 +1157,12 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                 } else if (rec.view != nil) && (panInitdir) && (panInit > 5) && (rec.translationInView(rec.view!).x > 0) {
                     let originx = 5
                     let originy = webViews[z]?.frame.origin.y
-                    let newx = rec.translationInView(self.view).x
+                    let thenewx = rec.translationInView(self.view).x
                     let originw = webViews[z]?.frame.width
                     let originh = webViews[z]?.frame.height
-                    let myframe = CGRectMake(5 + newx, originy!, originw!, originh!)
+                    let myframe = CGRectMake(5 + thenewx, originy!, originw!, originh!)
                     webViews[z]?.frame = myframe
-                    let alpha = newx / 200
+                    let alpha = thenewx / 200
                     if (alpha > 1) || (alpha < -1) {
                     } else if alpha > 0 {
                         webViews[z]?.alpha = 1 - alpha

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class NewFavoriteItemTableViewController: UITableViewController, UITableViewDataSource, UITableViewDelegate {
+class AddNewFavoriteItemTableViewController: UITableViewController, UITableViewDataSource, UITableViewDelegate {
     
     var thepassingvalue: Int = 0
     var viewshowed: Bool = false
@@ -170,15 +170,4 @@ class NewFavoriteItemTableViewController: UITableViewController, UITableViewData
         return true
     }
     */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

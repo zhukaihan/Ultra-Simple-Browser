@@ -8,7 +8,7 @@
 
 import UIKit
 
-class URLTextField: UITextField {
+class URLTextField: UITextField, NSXMLParserDelegate {
     
     var parentViewController: ViewController!
     
