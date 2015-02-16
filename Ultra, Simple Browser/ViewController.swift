@@ -401,7 +401,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         } else {
             unlockOrientation()
         }
-        notificationCenter.addObserver(self, selector: "downloadVideo", name: MPMoviePlayerDidEnterFullscreenNotification, object: nil)
     }
     
     func checkGos() {
@@ -621,10 +620,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         UIView.animateWithDuration(0.3, delay: 0.5, options: .CurveEaseInOut, animations: { self.progressBar.alpha = 0 }, completion: nil)
         textField.configrefreshImage()
         refreshControl.endRefreshing()
-    }
-    
-    func downloadVideo() {
-        println("downloadvideo")
     }
     
     func keyboardWillBeShown(sender: NSNotification) {

@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import Dispatch
+import CoreFoundation
 
 class SuggestionsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, NSXMLParserDelegate {
     
@@ -145,12 +146,16 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
                     var url = NSURL(string: "http://unionsug.baidu.com/su?wd=" + subString)
                     var sugurlrequest = NSURLRequest(URL: url!)
                     var myresponse = NSURLConnection.sendSynchronousRequest(sugurlrequest, returningResponse: nil, error: nil)
-                    var jsonString = NSString(data: myresponse!, encoding: NSASCIIStringEncoding)
+                    
+                    var encode:NSStringEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue))
+                    
+                    var jsonString = NSString(data: myresponse!, encoding: encode)
                     jsonString = jsonString?.substringFromIndex((jsonString?.rangeOfString("[").location)!)
                     jsonString = jsonString?.substringToIndex((jsonString?.length)! - 3)
-                    //jsonString = NSString(contentsOfFile: (jsonString?.stringByRemovingPercentEncoding)!, encoding: NSUTF8StringEncoding, error: nil)
-                    var jsonData = jsonString?.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
+                    
+                    var jsonData = jsonString?.dataUsingEncoding(NSUTF8StringEncoding)
                     var sugDic: NSArray = NSJSONSerialization.JSONObjectWithData(jsonData!, options: .MutableContainers, error: nil) as NSArray
+                    
                     for i in 0...sugDic.count - 1 {
                         let string: String = String(sugDic[i] as NSString)
                         self.listOfSuggestionsTitle.append(string.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding))
