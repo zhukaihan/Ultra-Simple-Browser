@@ -113,12 +113,14 @@ class BackForwardTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let tableviewcell = UITableViewCell()
+        let tableviewcell = UITableViewCell(style: .Subtitle, reuseIdentifier: nil)
         
         if self.tag == 0 {
             tableviewcell.textLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView]?.backForwardList.itemAtIndex(0 - indexPath.row - 1)?.title
+            tableviewcell.detailTextLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView]?.backForwardList.itemAtIndex(0 - indexPath.row - 1)?.URL.absoluteString
         } else if self.tag == 1 {
             tableviewcell.textLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView]?.backForwardList.itemAtIndex(indexPath.row + 1)?.title
+            tableviewcell.detailTextLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView]?.backForwardList.itemAtIndex(indexPath.row + 1)?.URL.absoluteString
         } else if self.tag == 2 {
             if Favoriteitems.count != 0 {
                 let theFavoriteitem = Favoriteitems[indexPath.row]
@@ -128,13 +130,15 @@ class BackForwardTableViewController: UITableViewController {
                 tableviewcell.detailTextLabel?.text = urlstring
             }
         } else if self.tag == 3 {
-            println("to History cell")
+            var dateFormatter = NSDateFormatter()
+            dateFormatter.dateFormat = "yy/MM/dd hh:mm"
             if Historyitems.count != 0 {
                 let theHistoryitem = Historyitems[indexPath.row]
                 let titlestring = theHistoryitem.valueForKey("title") as String?
-                tableviewcell.textLabel?.text = titlestring
+                tableviewcell.textLabel?.text = titlestring!
+                let datestring = dateFormatter.stringFromDate(theHistoryitem.valueForKey("time") as NSDate)
                 let urlstring = theHistoryitem.valueForKey("url") as String?
-                tableviewcell.detailTextLabel?.text = urlstring
+                tableviewcell.detailTextLabel?.text = datestring + " | " + urlstring!
             }
         }
         
@@ -161,6 +165,10 @@ class BackForwardTableViewController: UITableViewController {
             let urlstring = theHistoryitem.valueForKey("url") as String?
             self.backForwardParentViewController.textField.text = urlstring
             self.backForwardParentViewController.didClickGo()
+            
+            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+            let managedContext = appDelegate.managedObjectContext!
+            managedContext.deleteObject(theHistoryitem as NSManagedObject)
         }
     }
     

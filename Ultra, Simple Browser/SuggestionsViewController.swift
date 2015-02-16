@@ -91,7 +91,7 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell: UITableViewCell = UITableViewCell()
+        var cell: UITableViewCell = UITableViewCell(style: .Subtitle, reuseIdentifier: nil)
         if tableView.numberOfRowsInSection(0) != 0 {
             cell.textLabel?.text = listOfSuggestionsTitle[indexPath.row]
             cell.detailTextLabel?.text = listOfSuggestionsURL[indexPath.row]
@@ -103,7 +103,7 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         var text = listOfSuggestionsURL[indexPath.row]
         
-        if text == "searchit" {
+        if text == "Search Engine Suggestion" {
             suggestionsParentViewController.searchURL(listOfSuggestionsTitle[indexPath.row])
         } else {
             if text.hasPrefix("🔒") {
@@ -121,7 +121,7 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
     func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [NSObject : AnyObject]) {
         if elementName == "suggestion" {
             listOfSuggestionsTitle.append(attributeDict.values.first as String)
-            listOfSuggestionsURL.append("searchit")
+            listOfSuggestionsURL.append("Search Engine Suggestion")
         }
     }
     
@@ -154,7 +154,7 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
                     for i in 0...sugDic.count - 1 {
                         let string: String = String(sugDic[i] as NSString)
                         self.listOfSuggestionsTitle.append(string.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding))
-                        self.listOfSuggestionsURL.append("searchit")
+                        self.listOfSuggestionsURL.append("Search Engine Suggestion")
                     }
                 } else  {
                     var url: String = "http://google.com/complete/search?output=toolbar&q=" + subString

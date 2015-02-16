@@ -12,6 +12,7 @@ import WebKit
 import iAd
 import QuartzCore
 import CoreData
+import Dispatch
 
 class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate {
     
@@ -422,18 +423,40 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             let urlhost: String! = webViews[currentWebView]?.URL?.host
             println("Finished navigating to url \(theurl)")
             if webViews[currentWebView]?.URL?.host != nil{
-                if ((((theurl.hasPrefix("http://www.google.com/search?q=")) || (theurl.hasPrefix("https://www.google.com/search?q=")))) && (theurl.hasSuffix("gws_rd=ssl"))) {
-                    var str: String! = webViews[currentWebView]?.URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-                    let strstartindex = str.startIndex
-                    str = str?.substringFromIndex(advance(strstartindex, 32))
-                    let strendindex = str.endIndex
-                    str = str?.substringToIndex(advance(strendindex, -11))
+                if ((theurl.hasPrefix("http://www.google.com/search?")) || (theurl.hasPrefix("https://www.google.com/search?"))) {
+                    let urlstring = webViews[currentWebView]?.URL?.query
+                    
+                    var queryStringDictionary = NSMutableDictionary()
+                    var urlComponents = urlstring?.componentsSeparatedByString("&")
+                    var urlComponentsStrings: [String]! = urlComponents
+                    
+                    for keyValuePair in urlComponentsStrings {
+                        var pairComponents = keyValuePair.componentsSeparatedByString("=")
+                        var key = pairComponents.first?.stringByRemovingPercentEncoding
+                        var value = pairComponents.last?.stringByRemovingPercentEncoding
+                        
+                        queryStringDictionary.setObject(value!, forKey: key!)
+                    }
+                    
+                    var str: String! = queryStringDictionary.valueForKey("q") as String
                     str = "🔍" + str
                     textField.text = str
-                } else if (((theurl.hasPrefix("http://www.baidu.com/s?wd=")) || (theurl.hasPrefix("https://www.baidu.com/s?wd="))) && (!(theurl.hasSuffix("&cl=3")) && !(theurl.hasSuffix("&cl=2")))) {
-                    var str: String! = webViews[currentWebView]?.URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-                    let strstartindex = str.startIndex
-                    str = str?.substringFromIndex(advance(strstartindex, 26))
+                } else if ((theurl.hasPrefix("http://www.baidu.com/s?")) || (theurl.hasPrefix("https://www.baidu.com/s?"))) {
+                    let urlstring = webViews[currentWebView]?.URL?.query
+                    
+                    var queryStringDictionary = NSMutableDictionary()
+                    var urlComponents = urlstring?.componentsSeparatedByString("&")
+                    var urlComponentsStrings: [String]! = urlComponents
+                    
+                    for keyValuePair in urlComponentsStrings {
+                        var pairComponents = keyValuePair.componentsSeparatedByString("=")
+                        var key = pairComponents.first?.stringByRemovingPercentEncoding
+                        var value = pairComponents.last?.stringByRemovingPercentEncoding
+                        
+                        queryStringDictionary.setObject(value!, forKey: key!)
+                    }
+                    
+                    var str: String! = queryStringDictionary.valueForKey("wd") as String
                     str = "🔍" + str
                     textField.text = str
                 } else if (urlhost?.hasPrefix("www.") == true) {
@@ -535,26 +558,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         refreshControl.attributedTitle = NSAttributedString(string: "Refreshing")
         UIView.animateWithDuration(0.3, delay: 0, options: .CurveEaseInOut, animations: { self.progressBar.alpha = 1 }, completion: nil)
         
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        let managedContext = appDelegate.managedObjectContext!
-        let entity =  NSEntityDescription.entityForName("Historys", inManagedObjectContext: managedContext)
-        let fetchRequest = NSFetchRequest(entityName:"Historys")
-        var historys = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
-        
-        if (webViews[currentWebView]?.URL?.absoluteString != nil) {
-            
-            let websitevisit = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
-            websitevisit.setValue(webViews[currentWebView]?.title, forKey: "title")
-            websitevisit.setValue(webViews[currentWebView]?.URL?.absoluteString, forKey: "url")
-            let timeNow = NSDate()
-            
-            websitevisit.setValue(timeNow, forKey: "time")
-            var error: NSError?
-            if !managedContext.save(&error) {
-                println("Could not save \\(error), \(error?.userInfo)")
-            }
-            historys.append(websitevisit)
-        }
     }
     
     func webView(webView: WKWebView, didCommitNavigation navigation: WKNavigation){
@@ -572,6 +575,22 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         textField.configrefreshImage()
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         refreshControl.endRefreshing()
+        
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let managedContext = appDelegate.managedObjectContext!
+        let entity =  NSEntityDescription.entityForName("Historys", inManagedObjectContext: managedContext)
+        let fetchRequest = NSFetchRequest(entityName:"Historys")
+        var historys = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
+        
+        if (self.webViews[self.currentWebView]?.URL?.absoluteString != nil) {
+            
+            let websitevisit = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
+            websitevisit.setValue(self.webViews[self.currentWebView]?.title, forKey: "title")
+            websitevisit.setValue(self.webViews[self.currentWebView]?.URL?.absoluteString, forKey: "url")
+            websitevisit.setValue(NSDate(), forKey: "time")
+            
+            historys.append(websitevisit)
+        }
     }
     
     func webView(webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: NSError) {
