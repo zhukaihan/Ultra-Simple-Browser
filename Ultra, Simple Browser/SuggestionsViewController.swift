@@ -9,7 +9,6 @@
 import UIKit
 import CoreData
 import Dispatch
-import CoreFoundation
 
 class SuggestionsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, NSXMLParserDelegate {
     
@@ -17,6 +16,7 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
     var suggestionsParentViewController: ViewController!
     var Favoriteitems: [NSManagedObject] = []
     var Historyitems: [NSManagedObject] = []
+    var TopSitesitems: [NSManagedObject] = []
     var listOfSuggestionsTitle: [String!] = ["Google", "Facebook", "YouTube", "Yahoo", "Baidu", "Amazon", "Wikipedia", "Taobao", "Twitter", "Tencent QQ", "Windows Live", "Linkedln", "Sina", "Tmall", "Sina Weibo", "Blogspot", "eBay", "Yandex"]
     var listOfSuggestionsURL: [String!] = ["google.com", "facebook.com", "youtube.com", "yahoo.com", "baidu.com", "amazon.com", "wikipedia.org", "taobao.com", "twitter.com", "qq.com", "live.com", "linkedln.com", "sina.com.cn", "tmall.com", "weibo.com", "blogspot.com", "ebay.com", "yandex.ru"]
     var initListOfSuggestionsTitle: [String!] = []
@@ -42,10 +42,23 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
         if Favoriteitems.count > 0 {
             for i in 0...Favoriteitems.count - 1 {
                 let theFavoriteitem = Favoriteitems[i]
-                let titlestring = theFavoriteitem.valueForKey("title")as String?
+                let titlestring = theFavoriteitem.valueForKey("title") as String?
                 initListOfSuggestionsTitle.append(titlestring)
-                let urlstring = theFavoriteitem.valueForKey("url")as String?
+                let urlstring = theFavoriteitem.valueForKey("url") as String?
                 initListOfSuggestionsURL.append(urlstring)
+            }
+        }
+        
+        let topSitesFetchRequest = NSFetchRequest(entityName:"TopSites")
+        TopSitesitems = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as [NSManagedObject]!
+        if TopSitesitems.count > 0 {
+            for theTopSite in TopSitesitems {
+                if theTopSite.valueForKey("visits") as Float > 10 {
+                    let theFavoriteitem = theTopSite
+                    let titlestring = theTopSite.valueForKey("hostUrl") as String?
+                    initListOfSuggestionsTitle.append(titlestring)
+                    initListOfSuggestionsURL.append("Top Sites")
+                }
             }
         }
         
@@ -54,9 +67,9 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
         if Historyitems.count > 0 {
             for i in 0...Historyitems.count - 1 {
                 let theHistoryitem = Historyitems[i]
-                let titlestring = theHistoryitem.valueForKey("title")as String?
+                let titlestring = theHistoryitem.valueForKey("title") as String?
                 initListOfSuggestionsTitle.append(titlestring)
-                let urlstring = theHistoryitem.valueForKey("url")as String?
+                let urlstring = theHistoryitem.valueForKey("url") as String?
                 initListOfSuggestionsURL.append(urlstring)
             }
         }
@@ -106,6 +119,16 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
         
         if text == "Search Engine Suggestion" {
             suggestionsParentViewController.searchURL(listOfSuggestionsTitle[indexPath.row])
+        } else if text == "Top Sites" {
+            text = listOfSuggestionsTitle[indexPath.row]
+            if text.hasPrefix("🔒") {
+                let textmid: NSString = NSString(string: text)
+                text = String(textmid.substringFromIndex(2))
+            }
+            if !suggestionsParentViewController.URLHasInternetProtocalPrefix(text) {
+                text = "http://" + text
+            }
+            suggestionsParentViewController.loadURLRegularly(text.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!)
         } else {
             if text.hasPrefix("🔒") {
                 let textmid: NSString = NSString(string: text)

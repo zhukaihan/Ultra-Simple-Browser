@@ -34,8 +34,8 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     //var webViewCloseLongPress: [UILongPressGestureRecognizer!]! = []  //long press to sort webviews
     var webViewButtons: [UIButton?]! = [UIButton()]
     var webViewLabels: [UILabel?]! = [UILabel()]
-    var webViews: [WKWebView?]! = []  //first WKWebView starts at webViews[0]
-    var undoWebView: WKWebView? = WKWebView()
+    var webViews: [CustomWKWebView] = []  //first CustomWKWebView starts at webViews[0]
+    var undoWebView: CustomWKWebView? = CustomWKWebView()
     var isLongPressed: Bool = false
     var backForwardFavoriteTableView: BackForwardTableViewController! = BackForwardTableViewController()
     //var autocompleteTableView: UITableView!
@@ -171,7 +171,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         orientationlockbutton.frame = CGRectMake(orientationlockbuttonframewidth, 55, 59, 59)
         orientationlockbutton.setImage(orientationlockbuttonimg, forState: .Normal)
         orientationlockbutton.addTarget(self, action: "changeOrientationLock", forControlEvents: .TouchUpInside)
-        orientationlockbutton.addTarget(self, action: "buttonTint", forControlEvents: .TouchDown)
         orientationlockbutton.tintColor = UIColor.grayColor()
         
         //////////browsing history button
@@ -215,13 +214,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         progressBar.frame = CGRectMake(0, view.frame.height - 47, view.frame.width, 3)
         self.view.addSubview(progressBar)
         
-        /*autocompleteTableView = UITableView(frame: CGRectMake(0, 80, view.frame.width, view.frame.height), style: .Plain)
-        //autocompleteTableView.delegate = self
-        //autocompleteTableView.dataSource = self
-        autocompleteTableView.scrollEnabled = true
-        autocompleteTableView.hidden = true
-        self.view.addSubview(autocompleteTableView)*/
-        
         refreshControl = UIRefreshControl()
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refersh")
         refreshControl.addTarget(self, action: "doRefresh", forControlEvents: .ValueChanged)
@@ -230,22 +222,23 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         let managedContext = appDelegate.managedObjectContext!
         let fetchRequest = NSFetchRequest(entityName:"UnclosedWebViews")
         unclosedwebviews = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
+        
         if unclosedwebviews.count != 0 {
             for i in 0...unclosedwebviews.count - 1 {
-                webViews.insert(WKWebView(), atIndex: webViews.endIndex)
-                webViews[i]?.navigationDelegate = self
-                webViews[i]?.allowsBackForwardNavigationGestures = true
-                webViews[i]?.scrollView.addSubview(refreshControl)
+                webViews.insert(CustomWKWebView(), atIndex: webViews.endIndex)
+                webViews[i].navigationDelegate = self
+                webViews[i].allowsBackForwardNavigationGestures = true
+                webViews[i].scrollView.addSubview(refreshControl)
                 
                 let webview = unclosedwebviews[i]
                 let urlstring = webview.valueForKey("webviews") as String?
                 if (urlstring != nil) {
                     let url = NSURL(string: urlstring!)
                     let request = NSURLRequest(URL: url!)
-                    webViews[i]!.loadRequest(request)
+                    webViews[i].loadRequest(request)
                 }
                 
-                webViews[i]?.frame = CGRectMake(10, view.frame.height + 50, view.frame.width - 20, view.frame.height - 44)
+                webViews[i].frame = CGRectMake(10, view.frame.height + 50, view.frame.width - 20, view.frame.height - 44)
                 totalWebView++
             }
             showAllWebViews()
@@ -256,12 +249,12 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             }
             unclosedwebviews.removeAll(keepCapacity: false)
         } else {
-            webViews.insert(WKWebView(), atIndex: webViews.endIndex)
-            webViews[currentWebView]?.allowsBackForwardNavigationGestures = true
-            webViews[currentWebView]?.navigationDelegate = self
-            webViews[currentWebView]?.scrollView.addSubview(refreshControl)
-            webViews[currentWebView]?.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
-            self.view.addSubview(webViews[currentWebView]!)
+            webViews.insert(CustomWKWebView(), atIndex: webViews.endIndex)
+            webViews[currentWebView].allowsBackForwardNavigationGestures = true
+            webViews[currentWebView].navigationDelegate = self
+            webViews[currentWebView].scrollView.addSubview(refreshControl)
+            webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
+            self.view.addSubview(webViews[currentWebView])
             totalWebView++
             
             textField.text = homewebpage
@@ -282,6 +275,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             var DemoNavigationController = NavigationController(rootViewController: demoViewController)
             self.navigationController?.presentViewController(DemoNavigationController, animated: false, completion: nil)
         }
+        
     }
     
     /*override func viewDidLoad() {
@@ -335,10 +329,10 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         unclosedwebviews.removeAll(keepCapacity: false)
         
         for i in 0...webViews.count - 1 {
-            if (webViews[i]?.URL?.absoluteString != nil) && (webViews[i]?.URL?.absoluteString != homewebpage) {
+            if (webViews[i].URL?.absoluteString != nil) && (webViews[i].URL?.absoluteString != homewebpage) {
                 let webview = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
                 
-                webview.setValue(webViews[i]?.URL?.absoluteString, forKey: "webviews")
+                webview.setValue(webViews[i].URL?.absoluteString, forKey: "webviews")
                 
                 var error: NSError?
                 if !managedContext.save(&error) {
@@ -404,12 +398,12 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func checkGos() {
-        if webViews[currentWebView]!.canGoBack {
+        if webViews[currentWebView].canGoBack {
             backButton.enabled = true
         } else {
             backButton.enabled = false
         }
-        if webViews[currentWebView]!.canGoForward {
+        if webViews[currentWebView].canGoForward {
             forwardButton.enabled = true
         } else {
             forwardButton.enabled = false
@@ -417,13 +411,13 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func lettextfieldtohost() {
-        if (!textField.isFirstResponder() && ((webViews[currentWebView]?.URL?.absoluteString != nil)/* && ((webViews[currentWebView]?.URL?.absoluteString != "") && (webViews[currentWebView]?.canGoBack == false) && (webViews[currentWebView]?.canGoForward == false))*/)){
-            let theurl: String! = webViews[currentWebView]?.URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
-            let urlhost: String! = webViews[currentWebView]?.URL?.host
+        if (!textField.isFirstResponder() && ((webViews[currentWebView].URL?.absoluteString != nil)/* && ((webViews[currentWebView].URL?.absoluteString != "") && (webViews[currentWebView].canGoBack == false) && (webViews[currentWebView].canGoForward == false))*/)){
+            let theurl: String! = webViews[currentWebView].URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+            let urlhost: String! = webViews[currentWebView].URL?.host
             println("Finished navigating to url \(theurl)")
-            if webViews[currentWebView]?.URL?.host != nil{
+            if webViews[currentWebView].URL?.host != nil{
                 if ((theurl.hasPrefix("http://www.google.com/search?")) || (theurl.hasPrefix("https://www.google.com/search?"))) {
-                    let urlstring = webViews[currentWebView]?.URL?.query
+                    let urlstring = webViews[currentWebView].URL?.query
                     
                     var queryStringDictionary = NSMutableDictionary()
                     var urlComponents = urlstring?.componentsSeparatedByString("&")
@@ -441,7 +435,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                     str = "🔍" + str
                     textField.text = str
                 } else if ((theurl.hasPrefix("http://www.baidu.com/s?")) || (theurl.hasPrefix("https://www.baidu.com/s?"))) {
-                    let urlstring = webViews[currentWebView]?.URL?.query
+                    let urlstring = webViews[currentWebView].URL?.query
                     
                     var queryStringDictionary = NSMutableDictionary()
                     var urlComponents = urlstring?.componentsSeparatedByString("&")
@@ -468,7 +462,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             } else {
                 textField.text = ""
             }
-            if (webViews[currentWebView]?.hasOnlySecureContent == true) {
+            if (webViews[currentWebView].hasOnlySecureContent == true) {
                 textField.text = "🔒" + textField.text
             }
         } else if (!textField.isFirstResponder()) {
@@ -477,9 +471,9 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func checkifdnsrsearch() {
-        if webViews[currentWebView]?.URL?.absoluteString?.hasPrefix("http://www.dnsrsearch.com/index.php?origURL=") == true {
-            webViews[currentWebView]?.stopLoading()
-            let textfieldtext = webViews[currentWebView]?.URL?.absoluteString
+        if webViews[currentWebView].URL?.absoluteString?.hasPrefix("http://www.dnsrsearch.com/index.php?origURL=") == true {
+            webViews[currentWebView].stopLoading()
+            let textfieldtext = webViews[currentWebView].URL?.absoluteString
             var text = NSString(string: textfieldtext!)
             text = text.substringFromIndex(53)
             text = text.substringToIndex(text.length - 4)
@@ -491,10 +485,10 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         if ((UIDeviceOrientationIsLandscape(UIDevice.currentDevice().orientation) && !orientationchanged) || (((UIDevice.currentDevice().orientation == .Portrait) || UIDevice.currentDevice().userInterfaceIdiom == .Pad) && orientationchanged)) {
             if !showingAllWebViews{
                 if (toolBar.hidden == false) {
-                    webViews[currentWebView]?.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
+                    webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
                     progressBar.frame = CGRectMake(0, view.frame.height - 47, view.frame.width, 3)
                 } else {
-                    webViews[currentWebView]?.frame = CGRectMake(0, 0, view.frame.width, view.frame.height)
+                    webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height)
                     progressBar.frame = CGRectMake(0, view.frame.height - 3, view.frame.width, 3)
                 }
             } else {
@@ -504,7 +498,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                     progressBar.frame = CGRectMake(0, view.frame.height - 3, view.frame.width, 3)
                 }
                 for tryShowingWebView in 0...webViews.count - 1 {
-                    webViews[tryShowingWebView]?.frame = CGRectMake(20, CGFloat(200 * tryShowingWebView) + weby, view.frame.width - 40, view.frame.height - 10)
+                    webViews[tryShowingWebView].frame = CGRectMake(20, CGFloat(200 * tryShowingWebView) + weby, view.frame.width - 40, view.frame.height - 10)
                     webViewButtons[tryShowingWebView]?.frame = CGRectMake(0, 0, view.frame.width - 40, view.frame.height)
                     webViewLabels[tryShowingWebView]?.frame = CGRectMake(0, 0, view.frame.width - 40, 20)
                 }
@@ -560,7 +554,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func webView(webView: WKWebView, didCommitNavigation navigation: WKNavigation){
-        progressBar.setProgress(Float(webViews[currentWebView]!.estimatedProgress) + 0.01, animated: true)
+        progressBar.setProgress(Float(webViews[currentWebView].estimatedProgress) + 0.01, animated: true)
         textField.configstopImage()
         checkifdnsrsearch()
         lettextfieldtohost()
@@ -570,26 +564,64 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         checkGos()
         lettextfieldtohost()
         progressBar.setProgress(1.0, animated: true)
-        UIView.animateWithDuration(0.3, delay: 0.5, options: .CurveEaseInOut, animations: { self.progressBar.alpha = 0 }, completion: nil)
+        UIView.animateWithDuration(0.3, delay: 0.5, options: .CurveEaseInOut, animations: {
+            self.progressBar.alpha = 0
+        }, completion: nil)
         textField.configrefreshImage()
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         refreshControl.endRefreshing()
         
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        let managedContext = appDelegate.managedObjectContext!
-        let entity =  NSEntityDescription.entityForName("Historys", inManagedObjectContext: managedContext)
-        let fetchRequest = NSFetchRequest(entityName:"Historys")
-        var historys = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
-        
-        if (self.webViews[self.currentWebView]?.URL?.absoluteString != nil) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {
             
-            let websitevisit = NSManagedObject(entity: entity!, insertIntoManagedObjectContext:managedContext)
-            websitevisit.setValue(self.webViews[self.currentWebView]?.title, forKey: "title")
-            websitevisit.setValue(self.webViews[self.currentWebView]?.URL?.absoluteString, forKey: "url")
-            websitevisit.setValue(NSDate(), forKey: "time")
+            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+            let managedContext = appDelegate.managedObjectContext!
             
-            historys.append(websitevisit)
-        }
+            if (self.webViews[self.currentWebView].URL?.absoluteString != nil) {
+                let historysFetchRequest = NSFetchRequest(entityName:"Historys")
+                var historys = managedContext.executeFetchRequest(historysFetchRequest, error: nil) as [NSManagedObject]!
+                if historys.count > 0 {
+                    for theHistoryitem in historys {
+                        if (theHistoryitem.valueForKey("url") as String) == (self.webViews[self.currentWebView].URL?.absoluteString) {
+                            managedContext.deleteObject(theHistoryitem as NSManagedObject)
+                        }
+                    }
+                    historys = managedContext.executeFetchRequest(historysFetchRequest, error: nil) as [NSManagedObject]!
+                }
+                
+                let historysEntity =  NSEntityDescription.entityForName("Historys", inManagedObjectContext: managedContext)
+                let websitevisit = NSManagedObject(entity: historysEntity!, insertIntoManagedObjectContext:managedContext)
+                websitevisit.setValue(self.webViews[self.currentWebView].title, forKey: "title")
+                websitevisit.setValue(self.webViews[self.currentWebView].URL?.absoluteString, forKey: "url")
+                websitevisit.setValue(NSDate(), forKey: "time")
+                
+                historys.append(websitevisit)
+            }
+            
+            if self.webViews[self.currentWebView].URL?.host != nil {
+                let topSitesFetchRequest = NSFetchRequest(entityName:"TopSites")
+                var topSites = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as [NSManagedObject]!
+                var hostNameNotFound = true
+                if topSites.count > 0 {
+                    for theTopSite in topSites {
+                        if (theTopSite.valueForKey("hostUrl") as String) == (self.webViews[self.currentWebView].URL?.host) {
+                            var originalvisits = theTopSite.valueForKey("visits") as Float
+                            theTopSite.setValue(originalvisits + 1, forKey: "visits")
+                            hostNameNotFound = false
+                            break
+                        }
+                    }
+                }
+                
+                if hostNameNotFound {
+                    let topSitesEntity =  NSEntityDescription.entityForName("TopSites", inManagedObjectContext: managedContext)
+                    let theHostVisiting = NSManagedObject(entity: topSitesEntity!, insertIntoManagedObjectContext:managedContext)
+                    theHostVisiting.setValue(self.webViews[self.currentWebView].URL?.host, forKey: "hostUrl")
+                    theHostVisiting.setValue(1, forKey: "visits")
+                    
+                    topSites.append(theHostVisiting)
+                }
+            }
+        })
     }
     
     func webView(webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: NSError) {
@@ -680,7 +712,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     
     func textFieldDidBeginEditing(textField: UITextField) {
         textField.adjustsFontSizeToFitWidth = false
-        textField.text = webViews[currentWebView]?.URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+        textField.text = webViews[currentWebView].URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
         textField.textAlignment = .Left
         textField.selectedTextRange = textField.textRangeFromPosition(textField.beginningOfDocument, toPosition: textField.endOfDocument)
         
@@ -744,12 +776,10 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         if !URLHasInternetProtocalPrefix(text) {
             text = "http://" + text
         }
-        if (text != webViews[currentWebView]?.URL?.absoluteString) {
-            if !URLIsValid(text) {
-                searchURL(oritext)
-            } else {
-                loadURLRegularly(text)
-            }
+        if !URLIsValid(text) {
+            searchURL(oritext)
+        } else {
+            loadURLRegularly(text)
         }
     }
     
@@ -774,7 +804,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         let url = NSURL(string: urlstring)
         println("\(url)")
         let request = NSURLRequest(URL: url!)
-        webViews[currentWebView]?.loadRequest(request)
+        webViews[currentWebView].loadRequest(request)
     }
     
     func searchURL(urlstring: String) {
@@ -795,13 +825,13 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     func goBack() {
         dismissDashboard()
         
-        webViews[currentWebView]?.goBack()
+        webViews[currentWebView].goBack()
     }
     
     func goForward() {
         dismissDashboard()
         
-        webViews[currentWebView]?.goForward()
+        webViews[currentWebView].goForward()
     }
     
     func showGoBackList(rec: UILongPressGestureRecognizer) {
@@ -843,13 +873,13 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     func doRefresh() {
         dismissDashboard()
         
-        webViews[currentWebView]?.reload()
+        webViews[currentWebView].reload()
     }
     
     func doStop() {
         dismissDashboard()
         
-        webViews[currentWebView]?.stopLoading()
+        webViews[currentWebView].stopLoading()
         checkGos()
         lettextfieldtohost()
         progressBar.setProgress(1.0, animated: true)
@@ -880,7 +910,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func hidetoolbar() {
-        webViews[currentWebView]?.frame = CGRectMake(0, 0, view.frame.width, view.frame.height)
+        webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height)
         progressBar.frame = CGRectMake(0, view.frame.height - 3, view.frame.width, 3)
         toolBar.hidden = true
         dismissDashboard()
@@ -889,7 +919,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     func showtoolbar() {
         UIView.beginAnimations("animateWebView", context: nil)
         UIView.setAnimationDuration(0.2)
-        webViews[currentWebView]?.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
+        webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
         progressBar.frame = CGRectMake(0, view.frame.height - 47, view.frame.width, 3)
         toolBar.hidden = false
         UIView.commitAnimations()
@@ -910,12 +940,12 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     func toShare() {
         dismissDashboard()
         
-        let myWebsite = webViews[currentWebView]?.viewPrintFormatter()
-        let myWebsiteurl = webViews[currentWebView]?.URL
+        let myWebsite = webViews[currentWebView].viewPrintFormatter()
+        let myWebsiteurl = webViews[currentWebView].URL
         var objectsToShare = []
         
         if myWebsiteurl != nil {
-            objectsToShare = [myWebsiteurl!, myWebsite!]
+            objectsToShare = [myWebsiteurl!, myWebsite]
         }
         let activityVC = UIActivityViewController(activityItems: objectsToShare as [AnyObject], applicationActivities: nil)
         
@@ -925,7 +955,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     func toOpenInSafari() {
         dismissDashboard()
         
-        var myWebsite = webViews[currentWebView]?.URL
+        var myWebsite = webViews[currentWebView].URL
         if myWebsite == nil {
             myWebsite = NSURL(string: "")
         }
@@ -985,34 +1015,34 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         webViewLabels = []
         
         for tryShowingWebView in 0...webViews.count - 1 {
-            webViews[tryShowingWebView]?.frame = CGRectMake(20, CGFloat(200 * tryShowingWebView) + weby, view.frame.width - 40, view.frame.height - 10)
-            webViews[tryShowingWebView]?.layer.cornerRadius = 5.0
-            webViews[tryShowingWebView]?.layer.shadowColor = UIColor.blackColor().CGColor
-            webViews[tryShowingWebView]?.layer.shadowRadius = 5.0
-            webViews[tryShowingWebView]?.layer.shadowOffset = CGSizeMake(3.0, 3.0)
-            webViews[tryShowingWebView]?.layer.shadowOpacity = 1
-            webViews[tryShowingWebView]?.scrollView.layer.cornerRadius = 5.0
-            //webViews[tryShowingWebView]?.allowsBackForwardNavigationGestures = false
+            webViews[tryShowingWebView].frame = CGRectMake(20, CGFloat(200 * tryShowingWebView) + weby, view.frame.width - 40, view.frame.height - 10)
+            webViews[tryShowingWebView].layer.cornerRadius = 5.0
+            webViews[tryShowingWebView].layer.shadowColor = UIColor.blackColor().CGColor
+            webViews[tryShowingWebView].layer.shadowRadius = 5.0
+            webViews[tryShowingWebView].layer.shadowOffset = CGSizeMake(3.0, 3.0)
+            webViews[tryShowingWebView].layer.shadowOpacity = 1
+            webViews[tryShowingWebView].scrollView.layer.cornerRadius = 5.0
+            //webViews[tryShowingWebView].allowsBackForwardNavigationGestures = false
             //let rotate: CATransform3D = CATransform3DMakeRotation(M_PI/6, 0, 1, 0)
-            //webViews[tryShowingWebView]?.scrollView.layer.transform = CATransform3DPerspect(rotate, CGPointMake(0, 0), 200);
-            self.view.addSubview(webViews[tryShowingWebView]!)
+            //webViews[tryShowingWebView].scrollView.layer.transform = CATransform3DPerspect(rotate, CGPointMake(0, 0), 200);
+            self.view.addSubview(webViews[tryShowingWebView])
             
             webViewLabels.insert(UILabel(), atIndex: tryShowingWebView)
             webViewLabels[tryShowingWebView]?.frame = CGRectMake(0, 0, view.frame.width - 40, 20)
-            if webViews[tryShowingWebView]?.title != nil {
-                webViewLabels[tryShowingWebView]?.text = webViews[tryShowingWebView]?.title
+            if webViews[tryShowingWebView].title != nil {
+                webViewLabels[tryShowingWebView]?.text = webViews[tryShowingWebView].title
             }
             webViewLabels[tryShowingWebView]?.backgroundColor = UIColor.darkGrayColor()
             webViewLabels[tryShowingWebView]?.textColor = UIColor.whiteColor()
             webViewLabels[tryShowingWebView]?.textAlignment = .Center
             webViewLabels[tryShowingWebView]?.layer.cornerRadius = 5.0
-            webViews[tryShowingWebView]?.addSubview(webViewLabels[tryShowingWebView]!)
+            webViews[tryShowingWebView].addSubview(webViewLabels[tryShowingWebView]!)
             
             webViewButtons.insert(UIButton(), atIndex: tryShowingWebView)
             webViewButtons[tryShowingWebView]?.frame = CGRectMake(0, 0, view.frame.width - 40, view.frame.height)
             webViewButtons[tryShowingWebView]?.addTarget(self, action: "showWebView:", forControlEvents: .TouchUpInside)
             webViewButtons[tryShowingWebView]?.tag = tryShowingWebView
-            webViews[tryShowingWebView]?.addSubview(webViewButtons[tryShowingWebView]!)
+            webViews[tryShowingWebView].addSubview(webViewButtons[tryShowingWebView]!)
             
             webViewCloseSwipe.insert(UIPanGestureRecognizer(), atIndex: tryShowingWebView)
             webViewButtons[tryShowingWebView]?.addGestureRecognizer(webViewCloseSwipe[tryShowingWebView])
@@ -1036,14 +1066,14 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         UIView.setAnimationDuration(0.2)
         
         for i in 0...webViews.count - 1 {
-            webViews[i]?.removeFromSuperview()
+            webViews[i].removeFromSuperview()
             webViewButtons[i]?.removeGestureRecognizer(webViewCloseSwipe[i])
             //webViewButtons[i]?.removeGestureRecognizer(webViewCloseLongPress[i])
             webViewButtons[i]?.removeFromSuperview()
             webViewLabels[i]?.removeFromSuperview()
         }
-        webViews[currentWebView]?.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
-        self.view.addSubview(webViews[currentWebView]!)
+        webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
+        self.view.addSubview(webViews[currentWebView])
         
         configtoolbaritems()
         edgeSwipe.enabled = true
@@ -1066,10 +1096,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         webViewLabels = []
         
         showingAllWebViews = false
-    }
-    
-    func buttonTint() {
-        
     }
     
     func changeOrientationLock() {
@@ -1095,23 +1121,23 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func addNewWebView() {
-        webViews.insert(WKWebView(), atIndex: webViews.endIndex)
+        webViews.insert(CustomWKWebView(), atIndex: webViews.endIndex)
         currentWebView = webViews.endIndex - 1
-        webViews[currentWebView]?.navigationDelegate = self
-        webViews[currentWebView]?.allowsBackForwardNavigationGestures = true
-        webViews[currentWebView]?.scrollView.addSubview(refreshControl)
+        webViews[currentWebView].navigationDelegate = self
+        webViews[currentWebView].allowsBackForwardNavigationGestures = true
+        webViews[currentWebView].scrollView.addSubview(refreshControl)
         webViewButtons.insert(UIButton(), atIndex: webViews.count - 1)
         webViewCloseSwipe.insert(UIPanGestureRecognizer(), atIndex: webViews.count - 1)
         //webViewCloseLongPress.insert(UILongPressGestureRecognizer(), atIndex: webViews.count - 1)
         webViewLabels.insert(UILabel(), atIndex: webViews.count - 1)
         UIView.commitAnimations()
-        webViews[currentWebView]?.frame = CGRectMake(10, view.frame.height + 50, view.frame.width - 20, view.frame.height - 44)
-        webViews[currentWebView]?.layer.cornerRadius = 5.0
-        webViews[currentWebView]?.layer.shadowColor = UIColor.blackColor().CGColor
-        webViews[currentWebView]?.layer.shadowRadius = 5.0
-        webViews[currentWebView]?.layer.shadowOffset = CGSizeMake(3.0, 3.0)
-        webViews[currentWebView]?.layer.shadowOpacity = 1
-        webViews[currentWebView]?.scrollView.layer.cornerRadius = 5.0
+        webViews[currentWebView].frame = CGRectMake(10, view.frame.height + 50, view.frame.width - 20, view.frame.height - 44)
+        webViews[currentWebView].layer.cornerRadius = 5.0
+        webViews[currentWebView].layer.shadowColor = UIColor.blackColor().CGColor
+        webViews[currentWebView].layer.shadowRadius = 5.0
+        webViews[currentWebView].layer.shadowOffset = CGSizeMake(3.0, 3.0)
+        webViews[currentWebView].layer.shadowOpacity = 1
+        webViews[currentWebView].scrollView.layer.cornerRadius = 5.0
         
         doneShowingAllWebViews()
         
@@ -1127,15 +1153,15 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     
     func undoPreviousWebView() {
         undoWebViewButton.enabled = false
-        webViews.insert(undoWebView, atIndex: webViews.endIndex)
+        webViews.insert(undoWebView!, atIndex: webViews.endIndex)
         currentWebView = webViews.endIndex - 1
-        webViews[currentWebView]?.navigationDelegate = self
-        webViews[currentWebView]?.allowsBackForwardNavigationGestures = true
+        webViews[currentWebView].navigationDelegate = self
+        webViews[currentWebView].allowsBackForwardNavigationGestures = true
         webViewButtons.insert(UIButton(), atIndex: webViews.count - 1)
         webViewCloseSwipe.insert(UIPanGestureRecognizer(), atIndex: webViews.count - 1)
         //webViewCloseLongPress.insert(UILongPressGestureRecognizer(), atIndex: webViews.count - 1)
         webViewLabels.insert(UILabel(), atIndex: webViews.count - 1)
-        webViews[currentWebView]?.frame = CGRectMake(10, view.frame.height + 50, view.frame.width - 20, view.frame.height - 44)
+        webViews[currentWebView].frame = CGRectMake(10, view.frame.height + 50, view.frame.width - 20, view.frame.height - 44)
         
         doneShowingAllWebViews()
         totalWebView++
@@ -1150,10 +1176,10 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             if !isLongPressed {
                 if rec.view != nil {
                 }
-                let webby = webViews[0]?.frame
-                let webbby = webby?.origin
-                let webbbby = webby?.origin.y
-                weby = CGFloat(webbbby!)
+                let webby = webViews[0].frame
+                let webbby = webby.origin
+                let webbbby = webby.origin.y
+                weby = CGFloat(webbbby)
             } else {
                 
             }
@@ -1170,31 +1196,31 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                     panInit++
                 } else if (rec.view != nil) && (panInitdir) && (panInit > 5) && (rec.translationInView(rec.view!).x > 0) {
                     let originx = 5
-                    let originy = webViews[z]?.frame.origin.y
+                    let originy = webViews[z].frame.origin.y
                     let thenewx = rec.translationInView(self.view).x
-                    let originw = webViews[z]?.frame.width
-                    let originh = webViews[z]?.frame.height
-                    let myframe = CGRectMake(5 + thenewx, originy!, originw!, originh!)
-                    webViews[z]?.frame = myframe
+                    let originw = webViews[z].frame.width
+                    let originh = webViews[z].frame.height
+                    let myframe = CGRectMake(5 + thenewx, originy, originw, originh)
+                    webViews[z].frame = myframe
                     let alpha = thenewx / 200
                     if (alpha > 1) || (alpha < -1) {
                     } else if alpha > 0 {
-                        webViews[z]?.alpha = 1 - alpha
+                        webViews[z].alpha = 1 - alpha
                     } else {
-                        webViews[z]?.alpha = 1 - (0 - alpha)
+                        webViews[z].alpha = 1 - (0 - alpha)
                     }
                 } else if (rec.view != nil) && (panInitdir) && (panInit > 5) && (rec.translationInView(self.view!).x < 0) {
                     /*
                     let transy = rec.translationInView(self.view!).y
                     
                     if transy < -20 {
-                    let content = webViews[z]?.scrollView
+                    let content = webViews[z].scrollView
                     let contentoffset = content?.contentOffset
                     let contentx = contentoffset?.x
                     let contenty = contentoffset?.y
                     content?.setContentOffset(CGPointMake(contentx!, contenty! - 20), animated: true)
                     } else if transy > 20 {
-                    let content = webViews[z]?.scrollView
+                    let content = webViews[z].scrollView
                     let contentoffset = content?.contentOffset
                     let contentx = contentoffset?.x
                     let contenty = contentoffset?.y
@@ -1203,16 +1229,20 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                     }*/
                 } else if (rec.view != nil) && (!panInitdir) {
                     if rec.translationInView(self.view).y < 0 {
-                        let weboriginy = webViews[totalWebView - 1]?.frame.maxY
-                        if weboriginy! > view.frame.height {
+                        let weboriginy = webViews[totalWebView - 1].frame.maxY
+                        if weboriginy > view.frame.height {
                             for i in 0...webViews.count - 1 {
-                                webViews[i]?.frame = CGRectMake(20, weby + 200 * CGFloat(i) + rec.translationInView(self.view!).y, view.frame.width - 40, view.frame.height)
+                                webViews[i].frame = CGRectMake(20, weby + 200 * CGFloat(i) + rec.translationInView(self.view!).y, view.frame.width - 40, view.frame.height)
                             }
-                        }
-                    } else if rec.translationInView(self.view).y > 0 {
-                        if webViews[0]?.frame.origin.y < 0 {
+                        }/* else  {
                             for i in 0...webViews.count - 1 {
-                                webViews[i]?.frame = CGRectMake(20, weby + 200 * CGFloat(i) + rec.translationInView(self.view!).y, view.frame.width - 40, view.frame.height)
+                                webViews[i].frame = CGRectMake(20, weby + 200 * CGFloat(i) + rec.translationInView(self.view!).y + 200 / rec.translationInView(self.view!), view.frame.width - 40, view.frame.height)
+                            }
+                        }*/
+                    } else if rec.translationInView(self.view).y > 0 {
+                        if webViews[0].frame.origin.y < 0 {
+                            for i in 0...webViews.count - 1 {
+                                webViews[i].frame = CGRectMake(20, weby + 200 * CGFloat(i) + rec.translationInView(self.view!).y, view.frame.width - 40, view.frame.height)
                             }
                         }
                     }
@@ -1224,15 +1254,15 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         case .Ended:
             if !isLongPressed {
                 if (panInitdir) {
-                    if (Int(rec.translationInView(webViews[z]!).x) > 150) {
-                        webViews[z]?.alpha = 1
+                    if (Int(rec.translationInView(webViews[z]).x) > 150) {
+                        webViews[z].alpha = 1
                         undoWebView = webViews[z]
                         undoWebViewButton.enabled = true
                         webViewLabels[z]?.removeFromSuperview()
                         webViewLabels.removeAtIndex(z)
                         webViewButtons[z]?.removeFromSuperview()
                         webViewButtons.removeAtIndex(z)
-                        webViews[z]?.removeFromSuperview()
+                        webViews[z].removeFromSuperview()
                         webViews.removeAtIndex(z)
                         totalWebView--
                         currentWebView = webViews.endIndex - 1
@@ -1241,7 +1271,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                         } else {
                             for i in 0...webViews.count - 1 {
                                 webViewLabels[i]?.removeFromSuperview()
-                                webViews[i]?.removeFromSuperview()
+                                webViews[i].removeFromSuperview()
                                 webViewButtons[i]?.removeGestureRecognizer(webViewCloseSwipe[i])
                                 //webViewButtons[i]?.removeGestureRecognizer(webViewCloseLongPress[i])
                                 webViewButtons[i]?.removeFromSuperview()
@@ -1260,14 +1290,14 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                         }
                     } else {
                         let myframe = CGRectMake(20, weby + 200 * CGFloat(z), view.frame.width - 40, view.frame.height)
-                        webViews[z]?.frame = myframe
-                        webViews[z]?.alpha = 1
+                        webViews[z].frame = myframe
+                        webViews[z].alpha = 1
                     }
                 } else if (!panInitdir) {
-                    let webby = webViews[0]?.frame
-                    let webbby = webby?.origin
-                    let webbbby = webby?.origin.y
-                    weby = CGFloat(webbbby!)
+                    let webby = webViews[0].frame
+                    let webbby = webby.origin
+                    let webbbby = webby.origin.y
+                    weby = CGFloat(webbbby)
                 }
                 panInit = 0
             } else {

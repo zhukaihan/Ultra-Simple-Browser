@@ -20,7 +20,8 @@
 		8329D2611A8D992800532FD6 /* DemoImage3.png in Resources */ = {isa = PBXBuildFile; fileRef = 8329D25E1A8D992800532FD6 /* DemoImage3.png */; };
 		8329D2621A8D992800532FD6 /* DemoImage1.png in Resources */ = {isa = PBXBuildFile; fileRef = 8329D25F1A8D992800532FD6 /* DemoImage1.png */; };
 		8329D2631A8D992800532FD6 /* DemoImage2.png in Resources */ = {isa = PBXBuildFile; fileRef = 8329D2601A8D992800532FD6 /* DemoImage2.png */; };
-		8338BFA31A85B95300391E90 /* img1.png in Resources */ = {isa = PBXBuildFile; fileRef = 8338BFA21A85B95300391E90 /* img1.png */; };
+		8338BFA31A85B95300391E90 /* DemoImage0.png in Resources */ = {isa = PBXBuildFile; fileRef = 8338BFA21A85B95300391E90 /* DemoImage0.png */; };
+		8338E5451A97F7E4004DD22F /* CustomWKWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8338E5441A97F7E4004DD22F /* CustomWKWebView.swift */; };
 		833A74EB1A71E4DC00656ECB /* URLTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833A74EA1A71E4DC00656ECB /* URLTextField.swift */; };
 		833A74ED1A71E79D00656ECB /* toolBarItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833A74EC1A71E79D00656ECB /* toolBarItems.swift */; };
 		833C45B61A5110C2007833FE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 833C45B51A5110C2007833FE /* Settings.bundle */; };
@@ -96,7 +97,8 @@
 		8329D25E1A8D992800532FD6 /* DemoImage3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DemoImage3.png; sourceTree = "<group>"; };
 		8329D25F1A8D992800532FD6 /* DemoImage1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DemoImage1.png; sourceTree = "<group>"; };
 		8329D2601A8D992800532FD6 /* DemoImage2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DemoImage2.png; sourceTree = "<group>"; };
-		8338BFA21A85B95300391E90 /* img1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img1.png; sourceTree = "<group>"; };
+		8338BFA21A85B95300391E90 /* DemoImage0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DemoImage0.png; sourceTree = "<group>"; };
+		8338E5441A97F7E4004DD22F /* CustomWKWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomWKWebView.swift; sourceTree = "<group>"; };
 		833A74EA1A71E4DC00656ECB /* URLTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = URLTextField.swift; sourceTree = "<group>"; };
 		833A74EC1A71E79D00656ECB /* toolBarItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = toolBarItems.swift; sourceTree = "<group>"; };
 		833C45B51A5110C2007833FE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 				83A045821A33F770007E3FCC /* icon */,
 				83A045591A33F705007E3FCC /* AppDelegate.swift */,
 				83A0455E1A33F705007E3FCC /* ViewController.swift */,
+				8338E5441A97F7E4004DD22F /* CustomWKWebView.swift */,
 				83F3CBB21A8EC78B00864BF5 /* AlertController.swift */,
 				8374C8411A8AB965008F0420 /* NavigationController.swift */,
 				831554A71A89261100697E2D /* SuggestionsViewController.swift */,
@@ -202,25 +205,8 @@
 				83A045631A33F705007E3FCC /* Images.xcassets */,
 				83A045651A33F705007E3FCC /* LaunchScreen.xib */,
 				83A0455B1A33F705007E3FCC /* Ultra__Simple_Browser.xcdatamodeld */,
-				837CE4B11A6ACEE800B79EDD /* backbutton.png */,
-				837CE4B31A6ACF7100B79EDD /* forwardbutton.png */,
-				830110771A6C0B280026C4DD /* refreshimage.png */,
-				837CE4B71A6AD04600B79EDD /* stopimage.png */,
-				830110791A6C0C680026C4DD /* pages.png */,
-				830110871A6DA3F70026C4DD /* home.png */,
-				8301108B1A6DA4800026C4DD /* openinsafari.png */,
-				830110881A6DA3F70026C4DD /* share.png */,
-				83FE59381A6DCA7E0047C36E /* fullscreen.png */,
-				83879C9A1A6EED4200FE72E6 /* favorites.png */,
-				83C1F4D61A8ACBCC000148B0 /* orientationlock_locked.png */,
-				8374C8441A8AC415008F0420 /* orientationlock_unlocked.png */,
-				837CE4BB1A6AD24100B79EDD /* showtoolbar.png */,
 				83A0457E1A33F760007E3FCC /* Ultra_Simple_Browser_Internet_Error.html */,
-				8338BFA21A85B95300391E90 /* img1.png */,
-				8329D25F1A8D992800532FD6 /* DemoImage1.png */,
-				8329D2601A8D992800532FD6 /* DemoImage2.png */,
-				83F3CBB01A8DA82C00864BF5 /* DemoImage4.png */,
-				8329D25E1A8D992800532FD6 /* DemoImage3.png */,
+				83F3CBBA1A92573E00864BF5 /* images */,
 				83A045571A33F705007E3FCC /* Supporting Files */,
 			);
 			path = "Ultra, Simple Browser";
@@ -267,6 +253,31 @@
 				839D08F21A411DD4008F138A /* icon152.png */,
 			);
 			name = icon;
+			sourceTree = "<group>";
+		};
+		83F3CBBA1A92573E00864BF5 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				837CE4B11A6ACEE800B79EDD /* backbutton.png */,
+				837CE4B31A6ACF7100B79EDD /* forwardbutton.png */,
+				830110771A6C0B280026C4DD /* refreshimage.png */,
+				837CE4B71A6AD04600B79EDD /* stopimage.png */,
+				830110791A6C0C680026C4DD /* pages.png */,
+				830110871A6DA3F70026C4DD /* home.png */,
+				8301108B1A6DA4800026C4DD /* openinsafari.png */,
+				830110881A6DA3F70026C4DD /* share.png */,
+				83FE59381A6DCA7E0047C36E /* fullscreen.png */,
+				83879C9A1A6EED4200FE72E6 /* favorites.png */,
+				83C1F4D61A8ACBCC000148B0 /* orientationlock_locked.png */,
+				8374C8441A8AC415008F0420 /* orientationlock_unlocked.png */,
+				837CE4BB1A6AD24100B79EDD /* showtoolbar.png */,
+				8338BFA21A85B95300391E90 /* DemoImage0.png */,
+				8329D25F1A8D992800532FD6 /* DemoImage1.png */,
+				8329D2601A8D992800532FD6 /* DemoImage2.png */,
+				83F3CBB01A8DA82C00864BF5 /* DemoImage4.png */,
+				8329D25E1A8D992800532FD6 /* DemoImage3.png */,
+			);
+			name = images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -368,7 +379,7 @@
 				837CE4BC1A6AD24100B79EDD /* showtoolbar.png in Resources */,
 				83FE59391A6DCA7E0047C36E /* fullscreen.png in Resources */,
 				83A0458E1A33F798007E3FCC /* icon.png in Resources */,
-				8338BFA31A85B95300391E90 /* img1.png in Resources */,
+				8338BFA31A85B95300391E90 /* DemoImage0.png in Resources */,
 				830110781A6C0B280026C4DD /* refreshimage.png in Resources */,
 				8301108C1A6DA4800026C4DD /* openinsafari.png in Resources */,
 				839D08F31A411DD4008F138A /* icon29.png in Resources */,
@@ -409,6 +420,7 @@
 			files = (
 				83A0455F1A33F705007E3FCC /* ViewController.swift in Sources */,
 				833A74EB1A71E4DC00656ECB /* URLTextField.swift in Sources */,
+				8338E5451A97F7E4004DD22F /* CustomWKWebView.swift in Sources */,
 				833A74ED1A71E79D00656ECB /* toolBarItems.swift in Sources */,
 				83A0455A1A33F705007E3FCC /* AppDelegate.swift in Sources */,
 				838DDB241A83F794008007E0 /* BackForwardTableViewController.swift in Sources */,

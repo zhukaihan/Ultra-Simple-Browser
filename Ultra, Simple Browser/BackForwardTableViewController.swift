@@ -82,11 +82,11 @@ class BackForwardTableViewController: UITableViewController {
         // Return the number of rows in the section.
         
         if self.tag == 0 {
-            let number = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView]?.backForwardList.backList.count
-            return number!
+            let number = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].backForwardList.backList.count
+            return number
         } else if self.tag == 1 {
-            let number = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView]?.backForwardList.forwardList.count
-            return number!
+            let number = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].backForwardList.forwardList.count
+            return number
         } else if self.tag == 2 {
             let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
             let managedContext = appDelegate.managedObjectContext!
@@ -116,11 +116,11 @@ class BackForwardTableViewController: UITableViewController {
         let tableviewcell = UITableViewCell(style: .Subtitle, reuseIdentifier: nil)
         
         if self.tag == 0 {
-            tableviewcell.textLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView]?.backForwardList.itemAtIndex(0 - indexPath.row - 1)?.title
-            tableviewcell.detailTextLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView]?.backForwardList.itemAtIndex(0 - indexPath.row - 1)?.URL.absoluteString
+            tableviewcell.textLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].backForwardList.itemAtIndex(0 - indexPath.row - 1)?.title
+            tableviewcell.detailTextLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].backForwardList.itemAtIndex(0 - indexPath.row - 1)?.URL.absoluteString
         } else if self.tag == 1 {
-            tableviewcell.textLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView]?.backForwardList.itemAtIndex(indexPath.row + 1)?.title
-            tableviewcell.detailTextLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView]?.backForwardList.itemAtIndex(indexPath.row + 1)?.URL.absoluteString
+            tableviewcell.textLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].backForwardList.itemAtIndex(indexPath.row + 1)?.title
+            tableviewcell.detailTextLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].backForwardList.itemAtIndex(indexPath.row + 1)?.URL.absoluteString
         } else if self.tag == 2 {
             if Favoriteitems.count != 0 {
                 let theFavoriteitem = Favoriteitems[indexPath.row]
@@ -147,20 +147,19 @@ class BackForwardTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         dismissSelf()
-        var thewknavitem = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView]?.backForwardList.itemAtIndex(0)
+        var thewknavitem = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].backForwardList.itemAtIndex(0)
         if self.tag == 0 {
-            thewknavitem = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView]?.backForwardList.itemAtIndex(0 - indexPath.row - 1)
-            backForwardParentViewController.webViews[backForwardParentViewController.currentWebView]?.goToBackForwardListItem(thewknavitem!)
+            thewknavitem = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].backForwardList.itemAtIndex(0 - indexPath.row - 1)
+            backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].goToBackForwardListItem(thewknavitem!)
         } else if self.tag == 1 {
-            thewknavitem = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView]?.backForwardList.itemAtIndex(indexPath.row + 1)
-            backForwardParentViewController.webViews[backForwardParentViewController.currentWebView]?.goToBackForwardListItem(thewknavitem!)
+            thewknavitem = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].backForwardList.itemAtIndex(indexPath.row + 1)
+            backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].goToBackForwardListItem(thewknavitem!)
         } else if self.tag == 2 {
             let theFavoriteitem = Favoriteitems[indexPath.row]
             let urlstring = theFavoriteitem.valueForKey("url") as String?
             self.backForwardParentViewController.textField.text = urlstring
             self.backForwardParentViewController.didClickGo()
         } else if self.tag == 3 {
-            println("to History select")
             let theHistoryitem = Historyitems[indexPath.row]
             let urlstring = theHistoryitem.valueForKey("url") as String?
             self.backForwardParentViewController.textField.text = urlstring
@@ -242,8 +241,8 @@ class BackForwardTableViewController: UITableViewController {
     func startAddingFavorites() {
         println("startaddingfavorites")
         addNewFavoriteTableViewController = AddNewFavoriteItemTableViewController(style: .Grouped)
-        let title: String! = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView]?.title
-        let url: String! = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView]?.URL?.absoluteString
+        let title: String! = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].title
+        let url: String! = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].URL?.absoluteString
         addNewFavoriteTableViewController.defaultTitle = title
         if url != nil {
             addNewFavoriteTableViewController.defaultURL = url
@@ -289,6 +288,14 @@ class BackForwardTableViewController: UITableViewController {
         Historyitems.removeAll(keepCapacity: false)
         
         tableReload()
+        
+        let topSitesFetchRequest = NSFetchRequest(entityName:"TopSites")
+        var topSites = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as [NSManagedObject]!
+        if topSites.count > 0 {
+            for theTopSite in topSites {
+                managedContext.deleteObject(theTopSite)
+            }
+        }
     }
     
     func tableReload() {

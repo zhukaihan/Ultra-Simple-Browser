@@ -37,7 +37,7 @@ class DemoViewController: UIViewController, UIScrollViewDelegate {
         pageControl.pageIndicatorTintColor = UIColor.lightGrayColor()
         pageControl.currentPageIndicatorTintColor = UIColor.darkGrayColor()
         
-        var firstImageView = UIImageView(image: UIImage(named: "img1.png"))
+        var firstImageView = UIImageView(image: UIImage(named: "DemoImage0.png"))
         firstImageView.frame = CGRectMake(0, 0, view.frame.width, view.frame.height)
         firstImageView.contentMode = .ScaleAspectFit
         firstImageView.backgroundColor = UIColor(red: 0.3254, green: 0.7960, blue: 0.9921, alpha: 0.6)

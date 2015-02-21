@@ -10,12 +10,17 @@
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="url" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="TopSites" syncable="YES">
+        <attribute name="hostUrl" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="visits" optional="YES" attributeType="Float" defaultValueString="0" syncable="YES"/>
+    </entity>
     <entity name="UnclosedWebViews" syncable="YES">
         <attribute name="webviews" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
         <element name="Favorites" positionX="-63" positionY="-9" width="128" height="88"/>
-        <element name="UnclosedWebViews" positionX="-63" positionY="-18" width="128" height="60"/>
         <element name="Historys" positionX="-54" positionY="18" width="128" height="88"/>
+        <element name="TopSites" positionX="-36" positionY="36" width="128" height="75"/>
+        <element name="UnclosedWebViews" positionX="-63" positionY="-18" width="128" height="58"/>
     </elements>
 </model>
