@@ -33,9 +33,9 @@
 * **NavigationController.swift** It is a key for autoRotate.
 * **AppDelegate.swift** AppDelegate.swift. Do I need to say more?
 * **AlertController.swift** Will be use for downloading videos. Downloading videos is one of the ideas in list. Just don't know how to detect videos in website.
-* **CustomWKWebView.swift** It is a tryout for NSCoding. Ofcourse, failed. I try this out because NSKeyedArchiver and NSKeyedUnarchiver does not work for some god d**n reason. 
+* **CustomWKWebView.swift** It is a tryout for NSCoding. Of course, failed. I try this out because NSKeyedArchiver and NSKeyedUnarchiver does not work for some god d**n reason. 
 * **Info.plist** Just some orientation problem. Orientation is an big issue. Thank God, I fixed it (not in this plist). 
-* **(html)** That was planned to use for some internet connection error handling. Ofcourse, failed again.
+* **(html)** That was planned to use for some internet connection error handling. Of course, failed again.
 * **Description** Very, very, ultra, super, old file. It adds comments for ViewController. Haven't update it for a while. I will PROBABLY update it sometime. 
 
 **That's pretty much it. Suggestions are always welcome. Criticizes are slightly not so welcome, but still welcome if the criticizes are useful (such as improve your code design!!!!!).**
