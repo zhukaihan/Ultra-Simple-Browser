@@ -36,7 +36,7 @@
 * **Info.plist** Just some orientation problem. Orientation is an big issue. Thank God, I fixed it (not in this plist). 
 * **(html)** That was planned to use for some internet connection error handling. Ofcourse, failed again.
 * **Description** Very, very, ultra, super, old file. It adds comments for ViewController. Haven't update it for a while. I will PROBABLY update it sometime. 
-**That's pretty much it. Suggestions are always welcome. Criticizes are slightly not so welcome, but still welcome if the criticizes are useful (such as improve your code design!!!!!). **
+**That's pretty much it. Suggestions are always welcome. Criticizes are slightly not so welcome, but still welcome if the criticizes are useful (such as improve your code design!!!!!).**
 
 [appstorelink]: http://itunes.apple.com/us/app/ultra-simple-browser/id952551914?mt=8
 [githublink]: http://github.com/zhukaihan/Ultra-Simple-Browser
