@@ -17,10 +17,13 @@
 3. The xcodeproj. You know what is it.
 4. The Ultra, Simple Browser folder. It is the folder where every thing is. 
 5. The Tests. Never used it. It is not right for me. But it is not bothering me, so I let it be like that.
-        First, Images.xcassets. Only contains icons. 
-        Second, PNG Images. The images actually uses in app. 
-        Third, the Core Data model. It is what it is. 
-        Fourth, let's talk about swift files from the most important to the least important. 
+
+**Stuff in Ultra, Simple Browser**
+
+1. Images.xcassets. Only contains icons. 
+2. PNG Images. The images actually uses in app. 
+3. the Core Data model. It is what it is. 
+4. let's talk about swift files from the most important to the least important. 
             First, ViewController.swift. It is the heart of the App. It is about 1300 lines long(Horrible code design. I know). It mostly interacts with UI. It is the one and the only one linked to the storyboard, although there is nothing in the storyboard
             Second, let's say, toolBarItems.swift. It only configs the backButton and the forwardButton. I just to want to make the code shorter. BUT, it is the most basic feature in a browser: go back and go forward. 
             Third, URLTextField.swift. It is the URL text field. It acts as a host title bar when it is not the first responser. 
