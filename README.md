@@ -13,10 +13,11 @@ So, let's get started:
 5. let's talk about the folders and files. 
 
 #Files
+**First Level**
 1. Photoshop Images are images made by Photoshop and in Photoshop format. All of images in PNG format are in Ultra, Simple Browser/PNG Images. 
 2. Settings.Bundle is something let settings show up in Settings(of iOS), you can download it from App Store and have a taste of settings in Settings and have a sense what is it(I don't know why, but Xcode just created there. It is kind of (a word here is missing, you need to use your imagination to sense this word)).
-    Third, the xcodeproj. You know what is it.
-    Fourth, the Ultra, Simple Browser folder. It is the folder where every thing is. 
+3. the xcodeproj. You know what is it.
+4. the Ultra, Simple Browser folder. It is the folder where every thing is. 
         First, Images.xcassets. Only contains icons. 
         Second, PNG Images. The images actually uses in app. 
         Third, the Core Data model. It is what it is. 
