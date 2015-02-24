@@ -37,18 +37,6 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
         let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         let managedContext = appDelegate.managedObjectContext!
         
-        let fetchFavoritesRequest = NSFetchRequest(entityName:"Favorites")
-        Favoriteitems = managedContext.executeFetchRequest(fetchFavoritesRequest, error: nil) as [NSManagedObject]!
-        if Favoriteitems.count > 0 {
-            for i in 0...Favoriteitems.count - 1 {
-                let theFavoriteitem = Favoriteitems[i]
-                let titlestring = theFavoriteitem.valueForKey("title") as String?
-                initListOfSuggestionsTitle.append(titlestring)
-                let urlstring = theFavoriteitem.valueForKey("url") as String?
-                initListOfSuggestionsURL.append(urlstring)
-            }
-        }
-        
         let topSitesFetchRequest = NSFetchRequest(entityName:"TopSites")
         TopSitesitems = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as [NSManagedObject]!
         if TopSitesitems.count > 0 {
@@ -59,6 +47,18 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
                     initListOfSuggestionsTitle.append(titlestring)
                     initListOfSuggestionsURL.append("Top Sites")
                 }
+            }
+        }
+        
+        let fetchFavoritesRequest = NSFetchRequest(entityName:"Favorites")
+        Favoriteitems = managedContext.executeFetchRequest(fetchFavoritesRequest, error: nil) as [NSManagedObject]!
+        if Favoriteitems.count > 0 {
+            for i in 0...Favoriteitems.count - 1 {
+                let theFavoriteitem = Favoriteitems[i]
+                let titlestring = theFavoriteitem.valueForKey("title") as String?
+                initListOfSuggestionsTitle.append(titlestring)
+                let urlstring = theFavoriteitem.valueForKey("url") as String?
+                initListOfSuggestionsURL.append(urlstring)
             }
         }
         

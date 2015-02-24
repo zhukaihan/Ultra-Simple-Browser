@@ -800,9 +800,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func loadURLRegularly(urlstring: String) {
-        println("\(urlstring)")
         let url = NSURL(string: urlstring)
-        println("\(url)")
         let request = NSURLRequest(URL: url!)
         webViews[currentWebView].loadRequest(request)
     }
@@ -992,9 +990,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             self.view.addSubview(adbanner)
         }
         
-        UIView.beginAnimations("animateWebView", context: nil)
-        UIView.setAnimationDuration(0.2)
-        
         var addNewWebViewButton: UIBarButtonItem! = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addNewWebView")
         var doneShowingAllWebViewsButton: UIBarButtonItem! = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: "doneShowingAllWebViews")
         
@@ -1015,7 +1010,13 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         webViewLabels = []
         
         for tryShowingWebView in 0...webViews.count - 1 {
-            webViews[tryShowingWebView].frame = CGRectMake(20, CGFloat(200 * tryShowingWebView) + weby, view.frame.width - 40, view.frame.height - 10)
+            if tryShowingWebView < currentWebView {
+                webViews[tryShowingWebView].frame = CGRectMake(20, CGFloat(200 * tryShowingWebView) + weby - view.frame.height, view.frame.width - 40, view.frame.height - 10)
+            } else if tryShowingWebView > currentWebView {
+                webViews[tryShowingWebView].frame = CGRectMake(20, CGFloat(200 * tryShowingWebView) + weby + view.frame.height, view.frame.width - 40, view.frame.height - 10)
+            } else {
+                webViews[tryShowingWebView].frame = CGRectMake(20, CGFloat(200 * tryShowingWebView) + weby, view.frame.width - 40, view.frame.height - 10)
+            }
             webViews[tryShowingWebView].layer.cornerRadius = 5.0
             webViews[tryShowingWebView].layer.shadowColor = UIColor.blackColor().CGColor
             webViews[tryShowingWebView].layer.shadowRadius = 5.0
@@ -1025,7 +1026,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             //webViews[tryShowingWebView].allowsBackForwardNavigationGestures = false
             //let rotate: CATransform3D = CATransform3DMakeRotation(M_PI/6, 0, 1, 0)
             //webViews[tryShowingWebView].scrollView.layer.transform = CATransform3DPerspect(rotate, CGPointMake(0, 0), 200);
-            self.view.addSubview(webViews[tryShowingWebView])
             
             webViewLabels.insert(UILabel(), atIndex: tryShowingWebView)
             webViewLabels[tryShowingWebView]?.frame = CGRectMake(0, 0, view.frame.width - 40, 20)
@@ -1051,19 +1051,26 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             //webViewCloseLongPress.insert(UILongPressGestureRecognizer(), atIndex: tryShowingWebView)
             //webViewButtons[tryShowingWebView]?.addGestureRecognizer(webViewCloseLongPress[tryShowingWebView])
             //webViewCloseLongPress[tryShowingWebView].addTarget(self, action: <#Selector#>)
+            
+            UIView.beginAnimations("animateWebView", context: nil)
+            UIView.setAnimationDuration(0.75)
+            
+            self.view.addSubview(webViews[tryShowingWebView])
+            webViews[tryShowingWebView].frame = CGRectMake(20, CGFloat(200 * tryShowingWebView) + weby, view.frame.width - 40, view.frame.height - 10)
+            
+            UIView.commitAnimations()
+            
         }
         
         toolBar.frame = CGRectMake(0, view.frame.height - 44, view.frame.width, 44)
         self.view.bringSubviewToFront(toolBar)
-        
-        UIView.commitAnimations()
     }
     
     func doneShowingAllWebViews() {
         adbanner.removeFromSuperview()
         
         UIView.beginAnimations("animateWebView", context: nil)
-        UIView.setAnimationDuration(0.2)
+        UIView.setAnimationDuration(0.75)
         
         for i in 0...webViews.count - 1 {
             webViews[i].removeFromSuperview()
@@ -1267,8 +1274,15 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                         totalWebView--
                         currentWebView = webViews.endIndex - 1
                         if totalWebView < 1 {
+                            weby = 0
                             addNewWebView()
                         } else {
+                            if webViews[totalWebView - 1].frame.maxY < view.frame.height {
+                                weby = weby + view.frame.height - webViews[totalWebView - 1].frame.maxY
+                            } else if webViews[0].frame.origin.y > 0 {
+                                weby = weby - webViews[0].frame.origin.y
+                            }
+                            
                             for i in 0...webViews.count - 1 {
                                 webViewLabels[i]?.removeFromSuperview()
                                 webViews[i].removeFromSuperview()
@@ -1298,6 +1312,11 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                     let webbby = webby.origin
                     let webbbby = webby.origin.y
                     weby = CGFloat(webbbby)
+                    if webViews[totalWebView - 1].frame.maxY < view.frame.height {
+                        weby = weby + view.frame.height - webViews[totalWebView - 1].frame.maxY
+                    } else if webViews[0].frame.origin.y > 0 {
+                        weby = weby - webViews[0].frame.origin.y
+                    }
                 }
                 panInit = 0
             } else {
