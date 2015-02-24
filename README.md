@@ -5,11 +5,11 @@ Download at https://itunes.apple.com/us/app/ultra-simple-browser/id952551914?mt=
 Code on github.com/zhukaihan/Ultra-Simple-Browser
 Website at ultrasimplebrowser.zhukaihan.com
 So, let's get started.
-First, everything is made by me, basicly. 
-Second, all codes are in swift, in my opinion. 
-Third, copyright me. No copyleft yet. 
-Fourth, you can download it and open it in Xcode. 
-Fifth, let's talk about the folders and files. 
+1. everything is made by me, basicly. 
+2. all codes are in swift, in my opinion. 
+3. copyright me. No copyleft yet. 
+4. you can download it and open it in Xcode. 
+5. let's talk about the folders and files. 
     First, Photoshop Images are images made by Photoshop and in Photoshop format. All of images in PNG format are in         Ultra, Simple Browser/PNG Images. 
     Second, Settings.Bundle is something let settings show up in Settings(of iOS), you can download it from App Store         and have a taste of settings in Settings and have a sense what is it(I don't know why, but Xcode just created         there. It is kind of (a word here is missing, you need to use your imagination to sense this word)).
     Third, the xcodeproj. You know what is it.
