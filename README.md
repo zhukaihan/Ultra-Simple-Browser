@@ -1,7 +1,7 @@
 #How does README in Github works? It is so strange.
 # Ultra-Simple-Browser
 It is a browser.
-Download at [App Store] [itunes.apple.com/us/app/ultra-simple-browser/id952551914?mt=8]
+Download at [App Store] [appstorelink]
 Code on github.com/zhukaihan/Ultra-Simple-Browser
 Website at ultrasimplebrowser.zhukaihan.com
 
@@ -30,3 +30,5 @@ Website at ultrasimplebrowser.zhukaihan.com
             Seventh, DemoViewController.swift. The ViewController just like it named(although every controller named                 by its functions). It guide user to use this browser at its first launch. 
             Eightth(Eighth?), 
     Fifth, the Tests. Never used it. It is not right for me. But it is not bothering me, so I let it be like that.
+
+[appstorelink]: itunes.apple.com/us/app/ultra-simple-browser/id952551914?mt=8
