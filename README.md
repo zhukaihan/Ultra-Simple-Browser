@@ -24,14 +24,14 @@
 2. PNG Images. The images actually uses in app. 
 3. the Core Data model. It is what it is. 
 4. let's talk about swift files from the most important to the least important. 
-            First, ViewController.swift. It is the heart of the App. It is about 1300 lines long(Horrible code design. I know). It mostly interacts with UI. It is the one and the only one linked to the storyboard, although there is nothing in the storyboard
-            Second, let's say, toolBarItems.swift. It only configs the backButton and the forwardButton. I just to want to make the code shorter. BUT, it is the most basic feature in a browser: go back and go forward. 
-            Third, URLTextField.swift. It is the URL text field. It acts as a host title bar when it is not the first responser. 
-            Fourth, here we go, SuggestionViewController.swift(Although I think SuggestionViewController is more important, I put it at the fourth). It is a child view controller under ViewController. It give suggestions, such as the top 20 website that human beings visits, the favorites that user created,                   the websites that user visits over ten times, and histories user visited. 
-            Fifth, BackForwardTableViewController.swift. The TableViewController that displays the backList and                      forwardList of the WKWebView, favorites and histories. 
-            Sixth, AddNewFavoriteItemTableViewController.swift. The TableViewController that let user add new                        favorite item to Favorites
-            Seventh, DemoViewController.swift. The ViewController just like it named(although every controller named                 by its functions). It guide user to use this browser at its first launch. 
-            Eightth(Eighth?), 
+* First, ViewController.swift. It is the heart of the App. It is about 1300 lines long(Horrible code design. I know). It mostly interacts with UI. It is the one and the only one linked to the storyboard, although there is nothing in the storyboard
+* Second, let's say, toolBarItems.swift. It only configs the backButton and the forwardButton. I just to want to make the code shorter. BUT, it is the most basic feature in a browser: go back and go forward. 
+* Third, URLTextField.swift. It is the URL text field. It acts as a host title bar when it is not the first responser. 
+* Fourth, here we go, SuggestionViewController.swift(Although I think SuggestionViewController is more important, I put it at the fourth). It is a child view controller under ViewController. It give suggestions, such as the top 20 website that human beings visits, the favorites that user created,                   the websites that user visits over ten times, and histories user visited. 
+* Fifth, BackForwardTableViewController.swift. The TableViewController that displays the backList and forwardList of the WKWebView, favorites and histories. 
+* Sixth, AddNewFavoriteItemTableViewController.swift. The TableViewController that let user add new favorite item to Favorites
+* Seventh, DemoViewController.swift. The ViewController just like it named(although every controller named by its functions). It guide user to use this browser at its first launch. 
+* Eightth(Eighth?), 
 
 [appstorelink]: http://itunes.apple.com/us/app/ultra-simple-browser/id952551914?mt=8
 [githublink]: http://github.com/zhukaihan/Ultra-Simple-Browser
