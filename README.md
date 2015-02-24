@@ -1,8 +1,8 @@
 #How does README in Github works? It is so strange.
 # Ultra-Simple-Browser
 * It is a browser.
-* Download at [App Store] [appstorelink]
-* Code on [my github] [githublink]
+* Download at [**App Store**] [appstorelink]
+* Code on [**my github**] [githublink]
 * Website at ultrasimplebrowser.zhukaihan.com
 * Everything is made by me, basicly. 
 * All codes are in swift, in my opinion. 
@@ -23,7 +23,6 @@
 * **Images.xcassets** Only contains icons. 
 * **PNG Images** The images actually uses in app. 
 * **Core Data model** It is what it is. 
-* let's talk about swift files from the most important to the least important. 
 * **ViewController.swift** It is the heart of the App. It is about 1300 lines long(Horrible code design. I know). It mostly interacts with UI. It is the one and the only one linked to the storyboard, although there is nothing in the storyboard
 * **toolBarItems.swift** It only configs the backButton and the forwardButton. I just to want to make the code shorter. BUT, it is the most basic feature in a browser: go back and go forward. 
 * **URLTextField.swift** It is the URL text field. It acts as a host title bar when it is not the first responser. 
