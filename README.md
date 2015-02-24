@@ -11,7 +11,8 @@ So, let's get started:
 3. copyright me. No copyleft yet. 
 4. you can download it and open it in Xcode. 
 5. let's talk about the folders and files. 
-    First, Photoshop Images are images made by Photoshop and in Photoshop format. All of images in PNG format are in         Ultra, Simple Browser/PNG Images. 
+    
+1. Photoshop Images are images made by Photoshop and in Photoshop format. All of images in PNG format are in         Ultra, Simple Browser/PNG Images. 
     Second, Settings.Bundle is something let settings show up in Settings(of iOS), you can download it from App Store         and have a taste of settings in Settings and have a sense what is it(I don't know why, but Xcode just created         there. It is kind of (a word here is missing, you need to use your imagination to sense this word)).
     Third, the xcodeproj. You know what is it.
     Fourth, the Ultra, Simple Browser folder. It is the folder where every thing is. 
