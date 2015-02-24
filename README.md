@@ -2,7 +2,9 @@
 # Ultra-Simple-Browser
 It is a browser.
 Download at [App Store] [appstorelink]
+
 Code on [my github] [githublink]
+
 Website at ultrasimplebrowser.zhukaihan.com
 
 1. everything is made by me, basicly. 
