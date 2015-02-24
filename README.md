@@ -5,7 +5,8 @@
 * Website at ultrasimplebrowser.zhukaihan.com
 * Everything is made by me, basicly. 
 * All codes are in swift, in my opinion. 
-* Ultra, Simple Browser is copyright 2014-2015 Kaihan Zhu. No copyleft yet. 
+* Ultra, Simple Browser is copyright 2014-2015 Kaihan Zhu.
+* No copyleft yet. I will in someday in the future.
 * You can download it and open it in Xcode. 
 
 #Files
