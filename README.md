@@ -1,8 +1,8 @@
 #How does README in Github works? It is so strange.
 # Ultra-Simple-Browser
 * It is a browser.
-* Download at [**App Store**] [appstorelink]
-* Code on [**my github**] [githublink]
+* Download at [App Store] [appstorelink]
+* Code on [my github] [githublink]
 * Website at ultrasimplebrowser.zhukaihan.com
 * Everything is made by me, basicly. 
 * All codes are in swift, in my opinion. 
