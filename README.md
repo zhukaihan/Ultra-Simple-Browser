@@ -4,7 +4,7 @@ It is a browser.
 Download at https://itunes.apple.com/us/app/ultra-simple-browser/id952551914?mt=8
 Code on github.com/zhukaihan/Ultra-Simple-Browser
 Website at ultrasimplebrowser.zhukaihan.com
-So, let's get started.
+So, let's get started:
 1. everything is made by me, basicly. 
 2. all codes are in swift, in my opinion. 
 3. copyright me. No copyleft yet. 
