@@ -1,16 +1,20 @@
 #How does README in Github works? It is so strange.
 # Ultra-Simple-Browser
 It is a browser.
+
 Download at [App Store] [appstorelink]
 
 Code on [my github] [githublink]
 
 Website at ultrasimplebrowser.zhukaihan.com
 
-1. everything is made by me, basicly. 
-2. all codes are in swift, in my opinion. 
-3. copyright me. No copyleft yet. 
-4. you can download it and open it in Xcode. 
+Everything is made by me, basicly. 
+
+All codes are in swift, in my opinion. 
+
+Ultra, Simple Browser is copyright 2014-2015 Kaihan Zhu. No copyleft yet. 
+
+You can download it and open it in Xcode. 
 
 #Files
 **First Level**
