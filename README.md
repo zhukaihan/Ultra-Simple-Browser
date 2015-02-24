@@ -2,7 +2,7 @@
 # Ultra-Simple-Browser
 It is a browser.
 Download at [App Store] [appstorelink]
-Code on github.com/zhukaihan/Ultra-Simple-Browser
+Code on [my github] [githublink]
 Website at ultrasimplebrowser.zhukaihan.com
 
 1. everything is made by me, basicly. 
@@ -31,4 +31,5 @@ Website at ultrasimplebrowser.zhukaihan.com
             Eightth(Eighth?), 
     Fifth, the Tests. Never used it. It is not right for me. But it is not bothering me, so I let it be like that.
 
-[appstorelink]: itunes.apple.com/us/app/ultra-simple-browser/id952551914?mt=8
+[appstorelink]: http://itunes.apple.com/us/app/ultra-simple-browser/id952551914?mt=8
+[githublink]: http://github.com/zhukaihan/Ultra-Simple-Browser
