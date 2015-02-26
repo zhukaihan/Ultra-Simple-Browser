@@ -1,4 +1,4 @@
-# Ultra-Simple-Browser
+# Ultra, Simple Browser
 * It is a browser.
 * Download at [App Store] [appstorelink]
 * Code on [my github] [githublink]
