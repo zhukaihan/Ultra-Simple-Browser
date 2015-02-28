@@ -77,7 +77,7 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
         listOfSuggestionsTitle = initListOfSuggestionsTitle
         listOfSuggestionsURL = initListOfSuggestionsURL
         
-        suggestionsTableView.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 3000)
+        suggestionsTableView.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
         suggestionsTableView.alpha = 1
         suggestionsTableView.delegate = self
         suggestionsTableView.dataSource = self
@@ -169,22 +169,20 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
                     var url = NSURL(string: "http://unionsug.baidu.com/su?wd=" + subString)
                     var sugurlrequest = NSURLRequest(URL: url!)
                     var myresponse = NSURLConnection.sendSynchronousRequest(sugurlrequest, returningResponse: nil, error: nil)
-                    
                     var encode:NSStringEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue))
-                    
                     var jsonString = NSString(data: myresponse!, encoding: encode)
                     jsonString = jsonString?.substringFromIndex((jsonString?.rangeOfString("[").location)!)
                     jsonString = jsonString?.substringToIndex((jsonString?.length)! - 3)
-                    
                     var jsonData = jsonString?.dataUsingEncoding(NSUTF8StringEncoding)
                     var sugDic: NSArray = NSJSONSerialization.JSONObjectWithData(jsonData!, options: .MutableContainers, error: nil) as NSArray
-                    
-                    for i in 0...sugDic.count - 1 {
-                        let string: String = String(sugDic[i] as NSString)
-                        self.listOfSuggestionsTitle.append(string.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding))
-                        self.listOfSuggestionsURL.append("Search Engine Suggestion")
+                    if sugDic.count > 0 {
+                        for i in 0...sugDic.count - 1 {
+                            let string: String = String(sugDic[i] as NSString)
+                            self.listOfSuggestionsTitle.append(string.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding))
+                            self.listOfSuggestionsURL.append("Search Engine Suggestion")
+                        }
                     }
-                } else  {
+                } else {
                     var url: String = "http://google.com/complete/search?output=toolbar&q=" + subString
                     let parserurl = NSURL(string: url)
                     self.parser = NSXMLParser(contentsOfURL: parserurl)

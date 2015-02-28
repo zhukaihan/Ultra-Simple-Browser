@@ -9,13 +9,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Ultra, Simple Browser/ViewController.swift"
-            timestampString = "445990847.011453"
+            filePath = "Ultra, Simple Browser/SuggestionsViewController.swift"
+            timestampString = "446830396.766031"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "226"
-            endingLineNumber = "226"
-            landmarkName = "loadView()"
+            startingLineNumber = "154"
+            endingLineNumber = "154"
+            landmarkName = "searchAutocompleteEntriesWithSubstring(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,13 +25,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Ultra, Simple Browser/ViewController.swift"
-            timestampString = "446223635.018061"
+            filePath = "Ultra, Simple Browser/SuggestionsViewController.swift"
+            timestampString = "446831135.028823"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "224"
-            endingLineNumber = "224"
-            landmarkName = "loadView()"
+            startingLineNumber = "157"
+            endingLineNumber = "157"
+            landmarkName = "searchAutocompleteEntriesWithSubstring(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -41,42 +41,42 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Ultra, Simple Browser/ViewController.swift"
-            timestampString = "446223638.953493"
+            filePath = "Ultra, Simple Browser/SuggestionsViewController.swift"
+            timestampString = "446831135.028823"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "251"
-            endingLineNumber = "251"
-            landmarkName = "loadView()"
+            startingLineNumber = "166"
+            endingLineNumber = "166"
+            landmarkName = "searchAutocompleteEntriesWithSubstring(_:)"
             landmarkType = "5">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Ultra__Simple_Browser.ViewController.loadView (Ultra__Simple_Browser.ViewController)() -&gt; ()"
+                  symbolName = "Ultra__Simple_Browser.SuggestionsViewController.searchAutocompleteEntriesWithSubstring (Ultra__Simple_Browser.SuggestionsViewController)(Swift.String) -&gt; ()"
                   moduleName = "Ultra, Simple Browser"
-                  urlString = "file:///Users/PeterZhu/Desktop/Ultra,%20Simple%20Browser/Ultra,%20Simple%20Browser/ViewController.swift"
-                  timestampString = "446415758.867076"
+                  urlString = "file:///Users/PeterZhu/Desktop/Ultra,%20Simple%20Browser/Ultra,%20Simple%20Browser/SuggestionsViewController.swift"
+                  timestampString = "446830753.55186"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "251"
-                  endingLineNumber = "251"
-                  offsetFromSymbolStart = "39532">
+                  startingLineNumber = "169"
+                  endingLineNumber = "169"
+                  offsetFromSymbolStart = "4852">
                </Location>
                <Location
                   shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "Ultra__Simple_Browser.ViewController.loadView (Ultra__Simple_Browser.ViewController)() -&gt; ()"
+                  symbolName = "Ultra__Simple_Browser.SuggestionsViewController.(searchAutocompleteEntriesWithSubstring (Ultra__Simple_Browser.SuggestionsViewController) -&gt; (Swift.String) -&gt; ()).(closure #1)"
                   moduleName = "Ultra, Simple Browser"
-                  urlString = "file:///Users/PeterZhu/Desktop/Ultra,%20Simple%20Browser/Ultra,%20Simple%20Browser/ViewController.swift"
-                  timestampString = "446415758.867216"
+                  urlString = "file:///Users/PeterZhu/Desktop/Ultra,%20Simple%20Browser/Ultra,%20Simple%20Browser/SuggestionsViewController.swift"
+                  timestampString = "446830753.552061"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "251"
-                  endingLineNumber = "251"
-                  offsetFromSymbolStart = "39548">
+                  startingLineNumber = "170"
+                  endingLineNumber = "170"
+                  offsetFromSymbolStart = "52">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -87,13 +87,125 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Ultra, Simple Browser/ViewController.swift"
-            timestampString = "446223662.324257"
+            filePath = "Ultra, Simple Browser/SuggestionsViewController.swift"
+            timestampString = "446831135.028823"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "227"
-            endingLineNumber = "227"
-            landmarkName = "loadView()"
+            startingLineNumber = "168"
+            endingLineNumber = "168"
+            landmarkName = "searchAutocompleteEntriesWithSubstring(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/SuggestionsViewController.swift"
+            timestampString = "446831304.398021"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "181"
+            endingLineNumber = "181"
+            landmarkName = "searchAutocompleteEntriesWithSubstring(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/SuggestionsViewController.swift"
+            timestampString = "446831233.663279"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "174"
+            endingLineNumber = "174"
+            landmarkName = "searchAutocompleteEntriesWithSubstring(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/SuggestionsViewController.swift"
+            timestampString = "446831234.682353"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "172"
+            endingLineNumber = "172"
+            landmarkName = "searchAutocompleteEntriesWithSubstring(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/SuggestionsViewController.swift"
+            timestampString = "446831235.404282"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "170"
+            endingLineNumber = "170"
+            landmarkName = "searchAutocompleteEntriesWithSubstring(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/SuggestionsViewController.swift"
+            timestampString = "446831242.416872"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "176"
+            endingLineNumber = "176"
+            landmarkName = "searchAutocompleteEntriesWithSubstring(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/SuggestionsViewController.swift"
+            timestampString = "446831245.753047"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "178"
+            endingLineNumber = "178"
+            landmarkName = "searchAutocompleteEntriesWithSubstring(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/SuggestionsViewController.swift"
+            timestampString = "446831251.434643"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "180"
+            endingLineNumber = "180"
+            landmarkName = "searchAutocompleteEntriesWithSubstring(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -104,13 +216,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Ultra, Simple Browser/ViewController.swift"
-            timestampString = "446223663.584629"
+            timestampString = "446831610.871394"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "246"
-            endingLineNumber = "246"
-            landmarkName = "loadView()"
-            landmarkType = "5">
+            startingLineNumber = "760"
+            endingLineNumber = "760"
+            landmarkName = "ViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -120,12 +232,60 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Ultra, Simple Browser/ViewController.swift"
-            timestampString = "446415777.64533"
+            timestampString = "446831554.482312"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "228"
-            endingLineNumber = "228"
-            landmarkName = "loadView()"
+            startingLineNumber = "762"
+            endingLineNumber = "762"
+            landmarkName = "textFieldDidChanged()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/ViewController.swift"
+            timestampString = "446851951.798836"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "732"
+            endingLineNumber = "732"
+            landmarkName = "textFieldDidBeginEditing(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/ViewController.swift"
+            timestampString = "446851953.81744"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "733"
+            endingLineNumber = "733"
+            landmarkName = "textFieldDidBeginEditing(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/SuggestionsViewController.swift"
+            timestampString = "446851961.70135"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "80"
+            endingLineNumber = "80"
+            landmarkName = "viewDidLoad()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -13,6 +13,7 @@ import iAd
 import QuartzCore
 import CoreData
 import Dispatch
+import AVFoundation
 
 class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate {
     
@@ -315,6 +316,8 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        println("View Will Disappear")
+        
         NSURLCache.sharedURLCache().removeAllCachedResponses()
         NSNotificationCenter.defaultCenter().removeObserver(self)
         
@@ -395,6 +398,11 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         } else {
             unlockOrientation()
         }
+        notificationCenter.addObserver(self, selector: "videoPlayed", name: AVPlayerItemDidPlayToEndTimeNotification, object: nil)
+    }
+    
+    func videoPlayed() {
+        println("videoPlayed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     }
     
     func checkGos() {
@@ -714,12 +722,14 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         textField.adjustsFontSizeToFitWidth = false
         textField.text = webViews[currentWebView].URL?.absoluteString?.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
         textField.textAlignment = .Left
-        textField.selectedTextRange = textField.textRangeFromPosition(textField.beginningOfDocument, toPosition: textField.endOfDocument)
+        dispatch_async(dispatch_get_main_queue(), {
+            textField.selectedTextRange = textField.textRangeFromPosition(textField.beginningOfDocument, toPosition: textField.endOfDocument)
+        })
         
         childSuggestionsViewController = SuggestionsViewController()
         self.addChildViewController(childSuggestionsViewController)
         childSuggestionsViewController.suggestionsParentViewController = self
-        childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
+        childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 3000)
         self.view.addSubview(childSuggestionsViewController.view)
         childSuggestionsViewController.didMoveToParentViewController(self)
     }
@@ -750,6 +760,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     
     func textFieldDidChanged() {
         var substring: String = textField.text
+        println("good textString \(substring)")
         childSuggestionsViewController.searchAutocompleteEntriesWithSubstring(substring)
         childSuggestionsViewController.suggestionsTableView.reloadData()
     }
