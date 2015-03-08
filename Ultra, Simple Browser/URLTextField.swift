@@ -32,7 +32,7 @@ class URLTextField: UITextField, NSXMLParserDelegate {
     
     func configrefreshImage() {
         let refreshImage = UIImage(named: "refreshimage.png")!
-        let refreshImageButton = UIButton.buttonWithType(.Custom) as UIButton
+        let refreshImageButton = UIButton.buttonWithType(.Custom) as! UIButton
         refreshImageButton.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
         refreshImageButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 3)
         refreshImageButton.setImage(refreshImage, forState: .Normal)
@@ -46,7 +46,7 @@ class URLTextField: UITextField, NSXMLParserDelegate {
     
     func configstopImage() {
         let stopImage = UIImage(named: "stopimage.png")!
-        let stopImageButton = UIButton.buttonWithType(.Custom) as UIButton
+        let stopImageButton = UIButton.buttonWithType(.Custom) as! UIButton
         stopImageButton.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
         stopImageButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 3)
         stopImageButton.setImage(stopImage, forState: .Normal)

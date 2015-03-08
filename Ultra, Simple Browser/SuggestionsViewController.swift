@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import Dispatch
 
-class SuggestionsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, NSXMLParserDelegate {
+class SuggestionsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     var suggestionsTableView: UITableView = UITableView()
     var suggestionsParentViewController: ViewController!
@@ -21,9 +21,7 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
     var listOfSuggestionsURL: [String!] = ["google.com", "facebook.com", "youtube.com", "yahoo.com", "baidu.com", "amazon.com", "wikipedia.org", "taobao.com", "twitter.com", "qq.com", "live.com", "linkedln.com", "sina.com.cn", "tmall.com", "weibo.com", "blogspot.com", "ebay.com", "yandex.ru"]
     var initListOfSuggestionsTitle: [String!] = []
     var initListOfSuggestionsURL: [String!] = []
-    ////////parser var was here
     //var textFieldWidget: UIToolbar! = UIToolbar()
-    var parser: NSXMLParser! = NSXMLParser()
     //var qrcodescanner: UIButton! = UIButton()
     
     override func viewDidLoad() {
@@ -34,16 +32,16 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
         initListOfSuggestionsTitle = listOfSuggestionsTitle
         initListOfSuggestionsURL = listOfSuggestionsURL
         
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let managedContext = appDelegate.managedObjectContext!
         
         let topSitesFetchRequest = NSFetchRequest(entityName:"TopSites")
-        TopSitesitems = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as [NSManagedObject]!
+        TopSitesitems = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as! [NSManagedObject]!
         if TopSitesitems.count > 0 {
             for theTopSite in TopSitesitems {
-                if theTopSite.valueForKey("visits") as Float > 10 {
+                if theTopSite.valueForKey("visits") as! Float > 10 {
                     let theFavoriteitem = theTopSite
-                    let titlestring = theTopSite.valueForKey("hostUrl") as String?
+                    let titlestring = theTopSite.valueForKey("hostUrl") as! String?
                     initListOfSuggestionsTitle.append(titlestring)
                     initListOfSuggestionsURL.append("Top Sites")
                 }
@@ -51,25 +49,25 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
         }
         
         let fetchFavoritesRequest = NSFetchRequest(entityName:"Favorites")
-        Favoriteitems = managedContext.executeFetchRequest(fetchFavoritesRequest, error: nil) as [NSManagedObject]!
+        Favoriteitems = managedContext.executeFetchRequest(fetchFavoritesRequest, error: nil) as! [NSManagedObject]!
         if Favoriteitems.count > 0 {
             for i in 0...Favoriteitems.count - 1 {
                 let theFavoriteitem = Favoriteitems[i]
-                let titlestring = theFavoriteitem.valueForKey("title") as String?
+                let titlestring = theFavoriteitem.valueForKey("title") as! String?
                 initListOfSuggestionsTitle.append(titlestring)
-                let urlstring = theFavoriteitem.valueForKey("url") as String?
+                let urlstring = theFavoriteitem.valueForKey("url") as! String?
                 initListOfSuggestionsURL.append(urlstring)
             }
         }
         
         let fetchHistorysRequest = NSFetchRequest(entityName:"Historys")
-        Historyitems = managedContext.executeFetchRequest(fetchHistorysRequest, error: nil) as [NSManagedObject]!
+        Historyitems = managedContext.executeFetchRequest(fetchHistorysRequest, error: nil) as! [NSManagedObject]!
         if Historyitems.count > 0 {
             for i in 0...Historyitems.count - 1 {
                 let theHistoryitem = Historyitems[i]
-                let titlestring = theHistoryitem.valueForKey("title") as String?
+                let titlestring = theHistoryitem.valueForKey("title") as! String?
                 initListOfSuggestionsTitle.append(titlestring)
-                let urlstring = theHistoryitem.valueForKey("url") as String?
+                let urlstring = theHistoryitem.valueForKey("url") as! String?
                 initListOfSuggestionsURL.append(urlstring)
             }
         }
@@ -142,22 +140,15 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
         suggestionsParentViewController.textField.resignFirstResponder()
     }
     
-    func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [NSObject : AnyObject]) {
-        if elementName == "suggestion" {
-            listOfSuggestionsTitle.append(attributeDict.values.first as String)
-            listOfSuggestionsURL.append("Search Engine Suggestion")
-        }
-    }
-    
     func searchAutocompleteEntriesWithSubstring(substring: String) {
         if substring != "" {
             let subString = String(substring).stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
             listOfSuggestionsTitle.removeAll(keepCapacity: false)
             listOfSuggestionsURL.removeAll(keepCapacity: false)
             if initListOfSuggestionsTitle.count > 0 {
-                let uppsubstring = String(subString).uppercaseString
+                let uppsubstring = String(subString).uppercaseStringWithLocale(NSLocale.currentLocale())
                 for i in 0...initListOfSuggestionsURL.count - 1 {
-                    if (initListOfSuggestionsTitle[i].uppercaseString.rangeOfString(uppsubstring) != nil) || (initListOfSuggestionsURL[i].uppercaseString.rangeOfString(uppsubstring) != nil)   {
+                    if (initListOfSuggestionsTitle[i].uppercaseStringWithLocale(NSLocale.currentLocale()).rangeOfString(uppsubstring) != nil) || (initListOfSuggestionsURL[i].uppercaseStringWithLocale(NSLocale.currentLocale()).rangeOfString(uppsubstring) != nil)   {
                         listOfSuggestionsTitle.append(initListOfSuggestionsTitle[i])
                         listOfSuggestionsURL.append(initListOfSuggestionsURL[i])
                     }
@@ -169,31 +160,52 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
                     var url = NSURL(string: "http://unionsug.baidu.com/su?wd=" + subString)
                     var sugurlrequest = NSURLRequest(URL: url!)
                     var myresponse = NSURLConnection.sendSynchronousRequest(sugurlrequest, returningResponse: nil, error: nil)
+                    
                     var encode:NSStringEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue))
                     var jsonString = NSString(data: myresponse!, encoding: encode)
-                    jsonString = jsonString?.substringFromIndex((jsonString?.rangeOfString("[").location)!)
-                    jsonString = jsonString?.substringToIndex((jsonString?.length)! - 3)
-                    var jsonData = jsonString?.dataUsingEncoding(NSUTF8StringEncoding)
-                    var sugDic: NSArray = NSJSONSerialization.JSONObjectWithData(jsonData!, options: .MutableContainers, error: nil) as NSArray
-                    if sugDic.count > 0 {
-                        for i in 0...sugDic.count - 1 {
-                            let string: String = String(sugDic[i] as NSString)
-                            self.listOfSuggestionsTitle.append(string.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding))
-                            self.listOfSuggestionsURL.append("Search Engine Suggestion")
+                    if jsonString != nil {
+                        jsonString = jsonString?.substringFromIndex((jsonString?.rangeOfString("[").location)!)
+                        jsonString = jsonString?.substringToIndex((jsonString?.length)! - 3)
+                        
+                        var jsonData = jsonString?.dataUsingEncoding(NSUTF8StringEncoding)
+                        if (jsonData != nil) && (jsonString?.length > 2) {
+                            var sugDic: NSArray = NSJSONSerialization.JSONObjectWithData(jsonData!, options: .MutableContainers, error: nil) as! NSArray
+                            if sugDic.count > 0 {
+                                for i in 0...sugDic.count - 1 {
+                                    let string: String = String(sugDic[i] as! NSString)
+                                    self.listOfSuggestionsTitle.append(string.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding))
+                                    self.listOfSuggestionsURL.append("Search Engine Suggestion")
+                                }
+                            }
                         }
                     }
                 } else {
-                    var url: String = "http://google.com/complete/search?output=toolbar&q=" + subString
-                    let parserurl = NSURL(string: url)
-                    self.parser = NSXMLParser(contentsOfURL: parserurl)
-                    self.parser.delegate = self
-                    self.parser.parse()
+                    var urlstring: String = "http://google.com/complete/search?output=firefox&q=" + subString
+                    var url: NSURL = NSURL(string: urlstring)!
+                    let sugurlrequest: NSURLRequest = NSURLRequest(URL: url)
+                    var myresponse = NSURLConnection.sendSynchronousRequest(sugurlrequest, returningResponse: nil, error: nil)
+                    
+                    var jsonString = NSString(data: myresponse!, encoding: NSUTF8StringEncoding)
+                    if jsonString != nil {
+                        jsonString = jsonString?.substringFromIndex((jsonString?.rangeOfString(",[").location)! + 1)
+                        jsonString = jsonString?.substringToIndex((jsonString?.length)! - 1)
+                        
+                        var jsonData = jsonString?.dataUsingEncoding(NSUTF8StringEncoding)
+                        if (jsonData != nil) && (jsonString?.length > 2) {
+                            var sugDic: NSArray = NSJSONSerialization.JSONObjectWithData(jsonData!, options: .MutableContainers, error: nil) as! NSArray
+                            if sugDic.count > 0 {
+                                for i in 0...sugDic.count - 1 {
+                                    let string: String = String(sugDic[i] as! NSString)
+                                    self.listOfSuggestionsTitle.append(string.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding))
+                                    self.listOfSuggestionsURL.append("Search Engine Suggestion")
+                                }
+                            }
+                        }
+                    }
                 }
                 dispatch_async(dispatch_get_main_queue(), {
-                    UIView.beginAnimations("animateWebView", context: nil)
-                    UIView.setAnimationDuration(0.2)
+                    //animation for reloadData was 0.2 seconds. but it didn't work. ofcourse it didn't.
                     self.suggestionsTableView.reloadData()
-                    UIView.commitAnimations()
                 })
             })
         } else {

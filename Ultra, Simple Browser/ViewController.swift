@@ -6,6 +6,7 @@
 //  Copyright (c) 2014年 Peter Zhu. All rights reserved.
 //
 //  This is an "Emily Dickinson" style poetry.
+//  In this app, I used WKWebView. Although UIWebView may have more features, I believe WebKit is going to be very powerful and more powerful than UIWebView in the future.
 
 import UIKit  //Foundation included in
 import WebKit
@@ -13,9 +14,8 @@ import iAd
 import QuartzCore
 import CoreData
 import Dispatch
-import AVFoundation
 
-class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate {
+class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, ADBannerViewDelegate {
     
     
 //////////Variables
@@ -67,11 +67,12 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     var edgeSwipe: UIPanGestureRecognizer! = UIPanGestureRecognizer()
     var showButton: UIButton! = UIButton()
     var textField: URLTextField!
-    var childSuggestionsViewController: SuggestionsViewController = SuggestionsViewController()
+    var childSuggestionsViewController: SuggestionsViewController!// = SuggestionsViewController()
     
     var progressBar: UIProgressView! = UIProgressView(progressViewStyle: .Bar)
     
     var adbanner: ADBannerView! = ADBannerView()
+    var isAdbannerEnoughSecondsYet: Bool = false
     
     let backgroundimage = UIImageView(image: UIImage(named: "icon.png")!)
     
@@ -219,10 +220,10 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refersh")
         refreshControl.addTarget(self, action: "doRefresh", forControlEvents: .ValueChanged)
         
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let managedContext = appDelegate.managedObjectContext!
         let fetchRequest = NSFetchRequest(entityName:"UnclosedWebViews")
-        unclosedwebviews = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
+        unclosedwebviews = managedContext.executeFetchRequest(fetchRequest, error: nil) as! [NSManagedObject]!
         
         if unclosedwebviews.count != 0 {
             for i in 0...unclosedwebviews.count - 1 {
@@ -232,7 +233,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                 webViews[i].scrollView.addSubview(refreshControl)
                 
                 let webview = unclosedwebviews[i]
-                let urlstring = webview.valueForKey("webviews") as String?
+                let urlstring = webview.valueForKey("webviews") as! String?
                 if (urlstring != nil) {
                     let url = NSURL(string: urlstring!)
                     let request = NSURLRequest(URL: url!)
@@ -321,7 +322,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         NSURLCache.sharedURLCache().removeAllCachedResponses()
         NSNotificationCenter.defaultCenter().removeObserver(self)
         
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let managedContext = appDelegate.managedObjectContext!
         let entity =  NSEntityDescription.entityForName("UnclosedWebViews", inManagedObjectContext: managedContext)
         
@@ -398,11 +399,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         } else {
             unlockOrientation()
         }
-        notificationCenter.addObserver(self, selector: "videoPlayed", name: AVPlayerItemDidPlayToEndTimeNotification, object: nil)
-    }
-    
-    func videoPlayed() {
-        println("videoPlayed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     }
     
     func checkGos() {
@@ -439,7 +435,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                         queryStringDictionary.setObject(value!, forKey: key!)
                     }
                     
-                    var str: String! = queryStringDictionary.valueForKey("q") as String
+                    var str: String! = queryStringDictionary.valueForKey("q") as! String
                     str = "🔍" + str
                     textField.text = str
                 } else if ((theurl.hasPrefix("http://www.baidu.com/s?")) || (theurl.hasPrefix("https://www.baidu.com/s?"))) {
@@ -457,7 +453,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                         queryStringDictionary.setObject(value!, forKey: key!)
                     }
                     
-                    var str: String! = queryStringDictionary.valueForKey("wd") as String
+                    var str: String! = queryStringDictionary.valueForKey("wd") as! String
                     str = "🔍" + str
                     textField.text = str
                 } else if (urlhost?.hasPrefix("www.") == true) {
@@ -510,7 +506,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                     webViewButtons[tryShowingWebView]?.frame = CGRectMake(0, 0, view.frame.width - 40, view.frame.height)
                     webViewLabels[tryShowingWebView]?.frame = CGRectMake(0, 0, view.frame.width - 40, 20)
                 }
-                adbanner.frame = CGRectMake(5, 0, self.view.frame.width - 10, 50)
+                adbanner.frame = CGRectMake(5, 0, self.view.frame.width - 10, 66)
                 self.view.bringSubviewToFront(toolBar)
             }
             
@@ -581,19 +577,19 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {
             
-            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
+            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
             let managedContext = appDelegate.managedObjectContext!
             
             if (self.webViews[self.currentWebView].URL?.absoluteString != nil) {
                 let historysFetchRequest = NSFetchRequest(entityName:"Historys")
-                var historys = managedContext.executeFetchRequest(historysFetchRequest, error: nil) as [NSManagedObject]!
+                var historys = managedContext.executeFetchRequest(historysFetchRequest, error: nil) as! [NSManagedObject]!
                 if historys.count > 0 {
                     for theHistoryitem in historys {
-                        if (theHistoryitem.valueForKey("url") as String) == (self.webViews[self.currentWebView].URL?.absoluteString) {
+                        if (theHistoryitem.valueForKey("url") as! String) == (self.webViews[self.currentWebView].URL?.absoluteString) {
                             managedContext.deleteObject(theHistoryitem as NSManagedObject)
                         }
                     }
-                    historys = managedContext.executeFetchRequest(historysFetchRequest, error: nil) as [NSManagedObject]!
+                    historys = managedContext.executeFetchRequest(historysFetchRequest, error: nil) as! [NSManagedObject]!
                 }
                 
                 let historysEntity =  NSEntityDescription.entityForName("Historys", inManagedObjectContext: managedContext)
@@ -607,12 +603,12 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             
             if self.webViews[self.currentWebView].URL?.host != nil {
                 let topSitesFetchRequest = NSFetchRequest(entityName:"TopSites")
-                var topSites = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as [NSManagedObject]!
+                var topSites = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as! [NSManagedObject]!
                 var hostNameNotFound = true
                 if topSites.count > 0 {
                     for theTopSite in topSites {
-                        if (theTopSite.valueForKey("hostUrl") as String) == (self.webViews[self.currentWebView].URL?.host) {
-                            var originalvisits = theTopSite.valueForKey("visits") as Float
+                        if (theTopSite.valueForKey("hostUrl") as! String) == (self.webViews[self.currentWebView].URL?.host) {
+                            var originalvisits = theTopSite.valueForKey("visits") as! Float
                             theTopSite.setValue(originalvisits + 1, forKey: "visits")
                             hostNameNotFound = false
                             break
@@ -663,23 +659,44 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func keyboardWillBeShown(sender: NSNotification) {
-        println("keyboardWillBeShown")
         let info: NSDictionary = sender.userInfo!
         let value: AnyObject? = info.objectForKey(UIKeyboardFrameEndUserInfoKey)
         let keyboardSize: CGSize! = value?.CGRectValue().size
         
         if adbanner.bannerLoaded {
-            toolBar.frame = CGRectMake(0, view.frame.height - keyboardSize.height - 94, view.frame.width, 44)
-            adbanner.frame = CGRectMake(0, view.frame.height - keyboardSize.height - 50, view.frame.width, 50)
+            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                toolBar.frame = CGRectMake(0, view.frame.height - keyboardSize.height - 44 - 66, view.frame.width, 44)
+                adbanner.frame = CGRectMake(0, view.frame.height - keyboardSize.height - 66, view.frame.width, 66)
+            } else {
+                if UIInterfaceOrientationIsPortrait(self.interfaceOrientation) == true {
+                    toolBar.frame = CGRectMake(0, view.frame.height - keyboardSize.height - 44 - 50, view.frame.width, 44)
+                    adbanner.frame = CGRectMake(0, view.frame.height - keyboardSize.height - 50, view.frame.width, 50)
+                } else {
+                    toolBar.frame = CGRectMake(0, view.frame.height - keyboardSize.height - 44 - 32, view.frame.width, 44)
+                    adbanner.frame = CGRectMake(0, view.frame.height - keyboardSize.height - 32, view.frame.width, 32)
+                }
+            }
+            webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
             if adbanner.window == nil {
                 self.view.addSubview(adbanner)
+                NSTimer.scheduledTimerWithTimeInterval(45, target: self, selector: "adbannerReachedEnoughSeconds", userInfo: nil, repeats: false)
+                isAdbannerEnoughSecondsYet = false
             }
         } else {
             toolBar.frame = CGRectMake(0, view.frame.height - keyboardSize.height - 44, view.frame.width, 44)
         }
+        
         if childSuggestionsViewController.view.window != nil {
             if adbanner.window != nil {
-                childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - keyboardSize.height - 44 - 50) //44: toolBar height; 50: adbanner height
+                if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                    childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - keyboardSize.height - 44 - 66) //44: toolBar height; 66: adbanner height
+                } else {
+                    if UIInterfaceOrientationIsPortrait(self.interfaceOrientation) == true {
+                        childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - keyboardSize.height - 44 - 50) //44: toolBar height; 50: adbanner height
+                    } else {
+                        childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - keyboardSize.height - 44 - 32) //44: toolBar height; 32: adbanner height
+                    }
+                }
             } else {
                 childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - keyboardSize.height - 44) //44:toolBar height
             }
@@ -689,12 +706,47 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     
     func keyboardWillBeHidden(sender: NSNotification) {
         toolBar.frame = CGRectMake(0, view.frame.height - 44, view.frame.width, 44)
-        adbanner.removeFromSuperview()
+        if adbanner.window != nil {
+            if isAdbannerEnoughSecondsYet {
+                adbanner.removeFromSuperview()
+                isAdbannerEnoughSecondsYet = false
+            } else {
+                if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                    webViews[currentWebView].frame = CGRectMake(0, 66, view.frame.width, view.frame.height - 66)
+                    adbanner.frame = CGRectMake(0, 0, view.frame.width, 66)
+                } else {
+                    if UIInterfaceOrientationIsPortrait(self.interfaceOrientation) == true {
+                        webViews[currentWebView].frame = CGRectMake(0, 50, view.frame.width, view.frame.height - 50)
+                        adbanner.frame = CGRectMake(0, 0, view.frame.width, 50)
+                    } else {
+                        webViews[currentWebView].frame = CGRectMake(0, 32, view.frame.width, view.frame.height - 32)
+                        adbanner.frame = CGRectMake(0, 0, view.frame.width, 32)
+                    }
+                }
+            }
+        }
     }
     
     func keyboardDidHidden(sender: NSNotification) {
         if toolBar.frame.origin.y != view.frame.height - 44 {
             toolBar.frame = CGRectMake(0, view.frame.height - 44, view.frame.width, 44)
+        }
+    }
+    
+    func adbannerReachedEnoughSeconds() {
+        isAdbannerEnoughSecondsYet = true
+        if adbanner.frame.origin.y == 0 {
+            adbanner.removeFromSuperview()
+            webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
+        } else {
+            //adbanner.removeFromSuperview()
+        }
+    }
+    
+    func bannerView(banner: ADBannerView!, didFailToReceiveAdWithError error: NSError!) {
+        println("failed to receive ad")
+        if adbanner.window != nil {
+            adbanner.removeFromSuperview()
         }
     }
     
@@ -760,7 +812,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     
     func textFieldDidChanged() {
         var substring: String = textField.text
-        println("good textString \(substring)")
         childSuggestionsViewController.searchAutocompleteEntriesWithSubstring(substring)
         childSuggestionsViewController.suggestionsTableView.reloadData()
     }
@@ -870,13 +921,10 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func hideGoBackForwardFavoritesList() {
-        UIView.beginAnimations("animateWebView", context: nil)
-        UIView.setAnimationDuration(0.1)
-        
-        backForwardFavoriteTableView.dismissSelf()
-        configtoolbaritems()
-        
-        UIView.commitAnimations()
+        UIView.animateWithDuration(0.1, animations: {
+            self.backForwardFavoriteTableView.dismissSelf()
+            self.configtoolbaritems()
+        })
     }
     
     func doRefresh() {
@@ -905,14 +953,14 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                 dashboard.frame = CGRectMake(0, view.frame.height, view.frame.width, 120)
                 self.view.addSubview(dashboard)
                 superHugeRegretButton.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
-                UIView.beginAnimations("animateWebView", context: nil)
-                UIView.setAnimationDuration(1)
-                self.view.addSubview(superHugeRegretButton)
-                UIView.setAnimationDuration(0.2)
-                self.view.bringSubviewToFront(dashboard)
-                self.view.bringSubviewToFront(toolBar)
-                dashboard.frame = CGRectMake(0, view.frame.height - 44 - 120, view.frame.width, 120)
-                UIView.commitAnimations()
+                UIView.animateWithDuration(1, animations: {
+                    self.view.addSubview(self.superHugeRegretButton)
+                })
+                UIView.animateWithDuration(0.2, animations: {
+                    self.view.bringSubviewToFront(self.dashboard)
+                    self.view.bringSubviewToFront(self.toolBar)
+                    self.dashboard.frame = CGRectMake(0, self.view.frame.height - 44 - 120, self.view.frame.width, 120)
+                })
             }
         default: true
         }
@@ -921,28 +969,33 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     func hidetoolbar() {
         webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height)
         progressBar.frame = CGRectMake(0, view.frame.height - 3, view.frame.width, 3)
+        UIView.animateWithDuration(0.2, animations: {
+            self.toolBar.frame = CGRectMake(0, self.view.frame.height, self.view.frame.width, 44)
+        })
         toolBar.hidden = true
         dismissDashboard()
     }
     
     func showtoolbar() {
-        UIView.beginAnimations("animateWebView", context: nil)
-        UIView.setAnimationDuration(0.2)
-        webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
-        progressBar.frame = CGRectMake(0, view.frame.height - 47, view.frame.width, 3)
-        toolBar.hidden = false
-        UIView.commitAnimations()
+        self.toolBar.hidden = false
+        UIView.animateWithDuration(0.2, animations: {
+            self.toolBar.frame = CGRectMake(0, self.view.frame.height - 44, self.view.frame.width, 44)
+            self.webViews[self.currentWebView].frame = CGRectMake(0, 0, self.view.frame.width, self.view.frame.height - 44)
+            self.progressBar.frame = CGRectMake(0, self.view.frame.height - 47, self.view.frame.width, 3)
+        })
     }
     
     func dismissDashboard() {
         if (dashboard.window != nil) {
-            UIView.beginAnimations("animateWebView", context: nil)
-            UIView.setAnimationDuration(0.5)
-            superHugeRegretButton.removeFromSuperview()
-            self.view.bringSubviewToFront(toolBar)
-            dashboard.frame = CGRectMake(0, view.frame.height, view.frame.width, 120)
-            UIView.commitAnimations()
-            dashboard.removeFromSuperview()
+            view.bringSubviewToFront(self.toolBar)
+            UIView.animateWithDuration(0.3, animations: {
+                self.dashboard.frame = CGRectMake(0, self.view.frame.height, self.view.frame.width, 120)
+            })
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(0.1 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), {
+                self.dashboard.removeFromSuperview()
+                self.superHugeRegretButton.removeFromSuperview()
+                println("removed from superview")
+            })
         }
     }
     
@@ -997,7 +1050,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         edgeSwipe.enabled = false
         
         if adbanner.bannerLoaded {
-            adbanner.frame = CGRectMake(5, 0, self.view.frame.width - 10, 50)
+            adbanner.frame = CGRectMake(5, 0, self.view.frame.width - 10, 66)
             self.view.addSubview(adbanner)
         }
         
@@ -1063,33 +1116,58 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             //webViewButtons[tryShowingWebView]?.addGestureRecognizer(webViewCloseLongPress[tryShowingWebView])
             //webViewCloseLongPress[tryShowingWebView].addTarget(self, action: <#Selector#>)
             
-            UIView.beginAnimations("animateWebView", context: nil)
-            UIView.setAnimationDuration(0.75)
-            
-            self.view.addSubview(webViews[tryShowingWebView])
-            webViews[tryShowingWebView].frame = CGRectMake(20, CGFloat(200 * tryShowingWebView) + weby, view.frame.width - 40, view.frame.height - 10)
-            
-            UIView.commitAnimations()
+            UIView.animateWithDuration(0.75, animations: {
+                self.view.addSubview(self.webViews[tryShowingWebView])
+                self.webViews[tryShowingWebView].frame = CGRectMake(20, CGFloat(200 * tryShowingWebView) + self.weby, self.view.frame.width - 40, self.view.frame.height - 10)
+            })
             
         }
         
         toolBar.frame = CGRectMake(0, view.frame.height - 44, view.frame.width, 44)
         self.view.bringSubviewToFront(toolBar)
+        self.view.bringSubviewToFront(adbanner)
     }
     
     func doneShowingAllWebViews() {
         adbanner.removeFromSuperview()
         
-        UIView.beginAnimations("animateWebView", context: nil)
-        UIView.setAnimationDuration(0.75)
-        
-        for i in 0...webViews.count - 1 {
-            webViews[i].removeFromSuperview()
-            webViewButtons[i]?.removeGestureRecognizer(webViewCloseSwipe[i])
-            //webViewButtons[i]?.removeGestureRecognizer(webViewCloseLongPress[i])
-            webViewButtons[i]?.removeFromSuperview()
-            webViewLabels[i]?.removeFromSuperview()
+        if currentWebView < webViews.count - 1 && currentWebView > 0 {
+            for i in 0...currentWebView - 1 {
+                UIView.animateWithDuration(0.75, animations: {
+                    self.webViews[i].frame = CGRectMake(0, 0 - self.view.frame.height, self.view.frame.width, self.view.frame.height)
+                    }, completion: {(value: Bool) in
+                    self.webViews[i].removeFromSuperview()
+                })
+                webViewButtons[i]?.removeGestureRecognizer(webViewCloseSwipe[i])
+                //webViewButtons[i]?.removeGestureRecognizer(webViewCloseLongPress[i])
+                webViewButtons[i]?.removeFromSuperview()
+                webViewLabels[i]?.removeFromSuperview()
+            }
+            webViewButtons[currentWebView]?.removeGestureRecognizer(webViewCloseSwipe[currentWebView])
+            //webViewButtons[currentWebView]?.removeGestureRecognizer(webViewCloseLongPress[currentWebView])
+            webViewButtons[currentWebView]?.removeFromSuperview()
+            webViewLabels[currentWebView]?.removeFromSuperview()
+            for i in currentWebView + 1...webViews.count {
+                UIView.animateWithDuration(0.75, animations: {
+                    self.webViews[i].frame = CGRectMake(0, self.view.frame.height * 2, self.view.frame.width, self.view.frame.height)
+                    }, completion: {(value: Bool) in
+                        self.webViews[i].removeFromSuperview()
+                })
+                webViewButtons[i]?.removeGestureRecognizer(webViewCloseSwipe[i])
+                //webViewButtons[i]?.removeGestureRecognizer(webViewCloseLongPress[i])
+                webViewButtons[i]?.removeFromSuperview()
+                webViewLabels[i]?.removeFromSuperview()
+            }
+        } else {
+            for i in 0...webViews.count - 1 {
+                webViews[i].removeFromSuperview()
+                webViewButtons[i]?.removeGestureRecognizer(webViewCloseSwipe[i])
+                //webViewButtons[i]?.removeGestureRecognizer(webViewCloseLongPress[i])
+                webViewButtons[i]?.removeFromSuperview()
+                webViewLabels[i]?.removeFromSuperview()
+            }
         }
+        
         webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
         self.view.addSubview(webViews[currentWebView])
         
@@ -1098,11 +1176,11 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         checkGos()
         lettextfieldtohost()
         progressBar.setProgress(1.0, animated: true)
-        UIView.animateWithDuration(0.3, delay: 0.5, options: .CurveEaseInOut, animations: { self.progressBar.alpha = 0 }, completion: nil)
+        UIView.animateWithDuration(0.3, delay: 0.5, options: .CurveEaseInOut, animations: {
+            self.progressBar.alpha = 0
+        }, completion: nil)
         textField.configrefreshImage()
         refreshControl.endRefreshing()
-        
-        UIView.commitAnimations()
         
         self.view.bringSubviewToFront(showButton)
         self.view.bringSubviewToFront(toolBar)
@@ -1148,7 +1226,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         webViewCloseSwipe.insert(UIPanGestureRecognizer(), atIndex: webViews.count - 1)
         //webViewCloseLongPress.insert(UILongPressGestureRecognizer(), atIndex: webViews.count - 1)
         webViewLabels.insert(UILabel(), atIndex: webViews.count - 1)
-        UIView.commitAnimations()
+        
         webViews[currentWebView].frame = CGRectMake(10, view.frame.height + 50, view.frame.width - 20, view.frame.height - 44)
         webViews[currentWebView].layer.cornerRadius = 5.0
         webViews[currentWebView].layer.shadowColor = UIColor.blackColor().CGColor
