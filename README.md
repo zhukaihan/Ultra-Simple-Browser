@@ -13,7 +13,7 @@
 **First Level**
 
 1. **Photoshop Images** are images created with Photoshop and in Photoshop format. All of images in PNG format are in /Ultra, Simple Browser/PNG Images. 
-2. **Settings.Bundle** is something let settings show up in Settings(of iOS), you can download it from App Store and have a taste of settings in Settings and have a sense what is it(I don't know why, but Xcode just created there. It is kind of (a word here is missing, you need to use your imagination to sense this word)).
+2. **Settings.Bundle** is something let settings show up in Settings (of iOS), you can download it from App Store and have a taste of settings in Settings and have a sense what is it(I don't know why, but Xcode just created there. It is kind of (a word here is missing, you need to use your imagination to sense this word)).
 3. **xcodeproj**. You know what is it.
 4. **Ultra, Simple Browser** folder. It is the folder where every thing is. 
 5. **Tests**. Never used it. It is not right for me. But it is not bothering me, so I let it be like that.
@@ -23,7 +23,7 @@
 * **Images.xcassets** Only contains icons. 
 * **PNG Images** The images actually uses in app. 
 * **Core Data model** It is what it is. 
-* **ViewController.swift** It is the heart of the App. It is about 1300 lines long(Horrible code design. I know). It mostly interacts with UI. It is the one and the only one linked to the storyboard, although there is nothing in the storyboard
+* **ViewController.swift** It is the heart of the App. It is about 1300 lines long (Horrible code design. I know). It mostly interacts with UI. It is the one and the only one linked to the storyboard, although there is nothing in the storyboard. All UIs are created with code. 
 * **toolBarItems.swift** It only configs the backButton and the forwardButton. I just to want to make the code shorter. BUT, it is the most basic feature in a browser: go back and go forward. 
 * **URLTextField.swift** It is the URL text field. It acts as a host title bar when it is not the first responser. 
 * **SuggestionViewController.swift** It is a child view controller under ViewController. It give suggestions, such as the top 20 website that human beings visits, the favorites that user created,                   the websites that user visits over ten times, and histories user visited. 
