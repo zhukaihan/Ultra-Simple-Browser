@@ -14,6 +14,8 @@ import iAd
 import QuartzCore
 import CoreData
 import Dispatch
+import AVFoundation
+import MediaPlayer
 
 class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, ADBannerViewDelegate {
     
@@ -220,10 +222,10 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refersh")
         refreshControl.addTarget(self, action: "doRefresh", forControlEvents: .ValueChanged)
         
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         let managedContext = appDelegate.managedObjectContext!
         let fetchRequest = NSFetchRequest(entityName:"UnclosedWebViews")
-        unclosedwebviews = managedContext.executeFetchRequest(fetchRequest, error: nil) as! [NSManagedObject]!
+        unclosedwebviews = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
         
         if unclosedwebviews.count != 0 {
             for i in 0...unclosedwebviews.count - 1 {
@@ -233,7 +235,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                 webViews[i].scrollView.addSubview(refreshControl)
                 
                 let webview = unclosedwebviews[i]
-                let urlstring = webview.valueForKey("webviews") as! String?
+                let urlstring = webview.valueForKey("webviews") as String?
                 if (urlstring != nil) {
                     let url = NSURL(string: urlstring!)
                     let request = NSURLRequest(URL: url!)
@@ -262,6 +264,8 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             textField.text = homewebpage
             didClickGo()
         }
+        
+        adbanner.delegate = self
         
         self.view.bringSubviewToFront(showButton)
         self.view.bringSubviewToFront(toolBar)
@@ -322,7 +326,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         NSURLCache.sharedURLCache().removeAllCachedResponses()
         NSNotificationCenter.defaultCenter().removeObserver(self)
         
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         let managedContext = appDelegate.managedObjectContext!
         let entity =  NSEntityDescription.entityForName("UnclosedWebViews", inManagedObjectContext: managedContext)
         
@@ -435,7 +439,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                         queryStringDictionary.setObject(value!, forKey: key!)
                     }
                     
-                    var str: String! = queryStringDictionary.valueForKey("q") as! String
+                    var str: String! = queryStringDictionary.valueForKey("q") as String
                     str = "🔍" + str
                     textField.text = str
                 } else if ((theurl.hasPrefix("http://www.baidu.com/s?")) || (theurl.hasPrefix("https://www.baidu.com/s?"))) {
@@ -453,7 +457,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                         queryStringDictionary.setObject(value!, forKey: key!)
                     }
                     
-                    var str: String! = queryStringDictionary.valueForKey("wd") as! String
+                    var str: String! = queryStringDictionary.valueForKey("wd") as String
                     str = "🔍" + str
                     textField.text = str
                 } else if (urlhost?.hasPrefix("www.") == true) {
@@ -577,19 +581,19 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), {
             
-            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
             let managedContext = appDelegate.managedObjectContext!
             
             if (self.webViews[self.currentWebView].URL?.absoluteString != nil) {
                 let historysFetchRequest = NSFetchRequest(entityName:"Historys")
-                var historys = managedContext.executeFetchRequest(historysFetchRequest, error: nil) as! [NSManagedObject]!
+                var historys = managedContext.executeFetchRequest(historysFetchRequest, error: nil) as [NSManagedObject]!
                 if historys.count > 0 {
                     for theHistoryitem in historys {
-                        if (theHistoryitem.valueForKey("url") as! String) == (self.webViews[self.currentWebView].URL?.absoluteString) {
+                        if (theHistoryitem.valueForKey("url") as String) == (self.webViews[self.currentWebView].URL?.absoluteString) {
                             managedContext.deleteObject(theHistoryitem as NSManagedObject)
                         }
                     }
-                    historys = managedContext.executeFetchRequest(historysFetchRequest, error: nil) as! [NSManagedObject]!
+                    historys = managedContext.executeFetchRequest(historysFetchRequest, error: nil) as [NSManagedObject]!
                 }
                 
                 let historysEntity =  NSEntityDescription.entityForName("Historys", inManagedObjectContext: managedContext)
@@ -603,12 +607,12 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             
             if self.webViews[self.currentWebView].URL?.host != nil {
                 let topSitesFetchRequest = NSFetchRequest(entityName:"TopSites")
-                var topSites = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as! [NSManagedObject]!
+                var topSites = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as [NSManagedObject]!
                 var hostNameNotFound = true
                 if topSites.count > 0 {
                     for theTopSite in topSites {
-                        if (theTopSite.valueForKey("hostUrl") as! String) == (self.webViews[self.currentWebView].URL?.host) {
-                            var originalvisits = theTopSite.valueForKey("visits") as! Float
+                        if (theTopSite.valueForKey("hostUrl") as String) == (self.webViews[self.currentWebView].URL?.host) {
+                            var originalvisits = theTopSite.valueForKey("visits") as Float
                             theTopSite.setValue(originalvisits + 1, forKey: "visits")
                             hostNameNotFound = false
                             break
@@ -679,7 +683,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
             if adbanner.window == nil {
                 self.view.addSubview(adbanner)
-                NSTimer.scheduledTimerWithTimeInterval(45, target: self, selector: "adbannerReachedEnoughSeconds", userInfo: nil, repeats: false)
+                NSTimer.scheduledTimerWithTimeInterval(45, target: self, selector: "adbannerReachedEnoughSeconds:", userInfo: nil, repeats: false)
                 isAdbannerEnoughSecondsYet = false
             }
         } else {
@@ -712,14 +716,14 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                 isAdbannerEnoughSecondsYet = false
             } else {
                 if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-                    webViews[currentWebView].frame = CGRectMake(0, 66, view.frame.width, view.frame.height - 66)
+                    webViews[currentWebView].frame = CGRectMake(0, 66, view.frame.width, view.frame.height - 44 - 66) //44: toolbar height; 66: adbanner height
                     adbanner.frame = CGRectMake(0, 0, view.frame.width, 66)
                 } else {
                     if UIInterfaceOrientationIsPortrait(self.interfaceOrientation) == true {
-                        webViews[currentWebView].frame = CGRectMake(0, 50, view.frame.width, view.frame.height - 50)
+                        webViews[currentWebView].frame = CGRectMake(0, 50, view.frame.width, view.frame.height - 44 - 50) //44: toolbar height; 50: adbanner height
                         adbanner.frame = CGRectMake(0, 0, view.frame.width, 50)
                     } else {
-                        webViews[currentWebView].frame = CGRectMake(0, 32, view.frame.width, view.frame.height - 32)
+                        webViews[currentWebView].frame = CGRectMake(0, 32, view.frame.width, view.frame.height - 44 - 32) //44: toolbar height; 32: adbanner height
                         adbanner.frame = CGRectMake(0, 0, view.frame.width, 32)
                     }
                 }
@@ -733,7 +737,9 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         }
     }
     
-    func adbannerReachedEnoughSeconds() {
+    func adbannerReachedEnoughSeconds(timer: NSTimer) {
+        println("timer fired\(timer)")
+        
         isAdbannerEnoughSecondsYet = true
         if adbanner.frame.origin.y == 0 {
             adbanner.removeFromSuperview()
@@ -744,8 +750,11 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func bannerView(banner: ADBannerView!, didFailToReceiveAdWithError error: NSError!) {
-        println("failed to receive ad")
+        println("failed to receive ad\n \(error)")
         if adbanner.window != nil {
+            if adbanner.frame.origin.y == 0 {
+                webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
+            }
             adbanner.removeFromSuperview()
         }
     }

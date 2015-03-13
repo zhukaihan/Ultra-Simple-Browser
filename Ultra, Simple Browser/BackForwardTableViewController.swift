@@ -88,22 +88,22 @@ class BackForwardTableViewController: UITableViewController {
             let number = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].backForwardList.forwardList.count
             return number
         } else if self.tag == 2 {
-            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
             let managedContext = appDelegate.managedObjectContext!
             var fetchRequest = NSFetchRequest(entityName:"Favorites")
             let sortDescriptor = NSSortDescriptor(key: "time", ascending: true)
             fetchRequest.sortDescriptors = [sortDescriptor]
-            Favoriteitems = managedContext.executeFetchRequest(fetchRequest, error: nil) as! [NSManagedObject]!
+            Favoriteitems = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
             let number = Favoriteitems.count
             return number
         } else if self.tag == 3 {
             println("to History Row")
-            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
             let managedContext = appDelegate.managedObjectContext!
             var fetchRequest = NSFetchRequest(entityName:"Historys")
             let sortDescriptor = NSSortDescriptor(key: "time", ascending: false)
             fetchRequest.sortDescriptors = [sortDescriptor]
-            Historyitems = managedContext.executeFetchRequest(fetchRequest, error: nil) as! [NSManagedObject]!
+            Historyitems = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
             let number = Historyitems.count
             println(number)
             return number
@@ -124,9 +124,9 @@ class BackForwardTableViewController: UITableViewController {
         } else if self.tag == 2 {
             if Favoriteitems.count != 0 {
                 let theFavoriteitem = Favoriteitems[indexPath.row]
-                let titlestring = theFavoriteitem.valueForKey("title") as! String?
+                let titlestring = theFavoriteitem.valueForKey("title") as String?
                 tableviewcell.textLabel?.text = titlestring
-                let urlstring = theFavoriteitem.valueForKey("url") as! String?
+                let urlstring = theFavoriteitem.valueForKey("url") as String?
                 tableviewcell.detailTextLabel?.text = urlstring
             }
         } else if self.tag == 3 {
@@ -134,10 +134,10 @@ class BackForwardTableViewController: UITableViewController {
             dateFormatter.dateFormat = "yy/MM/dd hh:mm"
             if Historyitems.count != 0 {
                 let theHistoryitem = Historyitems[indexPath.row]
-                let titlestring = theHistoryitem.valueForKey("title") as! String?
+                let titlestring = theHistoryitem.valueForKey("title") as String?
                 tableviewcell.textLabel?.text = titlestring!
-                let datestring = dateFormatter.stringFromDate(theHistoryitem.valueForKey("time") as! NSDate)
-                let urlstring = theHistoryitem.valueForKey("url") as! String?
+                let datestring = dateFormatter.stringFromDate(theHistoryitem.valueForKey("time") as NSDate)
+                let urlstring = theHistoryitem.valueForKey("url") as String?
                 tableviewcell.detailTextLabel?.text = datestring + " | " + urlstring!
             }
         }
@@ -156,16 +156,16 @@ class BackForwardTableViewController: UITableViewController {
             backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].goToBackForwardListItem(thewknavitem!)
         } else if self.tag == 2 {
             let theFavoriteitem = Favoriteitems[indexPath.row]
-            let urlstring = theFavoriteitem.valueForKey("url") as! String?
+            let urlstring = theFavoriteitem.valueForKey("url") as String?
             self.backForwardParentViewController.textField.text = urlstring
             self.backForwardParentViewController.didClickGo()
         } else if self.tag == 3 {
             let theHistoryitem = Historyitems[indexPath.row]
-            let urlstring = theHistoryitem.valueForKey("url") as! String?
+            let urlstring = theHistoryitem.valueForKey("url") as String?
             self.backForwardParentViewController.textField.text = urlstring
             self.backForwardParentViewController.didClickGo()
             
-            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
             let managedContext = appDelegate.managedObjectContext!
             managedContext.deleteObject(theHistoryitem as NSManagedObject)
         }
@@ -183,7 +183,7 @@ class BackForwardTableViewController: UITableViewController {
     // Override to support editing the table view.
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
-            let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
             let managedContext = appDelegate.managedObjectContext!
             managedContext.deleteObject(Favoriteitems[indexPath.row])
             NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "tableReload", userInfo: nil, repeats: false)
@@ -252,13 +252,13 @@ class BackForwardTableViewController: UITableViewController {
     }
     
     func addFavorites() {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         let managedContext = appDelegate.managedObjectContext!
         let fetchRequest = NSFetchRequest(entityName:"Favorites")
-        var Favoriteitems = managedContext.executeFetchRequest(fetchRequest, error: nil) as! [NSManagedObject]!
+        var Favoriteitems = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
         let entity =  NSEntityDescription.entityForName("Favorites", inManagedObjectContext: managedContext)
         
-        let favoriteItem = NSEntityDescription.insertNewObjectForEntityForName("Favorites", inManagedObjectContext: managedContext) as! NSManagedObject
+        let favoriteItem = NSEntityDescription.insertNewObjectForEntityForName("Favorites", inManagedObjectContext: managedContext) as NSManagedObject
         
         let timeNow = NSDate()
         
@@ -279,7 +279,7 @@ class BackForwardTableViewController: UITableViewController {
     }
     
     func clearHistory() {
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         let managedContext = appDelegate.managedObjectContext!
         var mid: NSManagedObject!
         for mid in Historyitems {
@@ -290,7 +290,7 @@ class BackForwardTableViewController: UITableViewController {
         tableReload()
         
         let topSitesFetchRequest = NSFetchRequest(entityName:"TopSites")
-        var topSites = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as! [NSManagedObject]!
+        var topSites = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as [NSManagedObject]!
         if topSites.count > 0 {
             for theTopSite in topSites {
                 managedContext.deleteObject(theTopSite)

@@ -32,16 +32,16 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
         initListOfSuggestionsTitle = listOfSuggestionsTitle
         initListOfSuggestionsURL = listOfSuggestionsURL
         
-        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
         let managedContext = appDelegate.managedObjectContext!
         
         let topSitesFetchRequest = NSFetchRequest(entityName:"TopSites")
-        TopSitesitems = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as! [NSManagedObject]!
+        TopSitesitems = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as [NSManagedObject]!
         if TopSitesitems.count > 0 {
             for theTopSite in TopSitesitems {
-                if theTopSite.valueForKey("visits") as! Float > 10 {
+                if theTopSite.valueForKey("visits") as Float > 10 {
                     let theFavoriteitem = theTopSite
-                    let titlestring = theTopSite.valueForKey("hostUrl") as! String?
+                    let titlestring = theTopSite.valueForKey("hostUrl") as String?
                     initListOfSuggestionsTitle.append(titlestring)
                     initListOfSuggestionsURL.append("Top Sites")
                 }
@@ -49,25 +49,25 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
         }
         
         let fetchFavoritesRequest = NSFetchRequest(entityName:"Favorites")
-        Favoriteitems = managedContext.executeFetchRequest(fetchFavoritesRequest, error: nil) as! [NSManagedObject]!
+        Favoriteitems = managedContext.executeFetchRequest(fetchFavoritesRequest, error: nil) as [NSManagedObject]!
         if Favoriteitems.count > 0 {
             for i in 0...Favoriteitems.count - 1 {
                 let theFavoriteitem = Favoriteitems[i]
-                let titlestring = theFavoriteitem.valueForKey("title") as! String?
+                let titlestring = theFavoriteitem.valueForKey("title") as String?
                 initListOfSuggestionsTitle.append(titlestring)
-                let urlstring = theFavoriteitem.valueForKey("url") as! String?
+                let urlstring = theFavoriteitem.valueForKey("url") as String?
                 initListOfSuggestionsURL.append(urlstring)
             }
         }
         
         let fetchHistorysRequest = NSFetchRequest(entityName:"Historys")
-        Historyitems = managedContext.executeFetchRequest(fetchHistorysRequest, error: nil) as! [NSManagedObject]!
+        Historyitems = managedContext.executeFetchRequest(fetchHistorysRequest, error: nil) as [NSManagedObject]!
         if Historyitems.count > 0 {
             for i in 0...Historyitems.count - 1 {
                 let theHistoryitem = Historyitems[i]
-                let titlestring = theHistoryitem.valueForKey("title") as! String?
+                let titlestring = theHistoryitem.valueForKey("title") as String?
                 initListOfSuggestionsTitle.append(titlestring)
-                let urlstring = theHistoryitem.valueForKey("url") as! String?
+                let urlstring = theHistoryitem.valueForKey("url") as String?
                 initListOfSuggestionsURL.append(urlstring)
             }
         }
@@ -169,10 +169,10 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
                         
                         var jsonData = jsonString?.dataUsingEncoding(NSUTF8StringEncoding)
                         if (jsonData != nil) && (jsonString?.length > 2) {
-                            var sugDic: NSArray = NSJSONSerialization.JSONObjectWithData(jsonData!, options: .MutableContainers, error: nil) as! NSArray
+                            var sugDic: NSArray = NSJSONSerialization.JSONObjectWithData(jsonData!, options: .MutableContainers, error: nil) as NSArray
                             if sugDic.count > 0 {
                                 for i in 0...sugDic.count - 1 {
-                                    let string: String = String(sugDic[i] as! NSString)
+                                    let string: String = String(sugDic[i] as NSString)
                                     self.listOfSuggestionsTitle.append(string.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding))
                                     self.listOfSuggestionsURL.append("Search Engine Suggestion")
                                 }
@@ -192,10 +192,10 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
                         
                         var jsonData = jsonString?.dataUsingEncoding(NSUTF8StringEncoding)
                         if (jsonData != nil) && (jsonString?.length > 2) {
-                            var sugDic: NSArray = NSJSONSerialization.JSONObjectWithData(jsonData!, options: .MutableContainers, error: nil) as! NSArray
+                            var sugDic: NSArray = NSJSONSerialization.JSONObjectWithData(jsonData!, options: .MutableContainers, error: nil) as NSArray
                             if sugDic.count > 0 {
                                 for i in 0...sugDic.count - 1 {
-                                    let string: String = String(sugDic[i] as! NSString)
+                                    let string: String = String(sugDic[i] as NSString)
                                     self.listOfSuggestionsTitle.append(string.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding))
                                     self.listOfSuggestionsURL.append("Search Engine Suggestion")
                                 }
