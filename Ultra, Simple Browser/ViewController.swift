@@ -14,8 +14,8 @@ import iAd
 import QuartzCore
 import CoreData
 import Dispatch
-import AVFoundation
-import MediaPlayer
+//import AVFoundation
+//import MediaPlayer
 
 class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, ADBannerViewDelegate {
     
@@ -66,7 +66,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     var superHugeRegretButton: UIButton = UIButton()
     
     var toolBar: UIToolbar! = UIToolbar()
-    var edgeSwipe: UIPanGestureRecognizer! = UIPanGestureRecognizer()
+    var toolBarSwipe: UIPanGestureRecognizer! = UIPanGestureRecognizer()  //the UIPanGestureRecognizer for showing dashboard
     var showButton: UIButton! = UIButton()
     var textField: URLTextField!
     var childSuggestionsViewController: SuggestionsViewController!// = SuggestionsViewController()
@@ -74,7 +74,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     var progressBar: UIProgressView! = UIProgressView(progressViewStyle: .Bar)
     
     var adbanner: ADBannerView! = ADBannerView()
-    var isAdbannerEnoughSecondsYet: Bool = false
+    var isAdbannerEnoughSecondsYet: Bool = true
     
     let backgroundimage = UIImageView(image: UIImage(named: "icon.png")!)
     
@@ -129,8 +129,8 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         toolBar.backgroundColor = UIColor.lightGrayColor()
         self.view.addSubview(toolBar)
         
-        edgeSwipe.addTarget(self, action: "displayDashboard")
-        toolBar.addGestureRecognizer(edgeSwipe)
+        toolBarSwipe.addTarget(self, action: "displayDashboard")
+        toolBar.addGestureRecognizer(toolBarSwipe)
         
         let fullscreenbuttonimg = UIImage(named: "fullscreen.png")
         fullscreenbutton = UIButton()
@@ -499,6 +499,23 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                     webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height)
                     progressBar.frame = CGRectMake(0, view.frame.height - 3, view.frame.width, 3)
                 }
+                
+                if adbanner.window != nil {
+                    if (adbanner.frame.origin.x == 0) && (adbanner.frame.origin.y == 0) && (!isAdbannerEnoughSecondsYet) {
+                        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                            adbanner.frame = CGRectMake(0, 0, view.frame.width, 66)
+                            webViews[currentWebView].frame = CGRectMake(0, 66, view.frame.width, view.frame.height - 44 - 66) //44: toolbar height; 66: adbanner height
+                        } else {
+                            if UIInterfaceOrientationIsPortrait(self.interfaceOrientation) == true {
+                                adbanner.frame = CGRectMake(0, 0, view.frame.width, 50)
+                                webViews[currentWebView].frame = CGRectMake(0, 50, view.frame.width, view.frame.height - 44 - 50) //44: toolbar height; 50: adbanner height
+                            } else {
+                                adbanner.frame = CGRectMake(0, 0, view.frame.width, 32)
+                                webViews[currentWebView].frame = CGRectMake(0, 32, view.frame.width, view.frame.height - 44 - 32) //44: toolbar height; 32: adbanner height
+                            }
+                        }
+                    }
+                }
             } else {
                 if (toolBar.hidden == false) {
                     progressBar.frame = CGRectMake(0, view.frame.height - 47, view.frame.width, 3)
@@ -510,7 +527,15 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                     webViewButtons[tryShowingWebView]?.frame = CGRectMake(0, 0, view.frame.width - 40, view.frame.height)
                     webViewLabels[tryShowingWebView]?.frame = CGRectMake(0, 0, view.frame.width - 40, 20)
                 }
-                adbanner.frame = CGRectMake(5, 0, self.view.frame.width - 10, 66)
+                if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                    adbanner.frame = CGRectMake(0, 1, view.frame.width, 66)
+                } else {
+                    if UIInterfaceOrientationIsPortrait(self.interfaceOrientation) == true {
+                        adbanner.frame = CGRectMake(0, 1, view.frame.width, 50)
+                    } else {
+                        adbanner.frame = CGRectMake(0, 1, view.frame.width, 32)
+                    }
+                }
                 self.view.bringSubviewToFront(toolBar)
             }
             
@@ -681,16 +706,18 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
                 }
             }
             webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
-            if adbanner.window == nil {
+            if (adbanner.window == nil) && (isAdbannerEnoughSecondsYet) {
                 self.view.addSubview(adbanner)
                 NSTimer.scheduledTimerWithTimeInterval(45, target: self, selector: "adbannerReachedEnoughSeconds:", userInfo: nil, repeats: false)
                 isAdbannerEnoughSecondsYet = false
+            } else {
+                self.view.bringSubviewToFront(adbanner)
             }
         } else {
             toolBar.frame = CGRectMake(0, view.frame.height - keyboardSize.height - 44, view.frame.width, 44)
         }
         
-        if childSuggestionsViewController.view.window != nil {
+        if childSuggestionsViewController?.view?.window != nil {
             if adbanner.window != nil {
                 if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
                     childSuggestionsViewController.view.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - keyboardSize.height - 44 - 66) //44: toolBar height; 66: adbanner height
@@ -713,7 +740,6 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         if adbanner.window != nil {
             if isAdbannerEnoughSecondsYet {
                 adbanner.removeFromSuperview()
-                isAdbannerEnoughSecondsYet = false
             } else {
                 if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
                     webViews[currentWebView].frame = CGRectMake(0, 66, view.frame.width, view.frame.height - 44 - 66) //44: toolbar height; 66: adbanner height
@@ -772,7 +798,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             cancelBarItem
         ]
         toolBar.setItems(toolBarItems, animated: true)
-        edgeSwipe.enabled = false
+        toolBarSwipe.enabled = false
         
         textField.frame = CGRectMake(0, 0, view.frame.width - 100, 30)
         
@@ -798,7 +824,7 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     func textFieldShouldEndEditing(textField: UITextField) -> Bool {
         textField.frame = CGRectMake(0, 0, view.frame.width - 125, 30)
         configtoolbaritems()
-        edgeSwipe.enabled = true
+        toolBarSwipe.enabled = true
         
         return true
     }
@@ -956,9 +982,9 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
     }
     
     func displayDashboard() {
-        switch edgeSwipe.state {
+        switch toolBarSwipe.state {
         case .Changed:
-            if edgeSwipe.translationInView(toolBar).y < -20 {
+            if toolBarSwipe.translationInView(toolBar).y < -20 {
                 dashboard.frame = CGRectMake(0, view.frame.height, view.frame.width, 120)
                 self.view.addSubview(dashboard)
                 superHugeRegretButton.frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
@@ -1056,17 +1082,14 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         
         showingAllWebViews = true
         
-        edgeSwipe.enabled = false
+        toolBarSwipe.enabled = false
         
         if adbanner.bannerLoaded {
-            adbanner.frame = CGRectMake(5, 0, self.view.frame.width - 10, 66)
+            adbanner.frame = CGRectMake(0, 1, self.view.frame.width - 10, 66)
             self.view.addSubview(adbanner)
         }
-        
         var addNewWebViewButton: UIBarButtonItem! = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "addNewWebView")
         var doneShowingAllWebViewsButton: UIBarButtonItem! = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: "doneShowingAllWebViews")
-        
-        toolBar.frame = CGRectMake(0, view.frame.height + 10, view.frame.width, 44)
         var toolBarItems = [
             addNewWebViewButton,
             flexibleSpaceBarButtonItem,
@@ -1074,8 +1097,11 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             flexibleSpaceBarButtonItem,
             doneShowingAllWebViewsButton
         ]
-        
         toolBar.setItems(toolBarItems, animated: true)
+        UIView.animateWithDuration(0.5, animations: {
+            self.toolBar.frame = CGRectMake(0, self.view.frame.height + 44, self.view.frame.width, 44)
+            self.progressBar.alpha = 0
+        })
         
         webViewButtons = []
         webViewCloseSwipe = []
@@ -1132,14 +1158,15 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
             
         }
         
-        toolBar.frame = CGRectMake(0, view.frame.height - 44, view.frame.width, 44)
+        UIView.animateWithDuration(0.5, animations: {
+            self.toolBar.frame = CGRectMake(0, self.view.frame.height - 44, self.view.frame.width, 44)
+        })
+        
         self.view.bringSubviewToFront(toolBar)
         self.view.bringSubviewToFront(adbanner)
     }
     
     func doneShowingAllWebViews() {
-        adbanner.removeFromSuperview()
-        
         if currentWebView < webViews.count - 1 && currentWebView > 0 {
             for i in 0...currentWebView - 1 {
                 UIView.animateWithDuration(0.75, animations: {
@@ -1180,16 +1207,29 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         webViews[currentWebView].frame = CGRectMake(0, 0, view.frame.width, view.frame.height - 44)
         self.view.addSubview(webViews[currentWebView])
         
+        UIView.animateWithDuration(0.5, animations: {
+            self.toolBar.frame = CGRectMake(0, self.view.frame.height + 44, self.view.frame.width, 44)
+        })
         configtoolbaritems()
-        edgeSwipe.enabled = true
+        UIView.animateWithDuration(0.5, animations: {
+            self.toolBar.frame = CGRectMake(0, self.view.frame.height - 44, self.view.frame.width, 44)
+        })
+        toolBarSwipe.enabled = true
         checkGos()
         lettextfieldtohost()
-        progressBar.setProgress(1.0, animated: true)
-        UIView.animateWithDuration(0.3, delay: 0.5, options: .CurveEaseInOut, animations: {
-            self.progressBar.alpha = 0
-        }, completion: nil)
         textField.configrefreshImage()
         refreshControl.endRefreshing()
+        if webViews[currentWebView].loading {
+            progressBar.setProgress(Float(webViews[currentWebView].estimatedProgress) + 0.01, animated: true)
+            UIView.animateWithDuration(0.3, delay: 0.5, options: .CurveEaseInOut, animations: {
+                self.progressBar.alpha = 1
+            }, completion: nil)
+        } else {
+            progressBar.setProgress(1.0, animated: true)
+            UIView.animateWithDuration(0.3, delay: 0.5, options: .CurveEaseInOut, animations: {
+                self.progressBar.alpha = 0
+            }, completion: nil)
+        }
         
         self.view.bringSubviewToFront(showButton)
         self.view.bringSubviewToFront(toolBar)
@@ -1201,6 +1241,23 @@ class ViewController: UIViewController, UIContentContainer, WKNavigationDelegate
         webViewLabels = []
         
         showingAllWebViews = false
+        
+        if isAdbannerEnoughSecondsYet {
+            adbanner.removeFromSuperview()
+        } else {
+            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                adbanner.frame = CGRectMake(0, 0, view.frame.width, 66)
+                webViews[currentWebView].frame = CGRectMake(0, 66, view.frame.width, view.frame.height - 44 - 66) //44: toolbar height; 66: adbanner height
+            } else {
+                if UIInterfaceOrientationIsPortrait(self.interfaceOrientation) == true {
+                    adbanner.frame = CGRectMake(0, 0, view.frame.width, 50)
+                    webViews[currentWebView].frame = CGRectMake(0, 50, view.frame.width, view.frame.height - 44 - 50) //44: toolbar height; 50: adbanner height
+                } else {
+                    adbanner.frame = CGRectMake(0, 0, view.frame.width, 32)
+                    webViews[currentWebView].frame = CGRectMake(0, 32, view.frame.width, view.frame.height - 44 - 32) //44: toolbar height; 32: adbanner height
+                }
+            }
+        }
     }
     
     func changeOrientationLock() {

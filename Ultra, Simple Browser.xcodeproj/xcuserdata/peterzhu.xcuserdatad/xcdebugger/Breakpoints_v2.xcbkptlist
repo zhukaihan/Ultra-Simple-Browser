@@ -88,11 +88,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Ultra, Simple Browser/ViewController.swift"
-            timestampString = "447971557.441977"
+            timestampString = "448730449.409284"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "821"
-            endingLineNumber = "821"
+            startingLineNumber = "847"
+            endingLineNumber = "847"
             landmarkName = "ViewController"
             landmarkType = "3">
          </BreakpointContent>
@@ -104,11 +104,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Ultra, Simple Browser/ViewController.swift"
-            timestampString = "447971557.441977"
+            timestampString = "448730449.409284"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "823"
-            endingLineNumber = "823"
+            startingLineNumber = "849"
+            endingLineNumber = "849"
             landmarkName = "textFieldDidChanged()"
             landmarkType = "5">
          </BreakpointContent>
@@ -120,11 +120,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Ultra, Simple Browser/ViewController.swift"
-            timestampString = "447971557.441977"
+            timestampString = "448730449.409284"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "793"
-            endingLineNumber = "793"
+            startingLineNumber = "819"
+            endingLineNumber = "819"
             landmarkName = "textFieldDidBeginEditing(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -136,11 +136,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Ultra, Simple Browser/ViewController.swift"
-            timestampString = "447971557.441977"
+            timestampString = "448730449.409284"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "794"
-            endingLineNumber = "794"
+            startingLineNumber = "820"
+            endingLineNumber = "820"
             landmarkName = "textFieldDidBeginEditing(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -327,6 +327,150 @@
             startingLineNumber = "62"
             endingLineNumber = "62"
             landmarkName = "textFieldDidChanged()"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/ViewController.swift"
+            timestampString = "448588871.323588"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "695"
+            endingLineNumber = "695"
+            landmarkName = "keyboardWillBeShown(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/ViewController.swift"
+            timestampString = "448730449.409284"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "720"
+            endingLineNumber = "720"
+            landmarkName = "keyboardWillBeShown(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/ViewController.swift"
+            timestampString = "448588871.323588"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "696"
+            endingLineNumber = "696"
+            landmarkName = "keyboardWillBeShown(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/ViewController.swift"
+            timestampString = "448588871.323588"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "708"
+            endingLineNumber = "708"
+            landmarkName = "keyboardWillBeShown(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/ViewController.swift"
+            timestampString = "448588871.323588"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "709"
+            endingLineNumber = "709"
+            landmarkName = "keyboardWillBeShown(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/ViewController.swift"
+            timestampString = "448730449.409284"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "717"
+            endingLineNumber = "717"
+            landmarkName = "keyboardWillBeShown(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/ViewController.swift"
+            timestampString = "448730449.409284"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "721"
+            endingLineNumber = "721"
+            landmarkName = "keyboardWillBeShown(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/ViewController.swift"
+            timestampString = "448730449.409284"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "722"
+            endingLineNumber = "722"
+            landmarkName = "keyboardWillBeShown(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Ultra, Simple Browser/ViewController.swift"
+            timestampString = "448589169.990823"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "711"
+            endingLineNumber = "711"
+            landmarkName = "keyboardWillBeShown(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
