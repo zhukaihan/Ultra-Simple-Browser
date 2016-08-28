@@ -22,26 +22,28 @@ class BackForwardTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationController?.navigationBarHidden = true
-        self.navigationController?.toolbarHidden = false
+        self.navigationController?.isNavigationBarHidden = true
+        self.navigationController?.isToolbarHidden = false
+        
+        addNewFavoriteTableViewController.addNewFavoriteItemParentViewController = self
         
         let listLabel: UILabel = UILabel()
         if (self.tag != 2) && (self.tag != 3) {
             listLabel.text = "History of this Tab"
-            listLabel.frame = CGRectMake(0, 0, view.frame.width - 150, 30)
+            listLabel.frame = CGRect(x: 0, y: 0, width: view.frame.width - 150, height: 30)
             let listLabelItem: UIBarButtonItem = UIBarButtonItem(customView: listLabel)
-            let cancelButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "dismissSelf")
-            var toolBarItems = [
+            let cancelButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(BackForwardTableViewController.dismissSelf))
+            let toolBarItems: [UIBarButtonItem] = [
                 listLabelItem,
                 self.backForwardParentViewController.flexibleSpaceBarButtonItem,
                 cancelButton
             ]
             self.setToolbarItems(toolBarItems, animated: true)
         } else {
-            segmentedControl.insertSegmentWithTitle("Favorites", atIndex: 0, animated: true)
-            segmentedControl.insertSegmentWithTitle("Historys", atIndex: 1, animated: true)
-            segmentedControl.frame = CGRectMake(0, 0, view.frame.width - 150, 30)
-            segmentedControl.addTarget(self, action: "segmentedControlPressed:", forControlEvents: .ValueChanged)
+            segmentedControl.insertSegment(withTitle: "Favorites", at: 0, animated: true)
+            segmentedControl.insertSegment(withTitle: "Historys", at: 1, animated: true)
+            segmentedControl.frame = CGRect(x: 0, y: 0, width: view.frame.width - 150, height: 30)
+            segmentedControl.addTarget(self, action: #selector(BackForwardTableViewController.segmentedControlPressed(_:)), for: .valueChanged)
             segmentedControlButton = UIBarButtonItem(customView: segmentedControl)
             configFavoritesToolbar()
         }
@@ -53,7 +55,7 @@ class BackForwardTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         
         if ((addNewFavoriteTableViewController.viewshowed) && (addNewFavoriteTableViewController.clickedDone)) {
@@ -68,17 +70,17 @@ class BackForwardTableViewController: UITableViewController {
 
     // MARK: - Table view data source
     
-    override func shouldAutorotate() -> Bool {
+    /*override func shouldAutorotate() -> Bool {
         return false
-    }
+    }*/
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         // Return the number of sections.
         
         return 1
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // Return the number of rows in the section.
         
         if self.tag == 0 {
@@ -88,56 +90,56 @@ class BackForwardTableViewController: UITableViewController {
             let number = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].backForwardList.forwardList.count
             return number
         } else if self.tag == 2 {
-            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-            let managedContext = appDelegate.managedObjectContext!
-            var fetchRequest = NSFetchRequest(entityName:"Favorites")
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let managedContext = appDelegate.managedObjectContext
+            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName:"Favorites")
             let sortDescriptor = NSSortDescriptor(key: "time", ascending: true)
             fetchRequest.sortDescriptors = [sortDescriptor]
-            Favoriteitems = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
+            try! Favoriteitems = managedContext!.fetch(fetchRequest) 
             let number = Favoriteitems.count
             return number
         } else if self.tag == 3 {
-            println("to History Row")
-            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-            let managedContext = appDelegate.managedObjectContext!
-            var fetchRequest = NSFetchRequest(entityName:"Historys")
+            print("to History Row")
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let managedContext = appDelegate.managedObjectContext
+            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName:"Historys")
             let sortDescriptor = NSSortDescriptor(key: "time", ascending: false)
             fetchRequest.sortDescriptors = [sortDescriptor]
-            Historyitems = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
+            try! Historyitems = managedContext!.fetch(fetchRequest) 
             let number = Historyitems.count
-            println(number)
+            print(number)
             return number
         } else {
             return 0
         }
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let tableviewcell = UITableViewCell(style: .Subtitle, reuseIdentifier: nil)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let tableviewcell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
         
         if self.tag == 0 {
-            tableviewcell.textLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].backForwardList.itemAtIndex(0 - indexPath.row - 1)?.title
-            tableviewcell.detailTextLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].backForwardList.itemAtIndex(0 - indexPath.row - 1)?.URL.absoluteString
+            tableviewcell.textLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].backForwardList.item(at: 0 - (indexPath as NSIndexPath).row - 1)?.title
+            tableviewcell.detailTextLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].backForwardList.item(at: 0 - (indexPath as NSIndexPath).row - 1)?.url.absoluteString
         } else if self.tag == 1 {
-            tableviewcell.textLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].backForwardList.itemAtIndex(indexPath.row + 1)?.title
-            tableviewcell.detailTextLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].backForwardList.itemAtIndex(indexPath.row + 1)?.URL.absoluteString
+            tableviewcell.textLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].backForwardList.item(at: (indexPath as NSIndexPath).row + 1)?.title
+            tableviewcell.detailTextLabel?.text = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].backForwardList.item(at: (indexPath as NSIndexPath).row + 1)?.url.absoluteString
         } else if self.tag == 2 {
             if Favoriteitems.count != 0 {
-                let theFavoriteitem = Favoriteitems[indexPath.row]
-                let titlestring = theFavoriteitem.valueForKey("title") as String?
+                let theFavoriteitem = Favoriteitems[(indexPath as NSIndexPath).row]
+                let titlestring = theFavoriteitem.value(forKey: "title") as! String?
                 tableviewcell.textLabel?.text = titlestring
-                let urlstring = theFavoriteitem.valueForKey("url") as String?
+                let urlstring = theFavoriteitem.value(forKey: "url") as! String?
                 tableviewcell.detailTextLabel?.text = urlstring
             }
         } else if self.tag == 3 {
-            var dateFormatter = NSDateFormatter()
+            let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yy/MM/dd hh:mm"
             if Historyitems.count != 0 {
-                let theHistoryitem = Historyitems[indexPath.row]
-                let titlestring = theHistoryitem.valueForKey("title") as String?
+                let theHistoryitem = Historyitems[(indexPath as NSIndexPath).row]
+                let titlestring = theHistoryitem.value(forKey: "title") as! String?
                 tableviewcell.textLabel?.text = titlestring!
-                let datestring = dateFormatter.stringFromDate(theHistoryitem.valueForKey("time") as NSDate)
-                let urlstring = theHistoryitem.valueForKey("url") as String?
+                let datestring = dateFormatter.string(from: theHistoryitem.value(forKey: "time") as! Date)
+                let urlstring = theHistoryitem.value(forKey: "url") as! String?
                 tableviewcell.detailTextLabel?.text = datestring + " | " + urlstring!
             }
         }
@@ -145,34 +147,34 @@ class BackForwardTableViewController: UITableViewController {
         return tableviewcell
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         dismissSelf()
-        var thewknavitem = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].backForwardList.itemAtIndex(0)
+        var thewknavitem = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].backForwardList.item(at: 0)
         if self.tag == 0 {
-            thewknavitem = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].backForwardList.itemAtIndex(0 - indexPath.row - 1)
-            backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].goToBackForwardListItem(thewknavitem!)
+            thewknavitem = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].backForwardList.item(at: 0 - (indexPath as NSIndexPath).row - 1)
+            backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].go(to: thewknavitem!)
         } else if self.tag == 1 {
-            thewknavitem = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].backForwardList.itemAtIndex(indexPath.row + 1)
-            backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].goToBackForwardListItem(thewknavitem!)
+            thewknavitem = backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].backForwardList.item(at: (indexPath as NSIndexPath).row + 1)
+            backForwardParentViewController.webViews[backForwardParentViewController.currentWebView].go(to: thewknavitem!)
         } else if self.tag == 2 {
-            let theFavoriteitem = Favoriteitems[indexPath.row]
-            let urlstring = theFavoriteitem.valueForKey("url") as String?
+            let theFavoriteitem = Favoriteitems[(indexPath as NSIndexPath).row]
+            let urlstring = theFavoriteitem.value(forKey: "url") as! String?
             self.backForwardParentViewController.textField.text = urlstring
             self.backForwardParentViewController.didClickGo()
         } else if self.tag == 3 {
-            let theHistoryitem = Historyitems[indexPath.row]
-            let urlstring = theHistoryitem.valueForKey("url") as String?
+            let theHistoryitem = Historyitems[(indexPath as NSIndexPath).row]
+            let urlstring = theHistoryitem.value(forKey: "url") as! String?
             self.backForwardParentViewController.textField.text = urlstring
             self.backForwardParentViewController.didClickGo()
             
-            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-            let managedContext = appDelegate.managedObjectContext!
-            managedContext.deleteObject(theHistoryitem as NSManagedObject)
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let managedContext = appDelegate.managedObjectContext
+            managedContext!.delete(theHistoryitem)
         }
     }
     
     // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         if self.tag == 2 {
             return true
         } else {
@@ -181,26 +183,26 @@ class BackForwardTableViewController: UITableViewController {
     }
     
     // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-            let managedContext = appDelegate.managedObjectContext!
-            managedContext.deleteObject(Favoriteitems[indexPath.row])
-            NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector: "tableReload", userInfo: nil, repeats: false)
-        } else if editingStyle == .Insert {
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            let managedContext = appDelegate.managedObjectContext
+            managedContext!.delete(Favoriteitems[(indexPath as NSIndexPath).row])
+            Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(BackForwardTableViewController.tableReload), userInfo: nil, repeats: false)
+        } else if editingStyle == .insert {
         }
     }
     
     func dismissSelf() {
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
     func configFavoritesToolbar() {
         segmentedControl.selectedSegmentIndex = 0
         
-        let cancelButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: "dismissSelf")
-        let addButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "startAddingFavorites")
-        var toolBarItems = [
+        let cancelButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(BackForwardTableViewController.dismissSelf))
+        let addButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(BackForwardTableViewController.startAddingFavorites))
+        let toolBarItems: [UIBarButtonItem] = [
             addButton,
             self.backForwardParentViewController.flexibleSpaceBarButtonItem,
             segmentedControlButton,
@@ -213,9 +215,9 @@ class BackForwardTableViewController: UITableViewController {
     func configHistorysToolbar() {
         segmentedControl.selectedSegmentIndex = 1
         
-        let cancelButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: "dismissSelf")
-        var clearButton: UIBarButtonItem = UIBarButtonItem(title: "Clear", style: .Plain, target: self, action: "clearHistory")
-        var toolBarItems = [
+        let cancelButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(BackForwardTableViewController.dismissSelf))
+        let clearButton: UIBarButtonItem = UIBarButtonItem(title: "Clear", style: .plain, target: self, action: #selector(BackForwardTableViewController.clearHistory))
+        let toolBarItems: [UIBarButtonItem] = [
             clearButton,
             self.backForwardParentViewController.flexibleSpaceBarButtonItem,
             segmentedControlButton,
@@ -225,7 +227,7 @@ class BackForwardTableViewController: UITableViewController {
         self.setToolbarItems(toolBarItems, animated: true)
     }
     
-    func segmentedControlPressed(segCtrl: UISegmentedControl) {
+    func segmentedControlPressed(_ segCtrl: UISegmentedControl) {
         switch segCtrl.selectedSegmentIndex {
         case 0:
             self.tag = 2
@@ -239,37 +241,35 @@ class BackForwardTableViewController: UITableViewController {
     }
     
     func startAddingFavorites() {
-        println("startaddingfavorites")
-        addNewFavoriteTableViewController = AddNewFavoriteItemTableViewController(style: .Grouped)
+        print("startaddingfavorites")
+        addNewFavoriteTableViewController = AddNewFavoriteItemTableViewController(style: .grouped)
         let title: String! = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].title
-        let url: String! = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].URL?.absoluteString
+        let url: String! = self.backForwardParentViewController.webViews[self.backForwardParentViewController.currentWebView].url?.absoluteString
         addNewFavoriteTableViewController.defaultTitle = title
         if url != nil {
             addNewFavoriteTableViewController.defaultURL = url
         }
-        var addNewFavoriteNavigationController = UINavigationController(rootViewController: addNewFavoriteTableViewController)
-        self.navigationController?.presentViewController(addNewFavoriteNavigationController, animated: true, completion: nil)
+        let addNewFavoriteNavigationController = UINavigationController(rootViewController: addNewFavoriteTableViewController)
+        self.navigationController?.present(addNewFavoriteNavigationController, animated: true, completion: nil)
     }
     
     func addFavorites() {
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        let managedContext = appDelegate.managedObjectContext!
-        let fetchRequest = NSFetchRequest(entityName:"Favorites")
-        var Favoriteitems = managedContext.executeFetchRequest(fetchRequest, error: nil) as [NSManagedObject]!
-        let entity =  NSEntityDescription.entityForName("Favorites", inManagedObjectContext: managedContext)
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let managedContext = appDelegate.managedObjectContext
+        //let fetchRequest = NSFetchRequest<NSManagedObject>(entityName:"Favorites")
+        //let Favoriteitems = managedContext.executeFetchRequest(fetchRequest) as! [NSManagedObject]
+        //let entity =  NSEntityDescription.entityForName("Favorites", inManagedObjectContext: managedContext)
         
-        let favoriteItem = NSEntityDescription.insertNewObjectForEntityForName("Favorites", inManagedObjectContext: managedContext) as NSManagedObject
+        let favoriteItem = NSEntityDescription.insertNewObject(forEntityName: "Favorites", into: managedContext!) as NSManagedObject
         
-        let timeNow = NSDate()
+        let timeNow = Date()
         
         favoriteItem.setValue(addNewFavoriteTableViewController.usrTitle, forKey: "title")
         favoriteItem.setValue(addNewFavoriteTableViewController.usrURL, forKey: "url")
         favoriteItem.setValue(timeNow, forKey: "time")
         
-        var error: NSError?
-        if !managedContext.save(&error) {
-            println("Could not save \\(error), \(error?.userInfo)")
-        }
+        //var error: NSError?
+        try! managedContext!.save()
         
         //Favoriteitems.append(favoriteItem)
         
@@ -279,21 +279,20 @@ class BackForwardTableViewController: UITableViewController {
     }
     
     func clearHistory() {
-        let appDelegate = UIApplication.sharedApplication().delegate as AppDelegate
-        let managedContext = appDelegate.managedObjectContext!
-        var mid: NSManagedObject!
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let managedContext = appDelegate.managedObjectContext
         for mid in Historyitems {
-            managedContext.deleteObject(mid as NSManagedObject)
+            managedContext!.delete(mid)
         }
-        Historyitems.removeAll(keepCapacity: false)
+        Historyitems.removeAll(keepingCapacity: false)
         
         tableReload()
-        
-        let topSitesFetchRequest = NSFetchRequest(entityName:"TopSites")
-        var topSites = managedContext.executeFetchRequest(topSitesFetchRequest, error: nil) as [NSManagedObject]!
+        let topSitesFetchRequest = NSFetchRequest<NSManagedObject>(entityName: "TopSites")
+        var topSites = [NSManagedObject]()
+        try! topSites = managedContext!.fetch(topSitesFetchRequest) 
         if topSites.count > 0 {
             for theTopSite in topSites {
-                managedContext.deleteObject(theTopSite)
+                managedContext!.delete(theTopSite)
             }
         }
     }

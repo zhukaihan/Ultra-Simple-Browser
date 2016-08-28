@@ -8,8 +8,9 @@
 
 import UIKit
 
-class AddNewFavoriteItemTableViewController: UITableViewController, UITableViewDataSource, UITableViewDelegate {
+class AddNewFavoriteItemTableViewController: UITableViewController {
     
+    var addNewFavoriteItemParentViewController: BackForwardTableViewController!
     var thepassingvalue: Int = 0
     var viewshowed: Bool = false
     var clickedDone: Bool = false
@@ -27,43 +28,39 @@ class AddNewFavoriteItemTableViewController: UITableViewController, UITableViewD
         
         self.viewshowed = true
         
-        usrTitleTextField = UITextField(frame: CGRectMake(10, 0, view.frame.width - 10, 44))
+        usrTitleTextField = UITextField(frame: CGRect(x: 10, y: 0, width: view.frame.width - 10, height: 44))
         usrTitleTextField.placeholder = "Title"
         usrTitleTextField.text = defaultTitle
-        usrTitleTextField.tintColor = UIColor.grayColor()
-        usrTitleTextField.textAlignment = .Left
-        usrTitleTextField.clearButtonMode = .WhileEditing
-        usrTitleTextField.keyboardType = .Default
-        usrTitleTextField.spellCheckingType = .No
-        usrTitleTextField.autocapitalizationType = .None
-        usrTitleTextField.autocorrectionType = .No
+        usrTitleTextField.tintColor = UIColor.gray
+        usrTitleTextField.textAlignment = .left
+        usrTitleTextField.clearButtonMode = .whileEditing
+        usrTitleTextField.keyboardType = .default
+        usrTitleTextField.spellCheckingType = .no
+        usrTitleTextField.autocapitalizationType = .none
+        usrTitleTextField.autocorrectionType = .no
         usrTitleTextField.enablesReturnKeyAutomatically = true
         
-        usrURLTextField = UITextField(frame: CGRectMake(10, 0, view.frame.width - 10, 44))
+        usrURLTextField = UITextField(frame: CGRect(x: 10, y: 0, width: view.frame.width - 10, height: 44))
         usrURLTextField.placeholder = "URL"
         usrURLTextField.text = defaultURL
-        usrURLTextField.tintColor = UIColor.grayColor()
-        usrURLTextField.textAlignment = .Left
-        usrURLTextField.clearButtonMode = .WhileEditing
+        usrURLTextField.tintColor = UIColor.gray
+        usrURLTextField.textAlignment = .left
+        usrURLTextField.clearButtonMode = .whileEditing
         usrURLTextField.keyboardType = .URL
-        usrURLTextField.spellCheckingType = .No
-        usrURLTextField.autocapitalizationType = .None
-        usrURLTextField.autocorrectionType = .No
+        usrURLTextField.spellCheckingType = .no
+        usrURLTextField.autocapitalizationType = .none
+        usrURLTextField.autocorrectionType = .no
         usrURLTextField.enablesReturnKeyAutomatically = true
         
-        doneButton = UIButton(frame: CGRectMake(0, 0, view.frame.width, 44))
-        doneButton.setTitle("Done", forState: .Normal)
-        doneButton.setTitleColor(UIColor.blackColor(), forState: .Normal)
-        doneButton.addTarget(self, action: "pressDone", forControlEvents: .TouchUpInside)
+        doneButton = UIButton(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 44))
+        doneButton.setTitle("Done", for: UIControlState())
+        doneButton.setTitleColor(UIColor.black, for: UIControlState())
+        doneButton.addTarget(self, action: #selector(AddNewFavoriteItemTableViewController.pressDone), for: .touchUpInside)
         
-        cancelButton = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "cancelAddFavorite")
+        cancelButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(AddNewFavoriteItemTableViewController.cancelAddFavorite))
         self.navigationItem.leftBarButtonItem = cancelButton
         
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-        
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        NotificationCenter.default.addObserver(self, selector: #selector(AddNewFavoriteItemTableViewController.orientationDidChange(_:)), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
     }
     
     override func didReceiveMemoryWarning() {
@@ -73,11 +70,11 @@ class AddNewFavoriteItemTableViewController: UITableViewController, UITableViewD
     
     // MARK: - Table view data source
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
         if section == 0 {
@@ -87,53 +84,55 @@ class AddNewFavoriteItemTableViewController: UITableViewController, UITableViewD
         }
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = UITableViewCell()
         
-        if indexPath.section == 0 {
-            if indexPath.row == 0 {
+        if (indexPath as NSIndexPath).section == 0 {
+            if (indexPath as NSIndexPath).row == 0 {
                 cell.addSubview(usrTitleTextField)
             } else {
                 cell.addSubview(usrURLTextField)
             }
-        } else if indexPath.section == 1 {
+        } else if (indexPath as NSIndexPath).section == 1 {
             cell.addSubview(doneButton)
         }
         
         return cell
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         
-        let notificationCenter = NSNotificationCenter.defaultCenter()
-        notificationCenter.addObserver(self, selector: "orientationDidChange:", name: UIDeviceOrientationDidChangeNotification, object: nil)
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(AddNewFavoriteItemTableViewController.orientationDidChange(_:)), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
         
-        let notificationCenter = NSNotificationCenter.defaultCenter()
+        let notificationCenter = NotificationCenter.default
         notificationCenter.removeObserver(self)
     }
     
-    func orientationDidChange() {
-        usrTitleTextField.frame = CGRectMake(10, 0, view.frame.width - 10, 44)
-        usrURLTextField.frame = CGRectMake(10, 0, view.frame.width - 10, 44)
-        doneButton.frame = CGRectMake(0, 0, view.frame.width, 44)
+    func orientationDidChange(_ sender: Notification) {
+        //usrTitleTextField.frame = CGRectMake(10, 0, view.frame.width - 10, 44)
+        //usrURLTextField.frame = CGRectMake(10, 0, view.frame.width - 10, 44)
+        //doneButton.frame = CGRectMake(0, 0, view.frame.width, 44)
+        
+        addNewFavoriteItemParentViewController?.backForwardParentViewController?.orientationDidChange(sender)
     }
     
     func pressDone() {
-        usrTitle = usrTitleTextField.text
-        usrURL = usrURLTextField.text
+        usrTitle = usrTitleTextField.text!
+        usrURL = usrURLTextField.text!
         clickedDone = true
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
     func cancelAddFavorite(){
         clickedDone = false
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
 
     /*

@@ -21,51 +21,51 @@ class DemoViewController: UIViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationController?.navigationBarHidden = true
+        self.navigationController?.isNavigationBarHidden = true
         
-        self.view.backgroundColor = UIColor.darkGrayColor()
+        self.view.backgroundColor = UIColor.darkGray
         
-        finishButton.frame = CGRectMake(10, 10, 100, 35)
-        finishButton.backgroundColor = UIColor.grayColor()
-        finishButton.setTitle("close", forState: .Normal)
-        finishButton.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        finishButton.addTarget(self, action: "finishDemo", forControlEvents: .TouchUpInside)
+        finishButton.frame = CGRect(x: 10, y: 10, width: 100, height: 35)
+        finishButton.backgroundColor = UIColor.gray
+        finishButton.setTitle("close", for: UIControlState())
+        finishButton.setTitleColor(UIColor.white, for: UIControlState())
+        finishButton.addTarget(self, action: #selector(DemoViewController.finishDemo), for: .touchUpInside)
         
-        pageControl.frame = CGRectMake(0, view.frame.height - 35, view.frame.width, 10)
+        pageControl.frame = CGRect(x: 0, y: view.frame.height - 35, width: view.frame.width, height: 10)
         pageControl.numberOfPages = 5
         pageControl.currentPage = 0
-        pageControl.pageIndicatorTintColor = UIColor.lightGrayColor()
-        pageControl.currentPageIndicatorTintColor = UIColor.darkGrayColor()
+        pageControl.pageIndicatorTintColor = UIColor.lightGray
+        pageControl.currentPageIndicatorTintColor = UIColor.darkGray
         
-        var firstImageView = UIImageView(image: UIImage(named: "DemoImage0.png"))
-        firstImageView.frame = CGRectMake(0, 0, view.frame.width, view.frame.height)
-        firstImageView.contentMode = .ScaleAspectFit
+        let firstImageView = UIImageView(image: UIImage(named: "DemoImage0.png"))
+        firstImageView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
+        firstImageView.contentMode = .scaleAspectFit
         firstImageView.backgroundColor = UIColor(red: 0.3254, green: 0.7960, blue: 0.9921, alpha: 0.6)
         
-        var secondImageView = UIImageView(image: UIImage(named: "DemoImage1.png"))
-        secondImageView.frame = CGRectMake(view.frame.width, 0, view.frame.width, view.frame.height)
-        secondImageView.contentMode = .ScaleAspectFit
+        let secondImageView = UIImageView(image: UIImage(named: "DemoImage1.png"))
+        secondImageView.frame = CGRect(x: view.frame.width, y: 0, width: view.frame.width, height: view.frame.height)
+        secondImageView.contentMode = .scaleAspectFit
         
-        var thirdImageView = UIImageView(image: UIImage(named: "DemoImage2.png"))
-        thirdImageView.frame = CGRectMake(view.frame.width * 2, 0, view.frame.width, view.frame.height)
-        thirdImageView.contentMode = .ScaleAspectFit
+        let thirdImageView = UIImageView(image: UIImage(named: "DemoImage2.png"))
+        thirdImageView.frame = CGRect(x: view.frame.width * 2, y: 0, width: view.frame.width, height: view.frame.height)
+        thirdImageView.contentMode = .scaleAspectFit
         
-        var fourthImageView = UIImageView(image: UIImage(named: "DemoImage3.png"))
-        fourthImageView.frame = CGRectMake(view.frame.width * 3, 0, view.frame.width, view.frame.height)
-        fourthImageView.contentMode = .ScaleAspectFit
+        let fourthImageView = UIImageView(image: UIImage(named: "DemoImage3.png"))
+        fourthImageView.frame = CGRect(x: view.frame.width * 3, y: 0, width: view.frame.width, height: view.frame.height)
+        fourthImageView.contentMode = .scaleAspectFit
         
-        var fifthImageView = UIImageView(image: UIImage(named: "DemoImage4.png"))
-        fifthImageView.frame = CGRectMake(view.frame.width * 4, 0, view.frame.width, view.frame.height)
-        fifthImageView.contentMode = .ScaleAspectFit
+        let fifthImageView = UIImageView(image: UIImage(named: "DemoImage4.png"))
+        fifthImageView.frame = CGRect(x: view.frame.width * 4, y: 0, width: view.frame.width, height: view.frame.height)
+        fifthImageView.contentMode = .scaleAspectFit
         
-        scrollView.pagingEnabled = true
+        scrollView.isPagingEnabled = true
         scrollView.alwaysBounceHorizontal = true
         scrollView.alwaysBounceVertical = false
-        scrollView.multipleTouchEnabled = false
+        scrollView.isMultipleTouchEnabled = false
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.showsVerticalScrollIndicator = false
-        scrollView.frame = CGRectMake(0, 0, view.frame.width, view.frame.height)
-        scrollView.contentSize = CGSizeMake(view.frame.width * 5, view.frame.height - 1)
+        scrollView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
+        scrollView.contentSize = CGSize(width: view.frame.width * 5, height: view.frame.height - 1)
         scrollView.delegate = self
         scrollView.addSubview(firstImageView)
         scrollView.addSubview(secondImageView)
@@ -84,21 +84,22 @@ class DemoViewController: UIViewController, UIScrollViewDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden: Bool {
         return true
     }
+/*
     
     override func shouldAutorotate() -> Bool {
         return false
     }
-    
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        var pageWidth: CGFloat = scrollView.frame.size.width
-        var contentoffsetx: CGFloat = scrollView.contentOffset.x
-        var fractionalPage = contentoffsetx / pageWidth
-        var page: NSInteger = lroundf(Float(fractionalPage))
+    */
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let pageWidth: CGFloat = scrollView.frame.size.width
+        let contentoffsetx: CGFloat = scrollView.contentOffset.x
+        let fractionalPage = contentoffsetx / pageWidth
+        let page: NSInteger = lroundf(Float(fractionalPage))
         pageControl.currentPage = page
-        pageControl.frame = CGRectMake(contentoffsetx, view.frame.height - 35, view.frame.width, 10)
+        pageControl.frame = CGRect(x: contentoffsetx, y: view.frame.height - 35, width: view.frame.width, height: 10)
         if ((page == 0) && (firstTimeToPageZero)) {
             
         }
@@ -114,7 +115,7 @@ class DemoViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func finishDemo() {
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
 }

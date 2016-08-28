@@ -9,10 +9,10 @@
 import UIKit
 
 class NavigationController: UINavigationController {
-    
+    /*
     override func shouldAutorotate() -> Bool {
-        let bool = self.viewControllers.first?.shouldAutorotate()
+        let bool = self.viewControllers.first?.shouldAutorotate
         return bool!
-    }
+    }*/
     
 }

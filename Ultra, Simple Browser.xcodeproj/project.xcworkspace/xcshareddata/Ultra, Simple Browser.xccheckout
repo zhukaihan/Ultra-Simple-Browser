@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>8A457376-2A70-491B-AE67-937BE687E30F</string>
 	<key>IDESourceControlProjectName</key>
-	<string>Ultra, Simple Browser</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>EF407D3181AC1395DEF3873FC66B97406FF90FCE</key>
 		<string>https://github.com/zhukaihan/Ultra-Simple-Browser.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Ultra, Simple Browser.xcodeproj</string>
+	<string>Ultra, Simple Browser.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>EF407D3181AC1395DEF3873FC66B97406FF90FCE</key>

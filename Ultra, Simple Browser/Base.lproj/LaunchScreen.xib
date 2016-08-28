@@ -1,24 +1,25 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6221" systemVersion="14C78c" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11198.2" systemVersion="16A304a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6213"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
+            <rect key="frame" x="0.0" y="0.0" width="466" height="571"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Ultra, Simple Browser" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="kId-c2-rCX">
-                    <rect key="frame" x="20" y="37" width="441" height="43"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="441" id="Eva-Q1-GoR"/>
                         <constraint firstAttribute="width" constant="441" id="cB6-EC-7lR"/>
                         <constraint firstAttribute="height" constant="43" id="rjU-Q4-9Gn"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="boldSystem" pointSize="30"/>
-                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                     <variation key="default">
                         <mask key="constraints">
@@ -26,43 +27,37 @@
                         </mask>
                     </variation>
                 </label>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon.png" translatesAutoresizingMaskIntoConstraints="NO" id="Oel-7g-0nr">
-                    <rect key="frame" x="112" y="112" width="256" height="256"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="256" id="cd8-GG-Spk"/>
-                        <constraint firstAttribute="height" constant="256" id="hgC-8R-Ova"/>
-                    </constraints>
-                </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Start Surfing!" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eVC-7S-9yW">
-                    <rect key="frame" x="190" y="444" width="101" height="21"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="101" id="rP0-A9-bFq"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="FKF-nw-JLm">
-                    <rect key="frame" x="230" y="376" width="20" height="20"/>
-                </activityIndicatorView>
+                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="FKF-nw-JLm"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_start.png" translatesAutoresizingMaskIntoConstraints="NO" id="oRh-qI-x1l"/>
             </subviews>
-            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <color key="backgroundColor" red="0.1518271267414093" green="0.25519168376922607" blue="0.39054840803146362" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="FKF-nw-JLm" secondAttribute="bottom" constant="84" id="6cZ-vL-dKY"/>
+                <constraint firstAttribute="trailing" secondItem="oRh-qI-x1l" secondAttribute="trailing" id="NOi-n6-fva"/>
                 <constraint firstAttribute="centerX" secondItem="kId-c2-rCX" secondAttribute="centerX" constant="-0.5" id="PwS-W0-Rk7"/>
-                <constraint firstAttribute="centerY" secondItem="Oel-7g-0nr" secondAttribute="centerY" id="UuA-C1-hRB"/>
+                <constraint firstItem="oRh-qI-x1l" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="Q7p-dF-AMS"/>
+                <constraint firstAttribute="bottom" secondItem="oRh-qI-x1l" secondAttribute="bottom" id="VQf-IB-8hO"/>
+                <constraint firstItem="oRh-qI-x1l" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="VcT-xR-bPN"/>
                 <constraint firstAttribute="centerX" secondItem="FKF-nw-JLm" secondAttribute="centerX" id="ZbK-Cc-Lsg"/>
                 <constraint firstAttribute="centerX" secondItem="eVC-7S-9yW" secondAttribute="centerX" constant="-0.5" id="aqb-wd-5St"/>
                 <constraint firstAttribute="bottom" secondItem="eVC-7S-9yW" secondAttribute="bottom" constant="15" id="dZX-2O-r8u"/>
-                <constraint firstAttribute="centerX" secondItem="Oel-7g-0nr" secondAttribute="centerX" id="mu6-tB-1ga"/>
+                <constraint firstItem="oRh-qI-x1l" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" symbolic="YES" id="sKh-cW-5in"/>
                 <constraint firstItem="kId-c2-rCX" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="37" id="v7a-q4-qnF"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="548" y="455"/>
+            <point key="canvasLocation" x="541" y="409.5"/>
         </view>
     </objects>
     <resources>
-        <image name="icon.png" width="1024" height="1024"/>
+        <image name="icon_start.png" width="4096" height="4096"/>
     </resources>
 </document>

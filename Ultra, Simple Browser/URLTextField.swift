@@ -8,35 +8,34 @@
 
 import UIKit
 
-class URLTextField: UITextField, NSXMLParserDelegate {
+class URLTextField: UITextField, XMLParserDelegate {
     
     var parentViewController: ViewController!
     
     // override drawRect to perform custom drawing.
-    override func drawRect(rect: CGRect) {
-        self.leftViewMode = .UnlessEditing
-        self.tintColor = UIColor.grayColor()
-        self.textAlignment = .Center
-        self.returnKeyType = .Go
+    override func draw(_ rect: CGRect) {
+        self.leftViewMode = .unlessEditing
+        self.tintColor = UIColor.gray
+        self.textAlignment = .center
+        self.returnKeyType = .go
         self.placeholder = "Enter URL or Search"
         self.adjustsFontSizeToFitWidth = true
-        self.clearButtonMode = .WhileEditing
-        self.keyboardType = .WebSearch
-        self.spellCheckingType = .No
-        self.autocapitalizationType = .None
-        self.autocorrectionType = .No
+        self.clearButtonMode = .whileEditing
+        self.keyboardType = .webSearch
+        self.spellCheckingType = .no
+        self.autocapitalizationType = .none
+        self.autocorrectionType = .no
         self.enablesReturnKeyAutomatically = true
         self.font = UIFont(name: "Arial", size: 17)
-        self.addTarget(self, action: "textFieldDidChanged", forControlEvents: .EditingChanged)
+        self.addTarget(self, action: #selector(URLTextField.textFieldDidChanged), for: .editingChanged)
     }
-    
     func configrefreshImage() {
         let refreshImage = UIImage(named: "refreshimage.png")!
-        let refreshImageButton = UIButton.buttonWithType(.Custom) as UIButton
+        let refreshImageButton = UIButton(type: .custom)
         refreshImageButton.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
         refreshImageButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 3)
-        refreshImageButton.setImage(refreshImage, forState: .Normal)
-        refreshImageButton.addTarget(self, action: "doRefresh", forControlEvents: .TouchUpInside)
+        refreshImageButton.setImage(refreshImage, for: UIControlState())
+        refreshImageButton.addTarget(self, action: #selector(URLTextField.doRefresh), for: .touchUpInside)
         self.leftView = refreshImageButton
     }
     
@@ -46,11 +45,11 @@ class URLTextField: UITextField, NSXMLParserDelegate {
     
     func configstopImage() {
         let stopImage = UIImage(named: "stopimage.png")!
-        let stopImageButton = UIButton.buttonWithType(.Custom) as UIButton
+        let stopImageButton = UIButton(type: .custom)
         stopImageButton.bounds = CGRect(x: 0, y: 0, width: 30, height: 30)
         stopImageButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 3)
-        stopImageButton.setImage(stopImage, forState: .Normal)
-        stopImageButton.addTarget(self, action: "doStop", forControlEvents: .TouchUpInside)
+        stopImageButton.setImage(stopImage, for: UIControlState())
+        stopImageButton.addTarget(self, action: #selector(URLTextField.doStop), for: .touchUpInside)
         self.leftView = stopImageButton
     }
     
