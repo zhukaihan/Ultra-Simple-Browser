@@ -3,7 +3,8 @@
 * Download at [App Store] [appstorelink]
 * Code on [my github] [githublink]
 * Website at ultrasimplebrowser.zhukaihan.com
-* Everything is made by me, basicly. 
+* Everything was written by me, basicly. 
+* The theory that the development of an app takes 3 months from scratch to alpha is true. 
 * All codes are in swift, in my opinion. 
 * Ultra, Simple Browser is copyright 2014 Kaihan Zhu.
 * Feel free to use anything here. 
