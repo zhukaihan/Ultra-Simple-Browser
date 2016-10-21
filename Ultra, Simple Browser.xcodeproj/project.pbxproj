@@ -23,6 +23,7 @@
 		83A045671A33F705007E3FCC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 83A045651A33F705007E3FCC /* LaunchScreen.xib */; };
 		83A045731A33F705007E3FCC /* Ultra__Simple_BrowserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83A045721A33F705007E3FCC /* Ultra__Simple_BrowserTests.swift */; };
 		83A045811A33F760007E3FCC /* Ultra_Simple_Browser_Internet_Error.html in Resources */ = {isa = PBXBuildFile; fileRef = 83A0457E1A33F760007E3FCC /* Ultra_Simple_Browser_Internet_Error.html */; };
+		83A427401D76E38A00AAC344 /* touch.png in Resources */ = {isa = PBXBuildFile; fileRef = 83A4273F1D76E38A00AAC344 /* touch.png */; };
 		83C45AAC1D70469D00F52A50 /* backbutton.png in Resources */ = {isa = PBXBuildFile; fileRef = 83C45A8D1D70469D00F52A50 /* backbutton.png */; };
 		83C45AAD1D70469D00F52A50 /* DemoImage0.png in Resources */ = {isa = PBXBuildFile; fileRef = 83C45A8E1D70469D00F52A50 /* DemoImage0.png */; };
 		83C45AAE1D70469D00F52A50 /* DemoImage1.png in Resources */ = {isa = PBXBuildFile; fileRef = 83C45A8F1D70469D00F52A50 /* DemoImage1.png */; };
@@ -110,6 +111,7 @@
 		83A045711A33F705007E3FCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		83A045721A33F705007E3FCC /* Ultra__Simple_BrowserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ultra__Simple_BrowserTests.swift; sourceTree = "<group>"; };
 		83A0457E1A33F760007E3FCC /* Ultra_Simple_Browser_Internet_Error.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Ultra_Simple_Browser_Internet_Error.html; sourceTree = "<group>"; };
+		83A4273F1D76E38A00AAC344 /* touch.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = touch.png; sourceTree = "<group>"; };
 		83C45A8D1D70469D00F52A50 /* backbutton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backbutton.png; sourceTree = "<group>"; };
 		83C45A8E1D70469D00F52A50 /* DemoImage0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DemoImage0.png; sourceTree = "<group>"; };
 		83C45A8F1D70469D00F52A50 /* DemoImage1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DemoImage1.png; sourceTree = "<group>"; };
@@ -177,6 +179,7 @@
 		83139C981AA005DE00AACAF1 /* PNG Images */ = {
 			isa = PBXGroup;
 			children = (
+				83A4273F1D76E38A00AAC344 /* touch.png */,
 				83C45A8D1D70469D00F52A50 /* backbutton.png */,
 				83C45A8E1D70469D00F52A50 /* DemoImage0.png */,
 				83C45A8F1D70469D00F52A50 /* DemoImage1.png */,
@@ -409,6 +412,7 @@
 				83A045621A33F705007E3FCC /* Main.storyboard in Resources */,
 				83C45AAF1D70469D00F52A50 /* DemoImage2.png in Resources */,
 				835B527B1D70BA8800D492F7 /* icon_start.png in Resources */,
+				83A427401D76E38A00AAC344 /* touch.png in Resources */,
 				83E476061D709636008E276E /* icon76.png in Resources */,
 				83E4760B1D709636008E276E /* icon167.png in Resources */,
 				83E476081D709636008E276E /* icon87.png in Resources */,

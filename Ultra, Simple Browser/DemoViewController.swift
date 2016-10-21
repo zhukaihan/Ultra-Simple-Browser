@@ -10,6 +10,8 @@ import UIKit
 
 class DemoViewController: UIViewController, UIScrollViewDelegate {
 
+    var demoParentViewController: ViewController!
+    
     var scrollView: UIScrollView = UIScrollView()
     var pageControl: UIPageControl = UIPageControl()
     var finishButton: UIButton = UIButton()
@@ -26,6 +28,7 @@ class DemoViewController: UIViewController, UIScrollViewDelegate {
         self.view.backgroundColor = UIColor.darkGray
         
         finishButton.frame = CGRect(x: 10, y: 10, width: 100, height: 35)
+        finishButton.layer.cornerRadius = 10
         finishButton.backgroundColor = UIColor.gray
         finishButton.setTitle("close", for: UIControlState())
         finishButton.setTitleColor(UIColor.white, for: UIControlState())
@@ -40,7 +43,6 @@ class DemoViewController: UIViewController, UIScrollViewDelegate {
         let firstImageView = UIImageView(image: UIImage(named: "DemoImage0.png"))
         firstImageView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
         firstImageView.contentMode = .scaleAspectFit
-        firstImageView.backgroundColor = UIColor(red: 0.3254, green: 0.7960, blue: 0.9921, alpha: 0.6)
         
         let secondImageView = UIImageView(image: UIImage(named: "DemoImage1.png"))
         secondImageView.frame = CGRect(x: view.frame.width, y: 0, width: view.frame.width, height: view.frame.height)
@@ -58,12 +60,18 @@ class DemoViewController: UIViewController, UIScrollViewDelegate {
         fifthImageView.frame = CGRect(x: view.frame.width * 4, y: 0, width: view.frame.width, height: view.frame.height)
         fifthImageView.contentMode = .scaleAspectFit
         
+        let backgroundImg = UIImageView(image: UIImage(named: "icon_background.png"))
+        backgroundImg.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
+        backgroundImg.contentMode = .scaleAspectFill
+        self.view.addSubview(backgroundImg)
+        
         scrollView.isPagingEnabled = true
         scrollView.alwaysBounceHorizontal = true
         scrollView.alwaysBounceVertical = false
         scrollView.isMultipleTouchEnabled = false
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.showsVerticalScrollIndicator = false
+        scrollView.backgroundColor = UIColor.clear
         scrollView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
         scrollView.contentSize = CGSize(width: view.frame.width * 5, height: view.frame.height - 1)
         scrollView.delegate = self
@@ -93,6 +101,7 @@ class DemoViewController: UIViewController, UIScrollViewDelegate {
         return false
     }
     */
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let pageWidth: CGFloat = scrollView.frame.size.width
         let contentoffsetx: CGFloat = scrollView.contentOffset.x
@@ -115,7 +124,9 @@ class DemoViewController: UIViewController, UIScrollViewDelegate {
     }
     
     func finishDemo() {
-        self.dismiss(animated: true, completion: nil)
+        self.dismiss(animated: true, completion: {
+            self.demoParentViewController.demo()
+        })
     }
     
 }

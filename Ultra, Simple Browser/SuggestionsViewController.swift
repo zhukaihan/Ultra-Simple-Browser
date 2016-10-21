@@ -39,8 +39,8 @@ class SuggestionsViewController: UIViewController, UITableViewDataSource, UITabl
     var Favoriteitems: [NSManagedObject] = []
     var Historyitems: [NSManagedObject] = []
     var TopSitesitems: [NSManagedObject] = []
-    var listOfSuggestionsTitle: [String?] = ["Google", "Facebook", "YouTube", "Yahoo", "Baidu", "Amazon", "Wikipedia", "Taobao", "Twitter", "Tencent QQ", "Windows Live", "Linkedln", "Sina", "Tmall", "Sina Weibo", "Blogspot", "eBay"]
-    var listOfSuggestionsURL: [String?] = ["google.com", "facebook.com", "youtube.com", "yahoo.com", "baidu.com", "amazon.com", "wikipedia.org", "taobao.com", "twitter.com", "qq.com", "live.com", "linkedln.com", "sina.com.cn", "tmall.com", "weibo.com", "blogspot.com", "ebay.com"]
+    var listOfSuggestionsTitle: [String?] = ["Google", "Facebook", "YouTube", "Yahoo", "Baidu", "Amazon", "Wikipedia", "Taobao", "Twitter", "Tencent QQ", "Windows Live", "Linkedln", "Sina", "Tmall", "Sina Weibo", "eBay"]
+    var listOfSuggestionsURL: [String?] = ["google.com", "facebook.com", "youtube.com", "yahoo.com", "baidu.com", "amazon.com", "wikipedia.org", "taobao.com", "twitter.com", "qq.com", "live.com", "linkedln.com", "sina.com.cn", "tmall.com", "weibo.com", "ebay.com"]
     var initListOfSuggestionsTitle: [String?] = []
     var initListOfSuggestionsURL: [String?] = []
     //var textFieldWidget: UIToolbar! = UIToolbar()

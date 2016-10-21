@@ -17,6 +17,8 @@ import Dispatch
 class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate, ADBannerViewDelegate {
     
     
+    var backgroundQueue: DispatchQueue = DispatchQueue(label: "com.zhukaihan.USB.background", attributes: []);
+    
     //////////Variables
     var homewebpage: String!
     var defaultSearchEngine = UserDefaults.standard.string(forKey: "searchtype")
@@ -130,7 +132,7 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
         toolBar.backgroundColor = UIColor.lightGray
         self.view.addSubview(toolBar)
 
-        toolBarSwipe.addTarget(self, action: #selector(ViewController.displayDashboard))
+        toolBarSwipe.addTarget(self, action: #selector(ViewController.toolBarSwipeSwiping))
         toolBar.addGestureRecognizer(toolBarSwipe)
         //toolBar configuration end
 
@@ -295,18 +297,6 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
         self.view.bringSubview(toFront: toolBar)
         self.view.bringSubview(toFront: progressBar)
 
-
-        if (UserDefaults.standard.bool(forKey: "HasLaunchedOnce")) {
-            print("app already launched")
-        } else {
-            UserDefaults.standard.set(true, forKey: "HasLaunchedOnce")
-            UserDefaults.standard.synchronize()
-            print("This is the first launch ever")
-            let demoViewController: DemoViewController = DemoViewController()
-            let DemoNavigationController = NavigationController(rootViewController: demoViewController)
-            self.navigationController?.present(DemoNavigationController, animated: false, completion: nil)
-        }
-
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -314,6 +304,23 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
 
         checkhomeurl()
         registerForNotifications()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if (UserDefaults.standard.bool(forKey: "HasLaunchedOnce")) {
+          print("app already launched")
+        } else {
+            UserDefaults.standard.set(true, forKey: "HasLaunchedOnce")
+            UserDefaults.standard.synchronize()
+            print("This is the first launch ever")
+            
+            let demoViewController: DemoViewController = DemoViewController()
+            demoViewController.demoParentViewController = self
+            let DemoNavigationController = NavigationController(rootViewController: demoViewController)
+            self.navigationController?.present(DemoNavigationController, animated: true, completion: nil)
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -351,6 +358,110 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         print(size)
+        let transitToSize = size//CGSize(width: view.frame.width, height: view.frame.height)
+        
+        if ((UIDeviceOrientationIsLandscape(UIDevice.current.orientation) && !orientationchanged) || (((UIDevice.current.orientation == .portrait) || UIDevice.current.userInterfaceIdiom == .pad) && orientationchanged)) {
+            
+            if !showingAllWebViews{
+                if (toolBar.isHidden == false) {
+                    webViews[currentWebView].frame = CGRect(x: 0, y: 0, width: transitToSize.width, height: transitToSize.height - 44)
+                    progressBar.frame = CGRect(x: 0, y: transitToSize.height - 47, width: transitToSize.width, height: 3)
+                } else {
+                    webViews[currentWebView].frame = CGRect(x: 0, y: 0, width: transitToSize.width, height: transitToSize.height)
+                    progressBar.frame = CGRect(x: 0, y: transitToSize.height - 3, width: transitToSize.width, height: 3)
+                }
+                
+                if adbanner.window != nil {
+                    if (adbanner.frame.origin.x == 0) && (adbanner.frame.origin.y == 0) && (!isAdbannerEnoughSecondsYet) {
+                        if UIDevice.current.userInterfaceIdiom == .pad {
+                            adbanner.frame = CGRect(x: 0, y: 0, width: transitToSize.width, height: 66)
+                            webViews[currentWebView].frame = CGRect(x: 0, y: 66, width: transitToSize.width, height: transitToSize.height - 44 - 66) //44: toolbar height; 66: adbanner height
+                        } else {
+                            if UIScreen.main.bounds.size.height > UIScreen.main.bounds.size.width {
+                                adbanner.frame = CGRect(x: 0, y: 0, width: transitToSize.width, height: 50)
+                                webViews[currentWebView].frame = CGRect(x: 0, y: 50, width: transitToSize.width, height: transitToSize.height - 44 - 50) //44: toolbar height; 50: adbanner height
+                            } else {
+                                adbanner.frame = CGRect(x: 0, y: 0, width: transitToSize.width, height: 32)
+                                webViews[currentWebView].frame = CGRect(x: 0, y: 32, width: transitToSize.width, height: transitToSize.height - 44 - 32) //44: toolbar height; 32: adbanner height
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (toolBar.isHidden == false) {
+                    progressBar.frame = CGRect(x: 0, y: transitToSize.height - 47, width: transitToSize.width, height: 3)
+                } else {
+                    progressBar.frame = CGRect(x: 0, y: transitToSize.height - 3, width: transitToSize.width, height: 3)
+                }
+                //prep for showAllWebViews()
+                for i in 0...webViews.count - 1 {
+                    webViewLabels[i]?.removeFromSuperview()
+                    webViews[i].removeFromSuperview()
+                    webViewButtons[i]?.removeGestureRecognizer(webViewCloseSwipe[i])
+                    //webViewButtons[i]?.removeGestureRecognizer(webViewCloseLongPress[i])
+                    webViewButtons[i]?.removeFromSuperview()
+                }
+                
+                self.view.bringSubview(toFront: showButton)
+                self.view.bringSubview(toFront: toolBar)
+                self.view.bringSubview(toFront: progressBar)
+                
+                webViewButtons = []
+                webViewCloseSwipe = []
+                //webViewCloseLongPress = []
+                webViewLabels = []
+                
+                showAllWebViews(transitToSize)
+                
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    adbanner.frame = CGRect(x: 0, y: 1, width: transitToSize.width, height: 66)
+                } else {
+                    if UIScreen.main.bounds.size.height > UIScreen.main.bounds.size.height {
+                        adbanner.frame = CGRect(x: 0, y: 1, width: transitToSize.width, height: 50)
+                    } else {
+                        adbanner.frame = CGRect(x: 0, y: 1, width: transitToSize.width, height: 32)
+                    }
+                }
+                self.view.bringSubview(toFront: toolBar)
+            }
+            
+            //backgroundimage.frame = CGRectMake(abs(transitToSize.width - transitToSize.height) / 2, 0, sort(&[transitToSize.width,transitToSize.height]), transitToSize.width)
+            
+            toolBar.frame = CGRect(x: 0, y: transitToSize.height - 44, width: transitToSize.width, height: 44)
+            if textField.isFirstResponder {
+                textField.frame = CGRect(x: 0, y: 0, width: transitToSize.width - 100, height: 30)
+            } else {
+                textField.frame = CGRect(x: 0, y: 0, width: transitToSize.width - 150, height: 30)
+            }
+            showAllWebViewsScrollView.frame = CGRect(x: 0, y: 0, width: transitToSize.width, height: transitToSize.height)
+            showButton.frame = CGRect(x: transitToSize.width - 30, y: transitToSize.height - 30, width: 29, height: 29)
+            superHugeRegretButton.frame = CGRect(x: 0, y: 0, width: transitToSize.width, height: transitToSize.height)
+            dashboard.frame = CGRect(x: 0, y: transitToSize.height - 44 - 120, width: transitToSize.width, height: 120)
+            dashboard.contentSize = CGSize(width: transitToSize.width * 2,height: 120)
+            dashboardTitle.frame = CGRect(x: dashboard.contentOffset.x, y: 0, width: transitToSize.width, height: 30)
+            dashboardPageControl.frame = CGRect(x: dashboard.contentOffset.x, y: 35, width: transitToSize.width, height: 10)
+            let oneForthViewWidth = transitToSize.width / 4
+            fullscreenbutton.frame = CGRect(x: oneForthViewWidth * 1 - (oneForthViewWidth - 59) / 2 - 59, y: 55, width: 59, height: 59)
+            homebutton.frame = CGRect(x: oneForthViewWidth * 2 - (oneForthViewWidth - 59) / 2 - 59, y: 55, width: 59, height: 59)
+            sharebutton.frame = CGRect(x: oneForthViewWidth * 3 - (oneForthViewWidth - 59) / 2 - 59, y: 55, width: 59, height: 59)
+            openinsafaributton.frame = CGRect(x: oneForthViewWidth * 4 - (oneForthViewWidth - 59) / 2 - 59, y: 55, width: 59, height: 59)
+            let showfavoritebuttonframewidthmid = transitToSize.width / 4 * 1
+            let showfavoritebuttonframewidthonemid = (transitToSize.width / 4 - 59) / 2
+            let showfavoritebuttonframewidthone = showfavoritebuttonframewidthmid - showfavoritebuttonframewidthonemid - 59
+            let showfavoritebuttonframewidth = showfavoritebuttonframewidthone + transitToSize.width
+            showfavoritebutton.frame = CGRect(x: showfavoritebuttonframewidth, y: 55, width: 59, height: 59)
+            let orientationlockbuttonframewidthmid = transitToSize.width / 4 * 2
+            let orientationlockbuttonframewidthonemid = (transitToSize.width / 4 - 59) / 2
+            let orientationlockbuttonframewidthone = orientationlockbuttonframewidthmid - orientationlockbuttonframewidthonemid - 59
+            let orientationlockbuttonframewidth = orientationlockbuttonframewidthone + transitToSize.width
+            orientationlockbutton.frame = CGRect(x: orientationlockbuttonframewidth, y: 55, width: 59, height: 59)
+            
+            if (UIDeviceOrientationIsLandscape(UIDevice.current.orientation)) {
+                orientationchanged = true
+            } else {
+                orientationchanged = false
+            }
+        }
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -359,6 +470,228 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
     
     
     //////////Regular funcs
+    func demo() {
+        
+        let demoAlert = UIAlertController(title: "First time use", message: "Take a look at an automated demo?", preferredStyle: .alert)
+        demoAlert.addAction(UIAlertAction(title: "Yes", style: .default, handler: {(action: UIAlertAction) in
+            self.view.isUserInteractionEnabled = false
+            let touchImg: UIImage = UIImage(named: "touch.png")!
+            let touchView = UIImageView(image: touchImg)
+            
+            DispatchQueue.global().async {
+                sleep(1)
+                DispatchQueue.main.sync {
+                    touchView.frame = CGRect(x: self.textField.frame.origin.x + 20, y: self.toolBar.frame.origin.y, width: 50, height: 50)
+                    self.view.addSubview(touchView)
+                }
+                usleep(100000)
+                DispatchQueue.main.sync {
+                    UIView.animate(withDuration: 0.5, animations: {
+                        touchView.layer.transform = CATransform3DMakeScale(0.5, 0.5, 1)
+                    })
+                }
+                usleep(500000)
+                DispatchQueue.main.sync {
+                    touchView.layer.transform = CATransform3DIdentity
+                    touchView.removeFromSuperview()
+                    self.textField.becomeFirstResponder()
+                }
+                sleep(2)
+                
+                DispatchQueue.main.sync {
+                    touchView.frame = CGRect(x: self.childSuggestionsViewController.suggestionsTableView.frame.origin.x + 20, y: self.childSuggestionsViewController.suggestionsTableView.rectForRow(at: IndexPath(row: 0, section: 0)).origin.y, width: 50, height: 50)
+                    self.view.addSubview(touchView)
+                }
+                usleep(100000)
+                DispatchQueue.main.sync {
+                    UIView.animate(withDuration: 0.5, animations: {
+                        touchView.layer.transform = CATransform3DMakeScale(0.5, 0.5, 1)
+                        }, completion: {(animated: Bool) in
+                            touchView.layer.transform = CATransform3DIdentity
+                            touchView.removeFromSuperview()
+                    })
+                }
+                usleep(500000)
+                DispatchQueue.main.sync {
+                    self.childSuggestionsViewController.tableView(self.childSuggestionsViewController.suggestionsTableView, didSelectRowAt: IndexPath(row: 0, section: 0))
+                }
+                sleep(2)
+                
+                DispatchQueue.main.sync {
+                    touchView.frame = CGRect(x: 100, y: self.toolBar.frame.origin.y, width: 50, height: 50)
+                    self.view.addSubview(touchView)
+                }
+                usleep(100000)
+                DispatchQueue.main.sync {
+                    UIView.animate(withDuration: 0.5, animations: {
+                        touchView.layer.transform = CATransform3DMakeScale(0.5, 0.5, 1)
+                        }, completion: {(animated: Bool) in
+                            UIView.animate(withDuration: 0.5, animations: {
+                                var transform = CATransform3DIdentity
+                                transform = CATransform3DScale(transform, 0.5, 0.5, 1)
+                                self.view.bringSubview(toFront: touchView)
+                                touchView.layer.transform = CATransform3DTranslate(transform, 0, -200, 0)
+                                }, completion: {(animated: Bool) in
+                                    touchView.layer.transform = CATransform3DIdentity
+                                    touchView.removeFromSuperview()
+                            })
+                    })
+                }
+                usleep(500000)
+                DispatchQueue.main.sync {
+                    self.displayDashboard()
+                }
+                sleep(2)
+                
+                DispatchQueue.main.sync {
+                    touchView.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+                    self.fullscreenbutton.addSubview(touchView)
+                }
+                usleep(100000)
+                DispatchQueue.main.sync {
+                    UIView.animate(withDuration: 0.5, animations: {
+                        touchView.layer.transform = CATransform3DMakeScale(0.5, 0.5, 1)
+                        }, completion: {(animated: Bool) in
+                            UIView.animate(withDuration: 0.5, animations: {
+                                touchView.layer.transform = CATransform3DMakeScale(0.5, 0.5, 1)
+                                }, completion: {(animated: Bool) in
+                                    touchView.layer.transform = CATransform3DIdentity
+                                    touchView.removeFromSuperview()
+                            })
+                    })
+                }
+                usleep(500000)
+                DispatchQueue.main.sync {
+                    self.hidetoolbar()
+                }
+                sleep(2)
+                
+                DispatchQueue.main.sync {
+                    touchView.frame = CGRect(x: self.showButton.frame.origin.x - 5, y: self.showButton.frame.origin.y - 5, width: 50, height: 50)
+                    self.view.addSubview(touchView)
+                }
+                usleep(100000)
+                DispatchQueue.main.sync {
+                    UIView.animate(withDuration: 0.5, animations: {
+                        touchView.layer.transform = CATransform3DMakeScale(0.5, 0.5, 1)
+                        }, completion: {(animated: Bool) in
+                            UIView.animate(withDuration: 0.5, animations: {
+                                touchView.layer.transform = CATransform3DMakeScale(0.5, 0.5, 1)
+                                }, completion: {(animated: Bool) in
+                                    touchView.layer.transform = CATransform3DIdentity
+                                    touchView.removeFromSuperview()
+                            })
+                    })
+                }
+                usleep(500000)
+                DispatchQueue.main.sync {
+                    self.showtoolbar()
+                }
+                sleep(2)
+                
+                DispatchQueue.main.sync {
+                    touchView.frame = CGRect(x: 0, y: 0, width: 50, height: 50)
+                    self.webViewSwitch.customView?.addSubview(touchView)
+                }
+                usleep(100000)
+                DispatchQueue.main.sync {
+                    UIView.animate(withDuration: 0.5, animations: {
+                        touchView.layer.transform = CATransform3DMakeScale(0.5, 0.5, 1)
+                        }, completion: {(animated: Bool) in
+                            UIView.animate(withDuration: 0.5, animations: {
+                                touchView.layer.transform = CATransform3DMakeScale(0.5, 0.5, 1)
+                                }, completion: {(animated: Bool) in
+                                    touchView.layer.transform = CATransform3DIdentity
+                                    touchView.removeFromSuperview()
+                            })
+                    })
+                }
+                usleep(500000)
+                DispatchQueue.main.sync {
+                    self.showAllWebViews()
+                }
+                sleep(2)
+                
+                DispatchQueue.main.sync {
+                    touchView.frame = CGRect(x: self.view.frame.width / 3, y: 100, width: 50, height: 50)
+                    self.view.addSubview(touchView)
+                }
+                usleep(100000)
+                DispatchQueue.main.sync {
+                    UIView.animate(withDuration: 0.5, animations: {
+                        touchView.layer.transform = CATransform3DMakeScale(0.5, 0.5, 1)
+                        }, completion: {(animated: Bool) in
+                            UIView.animate(withDuration: 0.5, animations: {
+                                var transform = CATransform3DIdentity
+                                transform = CATransform3DScale(transform, 0.5, 0.5, 1)
+                                self.view.bringSubview(toFront: touchView)
+                                touchView.layer.transform = transform
+                            })
+                    })
+                }
+                usleep(500000)
+                DispatchQueue.main.sync {
+                    var transform = CATransform3DIdentity
+                    transform = CATransform3DScale(transform, 0.5, 0.5, 1)
+                    self.view.bringSubview(toFront: touchView)
+                    UIView.animate(withDuration: 0.1, animations: {
+                        touchView.layer.transform = CATransform3DTranslate(transform, 50, 0, 0)
+                    })
+                    
+                    self.panningRightToCloseWebView(0, thenewx: 50)
+                }
+                usleep(100000)
+                DispatchQueue.main.sync {
+                    var transform = CATransform3DIdentity
+                    transform = CATransform3DScale(transform, 0.5, 0.5, 1)
+                    self.view.bringSubview(toFront: touchView)
+                    UIView.animate(withDuration: 0.1, animations: {
+                        touchView.layer.transform = CATransform3DTranslate(transform, 100, 0, 0)
+                    })
+                    
+                    self.panningRightToCloseWebView(0, thenewx: 100)
+                }
+                usleep(100000)
+                DispatchQueue.main.sync {
+                    var transform = CATransform3DIdentity
+                    transform = CATransform3DScale(transform, 0.5, 0.5, 1)
+                    self.view.bringSubview(toFront: touchView)
+                    UIView.animate(withDuration: 0.1, animations: {
+                        touchView.layer.transform = CATransform3DTranslate(transform, 150, 0, 0)
+                    })
+                    
+                    self.panningRightToCloseWebView(0, thenewx: 150)
+                }
+                usleep(100000)
+                DispatchQueue.main.sync {
+                    var transform = CATransform3DIdentity
+                    transform = CATransform3DScale(transform, 0.5, 0.5, 1)
+                    self.view.bringSubview(toFront: touchView)
+                    UIView.animate(withDuration: 0.1, animations: {
+                        touchView.layer.transform = CATransform3DTranslate(transform, 200, 0, 0)
+                    })
+                    
+                    self.panningRightToCloseWebView(0, thenewx: 200)
+                }
+                usleep(100000)
+                DispatchQueue.main.sync {
+                    touchView.layer.transform = CATransform3DIdentity
+                    touchView.removeFromSuperview()
+                    
+                    self.closeWebView(0)
+                }
+                sleep(2)
+                DispatchQueue.main.sync {
+                    self.view.isUserInteractionEnabled = true
+                }
+            }
+        }))
+        demoAlert.addAction(UIAlertAction(title: "No", style: .cancel, handler: {(action: UIAlertAction) in
+            
+        }))
+        self.present(demoAlert, animated: true, completion: nil)
+    }
+    
     func configtextField() {
         textField = URLTextField()
         textField.parentViewController = self
@@ -473,7 +806,7 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
         if  UserDefaults.standard.string(forKey: "homeurl") != nil {
             homewebpage = UserDefaults.standard.string(forKey: "homeurl")!
         } else {
-            homewebpage = "google.com"
+            homewebpage = "zhukaihan.com"
         }
         if homewebpage.substring(from: homewebpage.index(before: homewebpage.endIndex)) != "/" {
             homewebpage = homewebpage + "/"
@@ -503,38 +836,40 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
     }*/
     
     func orientationDidChange(_ sender: Notification) {
+        /*let transitToSize = CGSize(width: view.frame.width, height: view.frame.height)
+        
         if ((UIDeviceOrientationIsLandscape(UIDevice.current.orientation) && !orientationchanged) || (((UIDevice.current.orientation == .portrait) || UIDevice.current.userInterfaceIdiom == .pad) && orientationchanged)) {
 
             if !showingAllWebViews{
                 if (toolBar.isHidden == false) {
-                    webViews[currentWebView].frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - 44)
-                    progressBar.frame = CGRect(x: 0, y: view.frame.height - 47, width: view.frame.width, height: 3)
+                    webViews[currentWebView].frame = CGRect(x: 0, y: 0, width: transitToSize.width, height: transitToSize.height - 44)
+                    progressBar.frame = CGRect(x: 0, y: transitToSize.height - 47, width: transitToSize.width, height: 3)
                 } else {
-                    webViews[currentWebView].frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
-                    progressBar.frame = CGRect(x: 0, y: view.frame.height - 3, width: view.frame.width, height: 3)
+                    webViews[currentWebView].frame = CGRect(x: 0, y: 0, width: transitToSize.width, height: transitToSize.height)
+                    progressBar.frame = CGRect(x: 0, y: transitToSize.height - 3, width: transitToSize.width, height: 3)
                 }
 
                 if adbanner.window != nil {
                     if (adbanner.frame.origin.x == 0) && (adbanner.frame.origin.y == 0) && (!isAdbannerEnoughSecondsYet) {
                         if UIDevice.current.userInterfaceIdiom == .pad {
-                            adbanner.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 66)
-                            webViews[currentWebView].frame = CGRect(x: 0, y: 66, width: view.frame.width, height: view.frame.height - 44 - 66) //44: toolbar height; 66: adbanner height
+                            adbanner.frame = CGRect(x: 0, y: 0, width: transitToSize.width, height: 66)
+                            webViews[currentWebView].frame = CGRect(x: 0, y: 66, width: transitToSize.width, height: transitToSize.height - 44 - 66) //44: toolbar height; 66: adbanner height
                         } else {
                             if UIScreen.main.bounds.size.height > UIScreen.main.bounds.size.width {
-                                adbanner.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
-                                webViews[currentWebView].frame = CGRect(x: 0, y: 50, width: view.frame.width, height: view.frame.height - 44 - 50) //44: toolbar height; 50: adbanner height
+                                adbanner.frame = CGRect(x: 0, y: 0, width: transitToSize.width, height: 50)
+                                webViews[currentWebView].frame = CGRect(x: 0, y: 50, width: transitToSize.width, height: transitToSize.height - 44 - 50) //44: toolbar height; 50: adbanner height
                             } else {
-                                adbanner.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 32)
-                                webViews[currentWebView].frame = CGRect(x: 0, y: 32, width: view.frame.width, height: view.frame.height - 44 - 32) //44: toolbar height; 32: adbanner height
+                                adbanner.frame = CGRect(x: 0, y: 0, width: transitToSize.width, height: 32)
+                                webViews[currentWebView].frame = CGRect(x: 0, y: 32, width: transitToSize.width, height: transitToSize.height - 44 - 32) //44: toolbar height; 32: adbanner height
                             }
                         }
                     }
                 }
             } else {
                 if (toolBar.isHidden == false) {
-                    progressBar.frame = CGRect(x: 0, y: view.frame.height - 47, width: view.frame.width, height: 3)
+                    progressBar.frame = CGRect(x: 0, y: transitToSize.height - 47, width: transitToSize.width, height: 3)
                 } else {
-                    progressBar.frame = CGRect(x: 0, y: view.frame.height - 3, width: view.frame.width, height: 3)
+                    progressBar.frame = CGRect(x: 0, y: transitToSize.height - 3, width: transitToSize.width, height: 3)
                 }
                 //prep for showAllWebViews()
                 for i in 0...webViews.count - 1 {
@@ -557,46 +892,46 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
                 showAllWebViews()
                 
                 if UIDevice.current.userInterfaceIdiom == .pad {
-                    adbanner.frame = CGRect(x: 0, y: 1, width: view.frame.width, height: 66)
+                    adbanner.frame = CGRect(x: 0, y: 1, width: transitToSize.width, height: 66)
                 } else {
                     if UIScreen.main.bounds.size.height > UIScreen.main.bounds.size.height {
-                        adbanner.frame = CGRect(x: 0, y: 1, width: view.frame.width, height: 50)
+                        adbanner.frame = CGRect(x: 0, y: 1, width: transitToSize.width, height: 50)
                     } else {
-                        adbanner.frame = CGRect(x: 0, y: 1, width: view.frame.width, height: 32)
+                        adbanner.frame = CGRect(x: 0, y: 1, width: transitToSize.width, height: 32)
                     }
                 }
                 self.view.bringSubview(toFront: toolBar)
             }
 
-            //backgroundimage.frame = CGRectMake(abs(view.frame.width - view.frame.height) / 2, 0, sort(&[view.frame.width,view.frame.height]), view.frame.width)
+            //backgroundimage.frame = CGRectMake(abs(transitToSize.width - transitToSize.height) / 2, 0, sort(&[transitToSize.width,transitToSize.height]), transitToSize.width)
 
-            toolBar.frame = CGRect(x: 0, y: view.frame.height - 44, width: view.frame.width, height: 44)
+            toolBar.frame = CGRect(x: 0, y: transitToSize.height - 44, width: transitToSize.width, height: 44)
             if textField.isFirstResponder {
-                textField.frame = CGRect(x: 0, y: 0, width: view.frame.width - 100, height: 30)
+                textField.frame = CGRect(x: 0, y: 0, width: transitToSize.width - 100, height: 30)
             } else {
-                textField.frame = CGRect(x: 0, y: 0, width: view.frame.width - 150, height: 30)
+                textField.frame = CGRect(x: 0, y: 0, width: transitToSize.width - 150, height: 30)
             }
-            showAllWebViewsScrollView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
-            showButton.frame = CGRect(x: view.frame.width - 30, y: view.frame.height - 30, width: 29, height: 29)
-            superHugeRegretButton.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
-            dashboard.frame = CGRect(x: 0, y: view.frame.height - 44 - 120, width: view.frame.width, height: 120)
-            dashboard.contentSize = CGSize(width: view.frame.width * 2,height: 120)
-            dashboardTitle.frame = CGRect(x: dashboard.contentOffset.x, y: 0, width: view.frame.width, height: 30)
-            dashboardPageControl.frame = CGRect(x: dashboard.contentOffset.x, y: 35, width: view.frame.width, height: 10)
-            let oneForthViewWidth = view.frame.width / 4
+            showAllWebViewsScrollView.frame = CGRect(x: 0, y: 0, width: transitToSize.width, height: transitToSize.height)
+            showButton.frame = CGRect(x: transitToSize.width - 30, y: transitToSize.height - 30, width: 29, height: 29)
+            superHugeRegretButton.frame = CGRect(x: 0, y: 0, width: transitToSize.width, height: transitToSize.height)
+            dashboard.frame = CGRect(x: 0, y: transitToSize.height - 44 - 120, width: transitToSize.width, height: 120)
+            dashboard.contentSize = CGSize(width: transitToSize.width * 2,height: 120)
+            dashboardTitle.frame = CGRect(x: dashboard.contentOffset.x, y: 0, width: transitToSize.width, height: 30)
+            dashboardPageControl.frame = CGRect(x: dashboard.contentOffset.x, y: 35, width: transitToSize.width, height: 10)
+            let oneForthViewWidth = transitToSize.width / 4
             fullscreenbutton.frame = CGRect(x: oneForthViewWidth * 1 - (oneForthViewWidth - 59) / 2 - 59, y: 55, width: 59, height: 59)
             homebutton.frame = CGRect(x: oneForthViewWidth * 2 - (oneForthViewWidth - 59) / 2 - 59, y: 55, width: 59, height: 59)
             sharebutton.frame = CGRect(x: oneForthViewWidth * 3 - (oneForthViewWidth - 59) / 2 - 59, y: 55, width: 59, height: 59)
             openinsafaributton.frame = CGRect(x: oneForthViewWidth * 4 - (oneForthViewWidth - 59) / 2 - 59, y: 55, width: 59, height: 59)
-            let showfavoritebuttonframewidthmid = view.frame.width / 4 * 1
-            let showfavoritebuttonframewidthonemid = (view.frame.width / 4 - 59) / 2
+            let showfavoritebuttonframewidthmid = transitToSize.width / 4 * 1
+            let showfavoritebuttonframewidthonemid = (transitToSize.width / 4 - 59) / 2
             let showfavoritebuttonframewidthone = showfavoritebuttonframewidthmid - showfavoritebuttonframewidthonemid - 59
-            let showfavoritebuttonframewidth = showfavoritebuttonframewidthone + view.frame.width
+            let showfavoritebuttonframewidth = showfavoritebuttonframewidthone + transitToSize.width
             showfavoritebutton.frame = CGRect(x: showfavoritebuttonframewidth, y: 55, width: 59, height: 59)
-            let orientationlockbuttonframewidthmid = view.frame.width / 4 * 2
-            let orientationlockbuttonframewidthonemid = (view.frame.width / 4 - 59) / 2
+            let orientationlockbuttonframewidthmid = transitToSize.width / 4 * 2
+            let orientationlockbuttonframewidthonemid = (transitToSize.width / 4 - 59) / 2
             let orientationlockbuttonframewidthone = orientationlockbuttonframewidthmid - orientationlockbuttonframewidthonemid - 59
-            let orientationlockbuttonframewidth = orientationlockbuttonframewidthone + view.frame.width
+            let orientationlockbuttonframewidth = orientationlockbuttonframewidthone + transitToSize.width
             orientationlockbutton.frame = CGRect(x: orientationlockbuttonframewidth, y: 55, width: 59, height: 59)
 
             if (UIDeviceOrientationIsLandscape(UIDevice.current.orientation)) {
@@ -604,7 +939,7 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
             } else {
                 orientationchanged = false
             }
-        }
+        }*/
     }
     
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation) {
@@ -612,9 +947,9 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
         checkifdnsrsearch()
         lettextfieldtohost()
         progressBar.setProgress(0.1, animated: false)
-        DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.background).async(execute: {
+        backgroundQueue.async {
             self.refreshControl.attributedTitle = NSAttributedString(string: "Refreshing")
-        })
+        }
         UIView.animate(withDuration: 0.3, delay: 0, options: UIViewAnimationOptions(), animations: { self.progressBar.alpha = 1 }, completion: nil)
     }
     
@@ -636,7 +971,7 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         refreshControl.endRefreshing()
 
-        DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.background).async(execute: {
+        backgroundQueue.async{
 
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             let managedContext = appDelegate.managedObjectContext
@@ -689,7 +1024,7 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
                     topSites.append(theHostVisiting)
                 }
             }
-        })
+        }
     }
     
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
@@ -746,6 +1081,26 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
         showtoolbar()
         openURLInNewWebView((navigationAction.request.url?.absoluteString)!)
         return nil//webViews[currentWebView]
+    }
+    
+    func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+        print("alert one")
+        let alert = UIAlertController(title: "Message from Web", message: message, preferredStyle: .alert)
+        let defaultAction = UIAlertAction(title: "OK", style: .default, handler: {(action: UIAlertAction!) in completionHandler()})
+        alert.addAction(defaultAction)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
+        print("alert two")
+        let alert = UIAlertController(title: "Message from Web", message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: {(action: UIAlertAction!) in completionHandler(true)})
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: {(action: UIAlertAction!) in completionHandler(false)})
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+        
+        self.present(alert, animated: true, completion: nil)
     }
     
     func keyboardWillBeShown(_ sender: Notification) {
@@ -1076,24 +1431,28 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
         textField.configrefreshImage()
     }
     
-    func displayDashboard() {
+    func toolBarSwipeSwiping() {
         switch toolBarSwipe.state {
         case .changed:
             if toolBarSwipe.translation(in: toolBar).y < -20 {
-                dashboard.frame = CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 120)
-                self.view.addSubview(dashboard)
-                superHugeRegretButton.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - 44)
-                UIView.animate(withDuration: 1, animations: {
-                    self.view.addSubview(self.superHugeRegretButton)
-                })
-                UIView.animate(withDuration: 0.2, animations: {
-                    self.view.bringSubview(toFront: self.dashboard)
-                    self.view.bringSubview(toFront: self.toolBar)
-                    self.dashboard.frame = CGRect(x: 0, y: self.view.frame.height - 44 - 120, width: self.view.frame.width, height: 120)
-                })
+                displayDashboard()
             }
         default: true
         }
+    }
+    
+    func displayDashboard() {
+        dashboard.frame = CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: 120)
+        self.view.addSubview(dashboard)
+        superHugeRegretButton.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height - 44)
+        UIView.animate(withDuration: 1, animations: {
+            self.view.addSubview(self.superHugeRegretButton)
+        })
+        UIView.animate(withDuration: 0.2, animations: {
+            self.view.bringSubview(toFront: self.dashboard)
+            self.view.bringSubview(toFront: self.toolBar)
+            self.dashboard.frame = CGRect(x: 0, y: self.view.frame.height - 44 - 120, width: self.view.frame.width, height: 120)
+        })
     }
     
     func hidetoolbar() {
@@ -1174,7 +1533,15 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
         self.navigationController?.present(backForwardNavigationController, animated: true, completion: nil)
     }
     
-    func showAllWebViews() {
+    func showAllWebViews(_ size: CGSize = CGSize(width: 0, height: 0)) {
+        var targetViewSize: CGSize {
+            if (Int(size.width) == 0 && Int(size.height) == 0) {
+                return view.frame.size
+            } else {
+                return size
+            }
+        }
+        
         dismissDashboard()
 
         showingAllWebViews = true
@@ -1182,7 +1549,7 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
         toolBarSwipe.isEnabled = false
 
         if adbanner.isBannerLoaded {
-            adbanner.frame = CGRect(x: 0, y: 1, width: self.view.frame.width - 10, height: 66)
+            adbanner.frame = CGRect(x: 0, y: 1, width: targetViewSize.width - 10, height: 66)
             self.view.addSubview(adbanner)
         }
         let addNewWebViewButton: UIBarButtonItem! = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(ViewController.addNewWebViewButtonPressed))
@@ -1196,7 +1563,7 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
         ]
         toolBar.setItems(toolBarItems, animated: true)
         UIView.animate(withDuration: 0.5, animations: {
-            self.toolBar.frame = CGRect(x: 0, y: self.view.frame.height + 44, width: self.view.frame.width, height: 44)
+            self.toolBar.frame = CGRect(x: 0, y: targetViewSize.height + 44, width: targetViewSize.width, height: 44)
             self.progressBar.alpha = 0
         })
 
@@ -1205,17 +1572,17 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
         //webViewCloseLongPress = []
         webViewLabels = []
         
-        showAllWebViewsScrollView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
+        showAllWebViewsScrollView.frame = CGRect(x: 0, y: 0, width: targetViewSize.width, height: targetViewSize.height)
         self.view.addSubview(self.showAllWebViewsScrollView)
         
         for tryShowingWebView in 0...webViews.count - 1 {
             webViews[tryShowingWebView].removeFromSuperview()
             
-            webViews[tryShowingWebView].frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height - 44)
+            webViews[tryShowingWebView].frame = CGRect(x: 0, y: 0, width: targetViewSize.width, height: targetViewSize.height - 44)
             webViews[tryShowingWebView].layer.cornerRadius = 5.0
             webViews[tryShowingWebView].layer.shadowColor = UIColor.black.cgColor
-            webViews[tryShowingWebView].layer.shadowRadius = 5.0
-            webViews[tryShowingWebView].layer.shadowOffset = CGSize(width: 3.0, height: 3.0)
+            webViews[tryShowingWebView].layer.shadowRadius = 30.0
+            webViews[tryShowingWebView].layer.shadowOffset = CGSize(width: 0.0, height: -20.0)
             webViews[tryShowingWebView].layer.shadowOpacity = 1
             //webViews[tryShowingWebView].scrollView.layer.cornerRadius = 5.0
             self.showAllWebViewsScrollView.addSubview(self.webViews[tryShowingWebView])
@@ -1233,7 +1600,7 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
             webViews[tryShowingWebView].layer.zPosition = CGFloat(tryShowingWebView * 50)
             
             webViewLabels.insert(UILabel(), at: tryShowingWebView)
-            webViewLabels[tryShowingWebView]?.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 20)
+            webViewLabels[tryShowingWebView]?.frame = CGRect(x: 0, y: 0, width: targetViewSize.width, height: 20)
             if webViews[tryShowingWebView].title != nil {
                 webViewLabels[tryShowingWebView]?.text = webViews[tryShowingWebView].title
             }
@@ -1244,7 +1611,7 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
             webViews[tryShowingWebView].addSubview(webViewLabels[tryShowingWebView]!)
 
             webViewButtons.insert(UIButton(), at: tryShowingWebView)
-            webViewButtons[tryShowingWebView]?.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
+            webViewButtons[tryShowingWebView]?.frame = CGRect(x: 0, y: 0, width: targetViewSize.width, height: targetViewSize.height)
             webViewButtons[tryShowingWebView]?.addTarget(self, action: #selector(ViewController.showWebView(_:)), for: .touchUpInside)
             webViewButtons[tryShowingWebView]?.tag = tryShowingWebView
             webViews[tryShowingWebView].addSubview(webViewButtons[tryShowingWebView]!)
@@ -1252,7 +1619,7 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
             webViewCloseSwipe.insert(UIPanGestureRecognizer(), at: tryShowingWebView)
             webViewCloseSwipe[tryShowingWebView].delegate = self;
             webViewButtons[tryShowingWebView]?.addGestureRecognizer(webViewCloseSwipe[tryShowingWebView])
-            webViewCloseSwipe[tryShowingWebView].addTarget(self, action: #selector(ViewController.closeWebView(_:)))
+            webViewCloseSwipe[tryShowingWebView].addTarget(self, action: #selector(ViewController.closeWebViewPan(_:)))
 
             //webViewCloseLongPress.insert(UILongPressGestureRecognizer(), atIndex: tryShowingWebView)
             //webViewButtons[tryShowingWebView]?.addGestureRecognizer(webViewCloseLongPress[tryShowingWebView])
@@ -1260,10 +1627,10 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
 
         }
         
-        self.showAllWebViewsScrollView.contentSize = CGSize(width: self.view.frame.width, height: self.webViews[webViews.count - 1].frame.origin.y + self.view.frame.height)
+        self.showAllWebViewsScrollView.contentSize = CGSize(width: targetViewSize.width, height: self.webViews[webViews.count - 1].frame.origin.y + targetViewSize.height)
 
         UIView.animate(withDuration: 0.5, animations: {
-            self.toolBar.frame = CGRect(x: 0, y: self.view.frame.height - 44, width: self.view.frame.width, height: 44)
+            self.toolBar.frame = CGRect(x: 0, y: targetViewSize.height - 44, width: targetViewSize.width, height: 44)
         })
 
         self.view.bringSubview(toFront: toolBar)
@@ -1454,7 +1821,7 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
         totalWebView += 1
     }
     
-    func closeWebView(_ rec: UIPanGestureRecognizer) {
+    func closeWebViewPan(_ rec: UIPanGestureRecognizer) {
         let y = rec.view?.tag
         let z = y!
 
@@ -1481,28 +1848,9 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
                 } else if (rec.view != nil) && (panInitdir) && (panInit > 3) && (rec.translation(in: rec.view!).x > 0) {
                     showAllWebViewsScrollView.isScrollEnabled = false;
                     
-                    //let originx = 5
-                    //let originy = webViews[z].layer.position.y//webViews[z].frame.origin.y
                     let thenewx = rec.translation(in: self.view).x
-                    //let originw = webViews[z].frame.width
-                    //let originh = webViews[z].frame.height
-                    //let myframe = CGRectMake(5 + thenewx, originy, originw, originh)
-                    //webViews[z].frame = myframe
-                    //webViews[z].layer.position = CGPointMake(5 + thenewx, originy)
                     
-                    var scale = abs(thenewx / 200) // for calculation of alpha and transformation scale
-                    if scale > 1 {
-                        scale = 1
-                    }
-                    webViews[z].alpha = 1 - scale
-                    
-                    var newTransform: CATransform3D = CATransform3DIdentity
-                    newTransform.m34 = CGFloat(1.0) / CGFloat(-1000.0)
-                    newTransform = CATransform3DRotate(newTransform, CGFloat(M_PI / 9) + scale / 2, 0, 1, 0)
-                    newTransform = CATransform3DScale(newTransform, 0.9, 0.9, 0.9)
-                    newTransform = CATransform3DTranslate(newTransform, thenewx * (5 * scale), 0, 0)//-thenewx / 4
-                    self.webViews[z].layer.transform = newTransform
-                    
+                    panningRightToCloseWebView(z, thenewx: thenewx)
                 } else if (rec.view != nil) && (panInitdir) && (panInit > 3) && (rec.translation(in: self.view!).x < 0) {
                     /*
                     let transy = rec.translationInView(self.view!).y
@@ -1549,47 +1897,7 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
             if !isLongPressed {
                 if (panInitdir) {  //end of closing a webView by moving right
                     if (Int(rec.translation(in: webViews[z]).x) > 200) {
-                        webViews[z].alpha = 1
-                        undoWebView = webViews[z]
-                        undoWebViewButton.isEnabled = true
-                        webViewLabels[z]?.removeFromSuperview()
-                        webViewLabels.remove(at: z)
-                        webViewButtons[z]?.removeFromSuperview()
-                        webViewButtons.remove(at: z)
-                        webViews[z].removeFromSuperview()
-                        webViews.remove(at: z)
-                        totalWebView -= 1
-                        currentWebView = webViews.endIndex - 1
-                        if totalWebView < 1 {  //no more webview
-                            weby = 0
-                            addNewWebViewButtonPressed()
-                        } else {
-                            //arrange webViews if there are space after the last and before the first webViews
-                            if webViews[totalWebView - 1].frame.maxY < view.frame.height {
-                                weby = weby + view.frame.height - webViews[totalWebView - 1].frame.maxY
-                            } else if webViews[0].frame.origin.y > 0 {
-                                weby = weby - webViews[0].frame.origin.y
-                            }
-                            //prep for showAllWebViews()
-                            for i in 0...webViews.count - 1 {
-                                webViewLabels[i]?.removeFromSuperview()
-                                webViews[i].removeFromSuperview()
-                                webViewButtons[i]?.removeGestureRecognizer(webViewCloseSwipe[i])
-                                //webViewButtons[i]?.removeGestureRecognizer(webViewCloseLongPress[i])
-                                webViewButtons[i]?.removeFromSuperview()
-                            }
-                            
-                            self.view.bringSubview(toFront: showButton)
-                            self.view.bringSubview(toFront: toolBar)
-                            self.view.bringSubview(toFront: progressBar)
-                            
-                            webViewButtons = []
-                            webViewCloseSwipe = []
-                            //webViewCloseLongPress = []
-                            webViewLabels = []
-                            
-                            showAllWebViews()
-                        }
+                        closeWebView(z)
                     } else {  //did not moved right enough to close the webView
                         //let myframe = CGRectMake(20, weby + 200 * CGFloat(z), view.frame.width - 40, view.frame.height)
                         //webViews[z].frame = myframe
@@ -1614,9 +1922,75 @@ class ViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UITe
                 panInit = 0
             } else {
                 //change order of web views
+                isLongPressed = false
                 print("end of changing the order of the webViews with long press")
             }
         default: true
+        }
+    }
+    
+    func panningRightToCloseWebView(_ indexOfWebView: Int, thenewx: CGFloat) {
+        let z = indexOfWebView
+        
+        var scale = abs(thenewx / 200) // for calculation of alpha and transformation scale
+        if scale > 1 {
+            scale = 1
+        }
+        webViews[z].alpha = 1 - scale
+        
+        var newTransform: CATransform3D = CATransform3DIdentity
+        newTransform.m34 = CGFloat(1.0) / CGFloat(-1000.0)
+        newTransform = CATransform3DRotate(newTransform, CGFloat(M_PI / 9) + scale / 3, 0, 1, 0)
+        newTransform = CATransform3DScale(newTransform, 0.9, 0.9, 0.9)
+        newTransform = CATransform3DTranslate(newTransform, thenewx * (5 * scale), 0, 0)//-thenewx / 4
+        UIView.animate(withDuration: 0.1, animations: {
+            self.webViews[z].layer.transform = newTransform
+        })
+    }
+    
+    func closeWebView(_ indexOfWebView: Int) {
+        let z = indexOfWebView
+        
+        webViews[z].alpha = 1
+        undoWebView = webViews[z]
+        undoWebViewButton.isEnabled = true
+        webViewLabels[z]?.removeFromSuperview()
+        webViewLabels.remove(at: z)
+        webViewButtons[z]?.removeFromSuperview()
+        webViewButtons.remove(at: z)
+        webViews[z].removeFromSuperview()
+        webViews.remove(at: z)
+        totalWebView -= 1
+        currentWebView = webViews.endIndex - 1
+        if totalWebView < 1 {  //no more webview
+            weby = 0
+            addNewWebViewButtonPressed()
+        } else {
+            //arrange webViews if there are space after the last and before the first webViews
+            if webViews[totalWebView - 1].frame.maxY < view.frame.height {
+                weby = weby + view.frame.height - webViews[totalWebView - 1].frame.maxY
+            } else if webViews[0].frame.origin.y > 0 {
+                weby = weby - webViews[0].frame.origin.y
+            }
+            //prep for showAllWebViews()
+            for i in 0...webViews.count - 1 {
+                webViewLabels[i]?.removeFromSuperview()
+                webViews[i].removeFromSuperview()
+                webViewButtons[i]?.removeGestureRecognizer(webViewCloseSwipe[i])
+                //webViewButtons[i]?.removeGestureRecognizer(webViewCloseLongPress[i])
+                webViewButtons[i]?.removeFromSuperview()
+            }
+            
+            self.view.bringSubview(toFront: showButton)
+            self.view.bringSubview(toFront: toolBar)
+            self.view.bringSubview(toFront: progressBar)
+            
+            webViewButtons = []
+            webViewCloseSwipe = []
+            //webViewCloseLongPress = []
+            webViewLabels = []
+            
+            showAllWebViews()
         }
     }
     
